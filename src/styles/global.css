@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark: #030303;
+  --color-light: #f4f4f5;
+  --color-brand: #ccff00; /* Electric neon for accents */
+  --color-muted: #a1a1aa;
+
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Syne", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --text-vw-huge: 18vw;
+  --text-vw-large: 10vw;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  overflow-x: hidden;
+  cursor: none; /* Custom cursor */
+}
+
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(244, 244, 245, 0.2);
+}
+
+.text-outline-brand {
+  color: transparent;
+  -webkit-text-stroke: 1px #ccff00;
+}
+
+/* Custom Cursor */
+#cursor {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ccff00;
+  mix-blend-mode: difference;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  transition: width 0.2s, height 0.2s;
+}
+#cursor.hovering {
+  width: 60px;
+  height: 60px;
+  background-color: #f4f4f5;
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 15s linear infinite;
+  display: inline-block;
+  white-space: nowrap;
+}

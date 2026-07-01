@@ -1,0 +1,777 @@
+---
+/*
+ * Relativistic black hole rendered as a FIXED full-viewport space backdrop for
+ * the whole site — pure space, no text/HUD. Content scrolls over it.
+ *
+ * Ported from public/black_hole.html (the GARGANTUA Schwarzschild geodesic
+ * ray tracer), stripped of every overlay element: title, subtitle, controls
+ * hint, FPS stats, sound button + ambient audio, cinematic letterbox bars,
+ * and the "no WebGL" message. Wheel + pinch zoom are removed so the page can
+ * scroll freely; drag-to-orbit and the slow auto-drift remain.
+ *
+ * Extras for portfolio use: rendering pauses when the tab is hidden (saves
+ * GPU/battery), touch vertical-swipe scrolls the page on mobile,
+ * prefers-reduced-motion renders a single still frame, and the canvas hides
+ * itself (falling back to the plain dark background) if WebGL2 is unavailable.
+ */
+---
+
+<!-- Fixed full-viewport space backdrop for the entire site. The black hole sits
+     behind all content and the page scrolls over it, so the background stays
+     space the whole way down. How much pure black hole shows before the content
+     begins is set by the hero spacer in index.astro. -->
+<canvas
+  id="bh-canvas"
+  class="fixed inset-0 -z-10 block h-full w-full bg-dark"
+></canvas>
+
+<noscript><style>#bh-canvas { display: none; }</style></noscript>
+
+<style>
+  /* Let vertical swipes scroll the page; mouse drag still orbits the camera. */
+  #bh-canvas {
+    touch-action: pan-y;
+  }
+  /* Scroll cue (lives in index.astro) fades out on first scroll. */
+  #bh-scrollcue.bh-hide {
+    opacity: 0;
+  }
+</style>
+
+<script>
+  /* ==========================================================================
+     GARGANTUA — single-file relativistic black hole renderer.
+
+     Physics: null geodesics in Schwarzschild spacetime, integrated per-pixel
+     in the fragment shader (units: r_s = 1). The Binet equation
+     u'' + u = (3/2) r_s u^2 becomes, in Cartesian form along the ray,
+     a = -(3/2) h^2 x / r^5  with conserved angular momentum h = |x × v|.
+     This reproduces the photon sphere at r = 1.5 r_s, the photon ring,
+     the lensed upper/lower images of the accretion disk, and Einstein
+     lensing of the background starfield — the full Interstellar look.
+     ======================================================================== */
+
+  const VERT = `#version 300 es
+layout(location=0) in vec2 aPos;
+void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }`;
+
+  /* ---------------------------- scene shader ------------------------------ */
+  const SCENE_FRAG = `#version 300 es
+precision highp float;
+precision highp int;
+out vec4 fragColor;
+
+uniform vec2  uRes;
+uniform float uTime;
+uniform vec3  uCamPos;
+uniform vec3  uCamRight, uCamUp, uCamFwd;
+uniform int   uSteps;
+uniform float uBeaming;   // strength of relativistic doppler beaming
+uniform float uShift;     // vertical scroll pan (uv units): lifts the hole away
+uniform float uShowHole;  // 1 = render the black hole, 0 = stars only
+
+#define MAX_STEPS 700
+#define R_HORIZON 1.0
+#define R_PHOTON  1.5
+#define DISK_IN   2.35
+#define DISK_OUT  11.5
+#define R_ESC     30.0
+#define PI 3.14159265359
+
+/* ------------------------- hashing & noise ------------------------------ */
+uint uhash(uint x){
+  x ^= x >> 16; x *= 0x7feb352du;
+  x ^= x >> 15; x *= 0x846ca68bu;
+  x ^= x >> 16; return x;
+}
+float hash1(uint x){ return float(uhash(x)) / 4294967295.0; }
+float hash13(vec3 p){
+  uvec3 q = uvec3(ivec3(floor(p)) + 4096);
+  return hash1(uhash(q.x + uhash(q.y + uhash(q.z))));
+}
+float hash12(vec2 p){
+  uvec2 q = uvec2(ivec2(floor(p)) + 4096);
+  return hash1(uhash(q.x + uhash(q.y)));
+}
+float vnoise(vec3 p){
+  vec3 i = floor(p), f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  float a = hash13(i + vec3(0,0,0)), b = hash13(i + vec3(1,0,0));
+  float c = hash13(i + vec3(0,1,0)), d = hash13(i + vec3(1,1,0));
+  float e = hash13(i + vec3(0,0,1)), g = hash13(i + vec3(1,0,1));
+  float h = hash13(i + vec3(0,1,1)), k = hash13(i + vec3(1,1,1));
+  return mix(mix(mix(a,b,f.x), mix(c,d,f.x), f.y),
+             mix(mix(e,g,f.x), mix(h,k,f.x), f.y), f.z);
+}
+float fbm(vec3 p){
+  float v = 0.0, a = 0.5;
+  for (int i = 0; i < 5; i++){
+    v += a * vnoise(p);
+    p = p * 2.13 + vec3(11.3, 7.7, 5.1);
+    a *= 0.52;
+  }
+  return v;
+}
+/* ----------------------- background: stars & nebula --------------------- */
+/* project a direction onto a cube face -> stable 2D domain for star cells */
+vec3 cubeProject(vec3 d){
+  vec3 ad = abs(d);
+  if (ad.x >= ad.y && ad.x >= ad.z) return vec3(d.yz / ad.x, d.x > 0.0 ? 0.0 : 1.0);
+  if (ad.y >= ad.z)                 return vec3(d.xz / ad.y, d.y > 0.0 ? 2.0 : 3.0);
+  return vec3(d.xy / ad.z, d.z > 0.0 ? 4.0 : 5.0);
+}
+vec3 starLayer(vec2 uv, float face, float n, float bright, float t){
+  vec2 g = uv * n;
+  vec2 cell = floor(g);
+  vec2 f = fract(g) - 0.5;
+  float seed = hash12(cell + vec2(face * 731.0, face * 517.0));
+  /* most cells are empty space */
+  if (seed < 0.82) return vec3(0.0);
+  float s2 = hash12(cell + vec2(face * 113.0 + 57.0, 91.0));
+  float s3 = hash12(cell + vec2(31.0, face * 197.0 + 13.0));
+  vec2 off = (vec2(s2, s3) - 0.5) * 0.62;
+  float d = length(f - off);
+  /* brightness: steep power law -> few brilliant stars, many faint ones */
+  float mag = pow(hash12(cell + vec2(7.0, face * 401.0)), 14.0) * 22.0 + 0.07;
+  /* subtract the tail level at the cell border so the gaussian dies fully
+     inside its cell — otherwise gamma lifts clipped tails into faint squares */
+  float core = max(exp(-d * d * n * n * 0.55) - 0.004, 0.0) * 1.004;
+  float star = mag * core * bright;
+  /* twinkle, gently */
+  star *= 0.78 + 0.22 * sin(t * (1.5 + s2 * 3.0) + s3 * 41.0);
+  /* stellar color: blue-white .. amber */
+  vec3 tint = mix(vec3(0.62, 0.75, 1.0), vec3(1.0, 0.82, 0.55), s3 * s3);
+  tint = mix(tint, vec3(1.0), 0.62);
+  return star * tint;
+}
+vec3 background(vec3 dir, float t){
+  vec3 col = vec3(0.0);
+  vec3 cp = cubeProject(dir);
+  col += starLayer(cp.xy, cp.z, 24.0,  1.35, t);  /* sparse brilliant stars */
+  col += starLayer(cp.xy + 0.37, cp.z, 64.0, 0.45, t * 0.7); /* dense faint dust */
+
+  /* a tilted galactic band + drifting nebulae */
+  vec3 bandN = normalize(vec3(0.34, 0.91, 0.22));
+  float bd = dot(dir, bandN);                 /* manual square: pow(x<0) is UB */
+  float band = exp(-bd * bd * 14.0);
+  float neb  = fbm(dir * 5.0 + vec3(2.0));
+  float neb2 = fbm(dir * 11.0 - vec3(5.0));
+  vec3 nebCol = mix(vec3(0.045, 0.05, 0.10), vec3(0.10, 0.055, 0.045), neb2);
+  nebCol += vec3(0.03, 0.045, 0.08) * pow(neb, 2.0) * 2.0;
+  col += band * nebCol * (0.35 + 1.3 * neb) * 0.38;
+  col += vec3(0.003, 0.004, 0.007);  /* deep-space floor, never pure black */
+  return col;
+}
+
+/* --------------------------- accretion disk ----------------------------- */
+/* blackbody-ish ramp: white-hot inner edge -> amber -> deep ember rim */
+vec3 diskRamp(float x){
+  vec3 c = mix(vec3(1.00, 0.96, 0.90), vec3(1.00, 0.78, 0.43), smoothstep(0.0, 0.35, x));
+  c = mix(c, vec3(1.00, 0.55, 0.18), smoothstep(0.25, 0.70, x));
+  c = mix(c, vec3(0.70, 0.24, 0.07), smoothstep(0.60, 1.00, x));
+  return c;
+}
+/* sample disk emission at an equatorial hit point (y == 0 plane).
+   rayDir = photon propagation direction at the crossing (cam -> scene). */
+vec4 diskSample(vec3 hit, vec3 rayDir, float t){
+  float r = length(hit.xz);
+  float x = clamp((r - DISK_IN) / (DISK_OUT - DISK_IN), 0.0, 1.0);
+
+  /* Keplerian shear: rotate the sample point by the local orbital angle.
+     Inner material laps the outer -> trailing spiral streaks, no UV seam. */
+  float omega = 0.55 / pow(r, 1.5);
+  float ang = -t * omega * 6.0;   /* negative: advect WITH the prograde tangent */
+  float ca = cos(ang), sa = sin(ang);
+  vec3 q = vec3(hit.x * ca - hit.z * sa, 0.0, hit.x * sa + hit.z * ca);
+
+  float n1 = fbm(q * vec3(0.9, 1.0, 0.9) + vec3(0.0, r * 2.2, 0.0));
+  float n2 = fbm(q * 2.6 + vec3(7.0));
+  float streaks = 0.55 + 0.45 * sin(r * 7.0 - 2.0 * n1 * 6.2831 + n2 * 3.0);
+  float density = (0.35 + 0.65 * n1) * (0.55 + 0.45 * streaks);
+
+  /* radial envelope: hard inner edge, feathered outer rim */
+  float envel = smoothstep(DISK_IN, DISK_IN + 0.55, r) * smoothstep(DISK_OUT, DISK_OUT - 3.2, r);
+  envel *= 0.4 + 0.6 * smoothstep(DISK_OUT, DISK_IN, r);
+
+  /* emissivity climbs steeply toward the inner edge */
+  float emis = pow(DISK_IN / r, 2.0) * 4.2;
+
+  /* --- special relativity at the camera's expense --- */
+  float beta = clamp(sqrt(0.5 / max(r - 1.0, 0.55)), 0.0, 0.86); /* orbital speed (c) */
+  vec3 tangent = normalize(vec3(-hit.z, 0.0, hit.x));            /* prograde flow */
+  float cosTh = dot(tangent, -rayDir);                            /* emitter -> observer */
+  float gamma = 1.0 / sqrt(1.0 - beta * beta);
+  float dopp = 1.0 / (gamma * (1.0 - beta * cosTh));              /* doppler factor */
+  float gred = sqrt(max(1.0 - 1.0 / r, 0.0));                     /* gravitational redshift */
+
+  float boost = pow(dopp, 3.0) * pow(gred, 1.1);
+  boost = mix(1.0, boost, uBeaming);
+
+  vec3 col = diskRamp(x) * density * emis * boost * envel;
+  /* spectral shift: approaching side blue-white, receding side ember-red */
+  float shift = clamp((dopp - 1.0) * 1.6, -1.0, 1.0) * uBeaming;
+  col *= mix(vec3(1.0), vec3(0.72, 0.85, 1.30), max(shift, 0.0));
+  col *= mix(vec3(1.0), vec3(1.30, 0.72, 0.42), max(-shift, 0.0));
+
+  float alpha = clamp(density * 1.6 * envel, 0.0, 1.0);
+  return vec4(col, alpha);
+}
+
+/* --------------------- geodesic integration (the bend) ------------------ */
+float sphereEntry(vec3 ro, vec3 rd, float R){
+  /* nearest intersection with influence sphere; -1 if the ray misses it */
+  float b = dot(ro, rd);
+  float c = dot(ro, ro) - R * R;
+  if (c <= 0.0) return 0.0;            /* already inside */
+  float disc = b * b - c;
+  if (disc < 0.0 || b > 0.0) return -1.0;
+  return -b - sqrt(disc);
+}
+
+vec3 trace(vec3 ro, vec3 rd, float t){
+  vec3 col = vec3(0.0);
+  float T = 1.0;                        /* transmittance */
+
+  float t0 = sphereEntry(ro, rd, R_ESC);
+  if (t0 < 0.0) return background(rd, t);   /* never feels the gravity well */
+
+  vec3 p = ro + rd * t0;
+  vec3 v = rd;
+  vec3 h = cross(p, v);
+  float h2 = dot(h, h);                 /* conserved: impact parameter^2 */
+
+  bool captured = false;
+  bool escaped  = false;
+  float prevY = p.y;
+  vec3  prevP = p;
+  float ringGlow = 0.0;     /* kept separate so the shadow stays void-black */
+  vec3 a = -1.5 * h2 * p / pow(dot(p, p), 2.5);
+
+  for (int i = 0; i < MAX_STEPS; i++){
+    if (i >= uSteps) break;
+    float r2 = dot(p, p);
+    float r  = sqrt(r2);
+
+    if (r < R_HORIZON) { captured = true; break; }
+    if (r2 > R_ESC * R_ESC && dot(p, v) > 0.0) { escaped = true; break; }
+
+    /* adaptive step: creep near the photon sphere, stride in the suburbs */
+    float dt = clamp((r - 0.9) * 0.16, 0.02, 0.45);
+
+    /* velocity Verlet on  a = -3/2 h^2 x / r^5  */
+    prevP = p; prevY = p.y;
+    p += v * dt + a * (0.5 * dt * dt);
+    vec3 a1 = -1.5 * h2 * p / pow(dot(p, p), 2.5);
+    v += (a + a1) * (0.5 * dt);
+    a = a1;
+
+    /* equatorial plane crossing -> disk hit (front AND lensed images) */
+    if (prevY * p.y < 0.0){
+      float s = prevY / (prevY - p.y);
+      vec3 hit = mix(prevP, p, s);
+      float hr = length(hit.xz);
+      if (hr > DISK_IN && hr < DISK_OUT){
+        vec4 d = diskSample(hit, normalize(v), t);
+        col += T * d.rgb * d.a;
+        T *= 1.0 - d.a * 0.92;
+        if (T < 0.02) break;
+      }
+    }
+
+    /* photon ring: a thin blade of light clinging to r = 1.5 */
+    float prx = (r - R_PHOTON) * 4.6;          /* manual square: pow(x<0) is UB */
+    float pr = exp(-prx * prx);
+    ringGlow += T * pr * 0.022 * dt * 18.0;
+  }
+
+  /* rays that fall in keep their glow: the shadow must stay void-black,
+     save for a whisper of white light scraping the rim */
+  col += vec3(1.0, 0.94, 0.84) * ringGlow * (captured ? 0.02 : 1.0);
+  if (!captured && T > 0.02) col += T * background(normalize(v), t);
+  return col;
+}
+
+/* --------------------------------- main --------------------------------- */
+void main(){
+  vec2 uv = (gl_FragCoord.xy * 2.0 - uRes) / uRes.y;
+
+  /* tiny golden-ratio jitter hides banding from the fixed-step integrator */
+  float j = hash12(gl_FragCoord.xy + fract(uTime) * 61.8) - 0.5;
+  uv += j * (1.2 / uRes.y);
+
+  /* scrolling lifts the whole scene upward so the black hole rises off the top
+     of the screen, leaving an infinite procedural starfield behind it. */
+  uv.y -= uShift;
+
+  vec3 rd = normalize(uCamFwd * 1.35 + uCamRight * uv.x + uCamUp * uv.y);
+  /* once the hole has scrolled away, skip the costly geodesic march entirely */
+  vec3 col = uShowHole > 0.5 ? trace(uCamPos, rd, uTime) : background(rd, uTime);
+
+  fragColor = vec4(col, 1.0);
+}`;
+  /* --------------------------- post-processing ---------------------------- */
+  const BRIGHT_FRAG = `#version 300 es
+precision highp float;
+out vec4 o;
+uniform sampler2D uTex;
+uniform vec2 uTexel;
+void main(){
+  /* proper 4x box downsample: 4 bilinear taps cover the full 4x4 footprint,
+     so sub-pixel star deltas average smoothly instead of aliasing */
+  vec2 uv = gl_FragCoord.xy * uTexel * 4.0;
+  vec3 c = vec3(0.0);
+  c += texture(uTex, uv + vec2( uTexel.x,  uTexel.y)).rgb;
+  c += texture(uTex, uv + vec2(-uTexel.x,  uTexel.y)).rgb;
+  c += texture(uTex, uv + vec2( uTexel.x, -uTexel.y)).rgb;
+  c += texture(uTex, uv + vec2(-uTexel.x, -uTexel.y)).rgb;
+  c *= 0.25;
+  c = min(c, vec3(10.0));   /* tame star deltas so bloom stays a glow, not a flare */
+  float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  /* high threshold: only the ring + disk core bloom, so no haze veils the shadow */
+  o = vec4(c * smoothstep(1.0, 2.2, l), 1.0);
+}`;
+
+  const BLUR_FRAG = `#version 300 es
+precision highp float;
+out vec4 o;
+uniform sampler2D uTex;
+uniform vec2 uTexel;
+uniform vec2 uDir;
+void main(){
+  vec2 uv = gl_FragCoord.xy * uTexel;
+  vec2 d = uDir * uTexel;
+  vec3 c = texture(uTex, uv).rgb * 0.227027;
+  c += (texture(uTex, uv + d * 1.3846).rgb + texture(uTex, uv - d * 1.3846).rgb) * 0.316216;
+  c += (texture(uTex, uv + d * 3.2308).rgb + texture(uTex, uv - d * 3.2308).rgb) * 0.070270;
+  o = vec4(c, 1.0);
+}`;
+
+  const COMPOSITE_FRAG = `#version 300 es
+precision highp float;
+precision highp int;
+out vec4 o;
+uniform sampler2D uScene;
+uniform sampler2D uBloom;
+uniform vec2  uRes;
+uniform float uTime;
+uniform float uFade;     /* 0 = black, 1 = fully revealed */
+
+vec3 aces(vec3 x){
+  return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);
+}
+uint ghash(uint x){
+  x ^= x >> 16; x *= 0x7feb352du;
+  x ^= x >> 15; x *= 0x846ca68bu;
+  x ^= x >> 16; return x;
+}
+float grain(vec2 p, float t){
+  uvec2 q = uvec2(p);
+  uint n = ghash(q.x + ghash(q.y + ghash(uint(t * 977.0))));
+  return float(n) / 4294967295.0;
+}
+void main(){
+  vec2 uv = gl_FragCoord.xy / uRes;
+  vec2 cc = uv - 0.5;
+  float r2 = dot(cc, cc);
+
+  /* chromatic aberration grows toward the frame edge */
+  vec2 ca = cc * r2 * 0.055;
+  vec3 col;
+  col.r = texture(uScene, uv - ca).r;
+  col.g = texture(uScene, uv).g;
+  col.b = texture(uScene, uv + ca).b;
+
+  col += texture(uBloom, uv).rgb * 0.9;
+
+  col = aces(col * 1.05);
+  col = pow(col, vec3(1.0 / 2.2));
+
+  /* film grain + vignette + fade-from-black */
+  col += (grain(gl_FragCoord.xy, uTime) - 0.5) * 0.028;
+  col *= 1.0 - r2 * 0.55;
+  col *= uFade;
+  o = vec4(col, 1.0);
+}`;
+
+  /* ============================ WebGL plumbing ============================= */
+  const canvas = document.getElementById("bh-canvas") as HTMLCanvasElement | null;
+  const cue = document.getElementById("bh-scrollcue") as HTMLElement | null;
+
+  const gl =
+    canvas &&
+    canvas.getContext("webgl2", { antialias: false, alpha: false, depth: false, stencil: false });
+
+  if (!canvas || !gl) {
+    /* no WebGL2: drop the canvas; the site falls back to its plain dark bg. */
+    if (canvas) canvas.style.display = "none";
+  } else {
+    runBlackHole(canvas, cue, gl);
+  }
+
+  function runBlackHole(
+    canvas: HTMLCanvasElement,
+    cue: HTMLElement | null,
+    gl: WebGL2RenderingContext
+  ) {
+    const reduce =
+      typeof matchMedia === "function" &&
+      matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* RGBA16F is texture-filterable unconditionally in WebGL2; the extension is
+       only needed to RENDER to it. (OES_texture_float_linear is for 32-bit only.) */
+    const HDR = !!gl.getExtension("EXT_color_buffer_float");
+
+    function compile(type: number, src: string) {
+      const s = gl.createShader(type)!;
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(s), src);
+        throw new Error("shader compile failed");
+      }
+      return s;
+    }
+    function program(fsSrc: string) {
+      const p = gl.createProgram()!;
+      gl.attachShader(p, compile(gl.VERTEX_SHADER, VERT));
+      gl.attachShader(p, compile(gl.FRAGMENT_SHADER, fsSrc));
+      gl.linkProgram(p);
+      if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+        console.error(gl.getProgramInfoLog(p));
+        throw new Error("program link failed");
+      }
+      return p;
+    }
+    function uniforms(p: WebGLProgram, names: string[]) {
+      const u: Record<string, WebGLUniformLocation | null> = {};
+      for (const n of names) u[n] = gl.getUniformLocation(p, n);
+      return u;
+    }
+
+    let progScene: WebGLProgram, progBright: WebGLProgram, progBlur: WebGLProgram, progComp: WebGLProgram;
+    try {
+      progScene = program(SCENE_FRAG);
+      progBright = program(BRIGHT_FRAG);
+      progBlur = program(BLUR_FRAG);
+      progComp = program(COMPOSITE_FRAG);
+    } catch (e) {
+      /* a driver that can't compile the shader: drop the canvas */
+      canvas.style.display = "none";
+      return;
+    }
+
+    const uScene = uniforms(progScene, ["uRes","uTime","uCamPos","uCamRight","uCamUp","uCamFwd","uSteps","uBeaming","uShift","uShowHole"]);
+    const uBright = uniforms(progBright, ["uTex","uTexel"]);
+    const uBlur = uniforms(progBlur, ["uTex","uTexel","uDir"]);
+    const uComp = uniforms(progComp, ["uScene","uBloom","uRes","uTime","uFade"]);
+
+    /* fullscreen triangle */
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+    const vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+    type RT = { tex: WebGLTexture; fbo: WebGLFramebuffer; w: number; h: number };
+    function makeTarget(w: number, h: number): RT {
+      const tex = gl.createTexture()!;
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texStorage2D(gl.TEXTURE_2D, 1, HDR ? gl.RGBA16F : gl.RGBA8, w, h);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      const fbo = gl.createFramebuffer()!;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      return { tex, fbo, w, h };
+    }
+
+    let sceneRT: RT | null = null, bloomA: RT | null = null, bloomB: RT | null = null;
+    let renderScale = 0.8;          /* dynamic resolution, adjusted by FPS */
+    let W = 0, H = 0;
+
+    function allocTargets() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = Math.max(2, Math.round(canvas.clientWidth * dpr));
+      H = Math.max(2, Math.round(canvas.clientHeight * dpr));
+      canvas.width = W; canvas.height = H;
+      for (const rt of [sceneRT, bloomA, bloomB]) if (rt) { gl.deleteTexture(rt.tex); gl.deleteFramebuffer(rt.fbo); }
+      const sw = Math.max(2, Math.round(W * renderScale));
+      const sh = Math.max(2, Math.round(H * renderScale));
+      sceneRT = makeTarget(sw, sh);
+      bloomA = makeTarget(Math.max(2, sw >> 2), Math.max(2, sh >> 2));
+      bloomB = makeTarget(bloomA.w, bloomA.h);
+    }
+
+    let resizeT = 0;   /* mobile address-bar show/hide spams resize — debounce */
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeT);
+      resizeT = window.setTimeout(() => {
+        allocTargets();
+        if (reduce) renderStatic();   /* no loop in reduced-motion: redraw once */
+      }, 150);
+    });
+
+    /* ============================ camera & input ============================= */
+    const cam = {
+      yaw: 0.45, pitch: 0.07, dist: 27.0,
+      tYaw: 0.45, tPitch: 0.07, tDist: 13.8,   /* targets — eased toward */
+      vYaw: 0.0, vPitch: 0.0,
+      auto: true,
+    };
+    const pointers = new Map<number, { x: number; y: number }>();
+    let lastInteract = -20;
+
+    if (!reduce) {
+      /* drag-to-orbit — mouse / pen only. Touch is left to the browser so a
+         vertical swipe scrolls past the hero instead of getting trapped. */
+      canvas.addEventListener("pointerdown", (e) => {
+        if (e.pointerType === "touch") return;
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        canvas.setPointerCapture(e.pointerId);
+        cam.auto = false; lastInteract = perfNow();
+      });
+      canvas.addEventListener("pointermove", (e) => {
+        const p = pointers.get(e.pointerId);
+        if (!p) return;
+        const dx = (e.clientX - p.x) / canvas.clientHeight;
+        const dy = (e.clientY - p.y) / canvas.clientHeight;
+        cam.tYaw   -= dx * 3.2;
+        cam.tPitch += dy * 2.4;
+        cam.tPitch = Math.max(-1.35, Math.min(1.35, cam.tPitch));
+        lastInteract = perfNow();
+        p.x = e.clientX; p.y = e.clientY;
+      });
+      const endDrag = (e: PointerEvent) => { pointers.delete(e.pointerId); };
+      canvas.addEventListener("pointerup", endDrag);
+      canvas.addEventListener("pointercancel", endDrag);
+    }
+
+    /* quality presets: integration steps + base render scale */
+    const QUALITY = [
+      { steps: 180, scale: 0.55 },
+      { steps: 320, scale: 0.80 },
+      { steps: 480, scale: 1.00 },
+    ];
+    const quality = 1;
+
+    /* ============================== render loop ============================== */
+    const start = performance.now();
+    function perfNow() { return (performance.now() - start) / 1000; }
+
+    let fpsEMA = 60, lastFrame = 0, frameCount = 0;
+    let dispHz = 60, lastScaleAdj = -999;   /* estimated refresh cap, last change */
+
+    function camera(t: number, dts: number) {
+      /* all motion is dt-corrected so 30 Hz phones and 144 Hz monitors agree */
+      const f = dts * 60;
+      const k = (c: number) => 1 - Math.pow(1 - c, f);
+      /* slow majestic drift whenever the pilot lets go (never in reduced-motion) */
+      if (!reduce && (cam.auto || t - lastInteract > 14)) {
+        cam.auto = true;
+        cam.tYaw += 0.00065 * f;
+        cam.tPitch += (0.12 + Math.sin(t * 0.05) * 0.05 - cam.tPitch) * k(0.002);
+      }
+      /* intro: fall from 27 toward 13.8 over the first seconds */
+      cam.yaw   += (cam.tYaw   - cam.yaw)   * k(0.06);
+      cam.pitch += (cam.tPitch - cam.pitch) * k(0.06);
+      cam.dist  += (cam.tDist  - cam.dist)  * k(0.022);
+
+      const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+      const cy = Math.cos(cam.yaw),   sy = Math.sin(cam.yaw);
+      const pos = [cam.dist * cp * sy, cam.dist * sp, cam.dist * cp * cy];
+      const fwd = norm3([-pos[0], -pos[1], -pos[2]]);
+      const right = norm3(cross3(fwd, [0, 1, 0]));
+      const up = cross3(right, fwd);
+      return { pos, fwd, right, up };
+    }
+    function cross3(a: number[], b: number[]) {
+      return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+    }
+    function norm3(a: number[]) {
+      const l = Math.hypot(a[0], a[1], a[2]) || 1;
+      return [a[0]/l, a[1]/l, a[2]/l];
+    }
+
+    let forceFade = -1;   /* >= 0 overrides the timed fade (reduced-motion) */
+
+    function draw(now: number) {
+      const t = perfNow();
+      const dt = now - lastFrame; lastFrame = now;
+
+      /* dynamic resolution: hold near the display's own ceiling, whatever it is */
+      if (dt > 0 && dt < 500) {
+        const inst = 1000 / dt;
+        fpsEMA = fpsEMA * 0.95 + inst * 0.05;
+        dispHz = Math.min(240, Math.max(dispHz * 0.9995, inst));
+        if (++frameCount % 40 === 0) {
+          const base = QUALITY[quality].scale;
+          if (fpsEMA < dispHz * 0.7 && renderScale > 0.4) {
+            renderScale = Math.max(0.4, renderScale - 0.1);
+            allocTargets(); fpsEMA = dispHz * 0.85; lastScaleAdj = frameCount;
+          } else if (fpsEMA > dispHz * 0.93 && renderScale < base && frameCount - lastScaleAdj > 120) {
+            renderScale = Math.min(base, renderScale + 0.05);
+            allocTargets(); fpsEMA = dispHz * 0.85; lastScaleAdj = frameCount;
+          }
+        }
+      }
+
+      const c = camera(t, Math.min(0.1, Math.max(0.0001, dt / 1000)));
+      const fade = forceFade >= 0 ? forceFade : Math.min(1, Math.max(0, (t - 0.4) / 5.0));
+
+      /* scroll pan: 2 uv units == one viewport, so factor 2 lifts the scene
+         1:1 with the page. The hole is gone once a full viewport is scrolled. */
+      const vh = window.innerHeight || 1;
+      const shift = (window.scrollY / vh) * 2.0;
+      const showHole = window.scrollY < vh ? 1 : 0;
+
+      const scene = sceneRT!, bA = bloomA!, bB = bloomB!;
+
+      /* pass 1: trace geodesics into the HDR scene target */
+      gl.bindFramebuffer(gl.FRAMEBUFFER, scene.fbo);
+      gl.viewport(0, 0, scene.w, scene.h);
+      gl.useProgram(progScene);
+      gl.uniform2f(uScene.uRes, scene.w, scene.h);
+      gl.uniform1f(uScene.uTime, t);
+      gl.uniform3fv(uScene.uCamPos, c.pos);
+      gl.uniform3fv(uScene.uCamRight, c.right);
+      gl.uniform3fv(uScene.uCamUp, c.up);
+      gl.uniform3fv(uScene.uCamFwd, c.fwd);
+      gl.uniform1i(uScene.uSteps, QUALITY[quality].steps);
+      gl.uniform1f(uScene.uBeaming, 0.72);
+      gl.uniform1f(uScene.uShift, shift);
+      gl.uniform1f(uScene.uShowHole, showHole);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+      /* pass 2: bright extraction at quarter res */
+      gl.bindFramebuffer(gl.FRAMEBUFFER, bA.fbo);
+      gl.viewport(0, 0, bA.w, bA.h);
+      gl.useProgram(progBright);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, scene.tex);
+      gl.uniform1i(uBright.uTex, 0);
+      gl.uniform2f(uBright.uTexel, 1 / scene.w, 1 / scene.h);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+      /* passes 3..6: separable gaussian, two rounds */
+      gl.useProgram(progBlur);
+      gl.uniform1i(uBlur.uTex, 0);
+      gl.uniform2f(uBlur.uTexel, 1 / bA.w, 1 / bA.h);
+      for (let i = 0; i < 3; i++) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, bB.fbo);
+        gl.bindTexture(gl.TEXTURE_2D, bA.tex);
+        gl.uniform2f(uBlur.uDir, 1, 0);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, bA.fbo);
+        gl.bindTexture(gl.TEXTURE_2D, bB.tex);
+        gl.uniform2f(uBlur.uDir, 0, 1);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+
+      /* pass 7: composite to screen */
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0, 0, W, H);
+      gl.useProgram(progComp);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, scene.tex);
+      gl.uniform1i(uComp.uScene, 0);
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, bA.tex);
+      gl.uniform1i(uComp.uBloom, 1);
+      gl.uniform2f(uComp.uRes, W, H);
+      gl.uniform1f(uComp.uTime, t);
+      gl.uniform1f(uComp.uFade, fade);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+
+    /* ----- loop control: render while the tab is visible (it's a permanent
+       full-page backdrop, so it stays on screen). Pauses on tab switch. ----- */
+    let running = false, rafId = 0;
+    let tabVisible = !document.hidden;
+
+    function tick(now: number) {
+      if (!running) return;
+      rafId = requestAnimationFrame(tick);
+      draw(now);
+    }
+    function startLoop() {
+      if (running) return;
+      running = true;
+      lastFrame = performance.now();
+      rafId = requestAnimationFrame(tick);
+    }
+    function stopLoop() {
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+    function syncLoop() {
+      if (tabVisible) startLoop();
+      else stopLoop();
+    }
+    function renderStatic() {
+      /* single fully-revealed frame for reduced-motion / fallback redraws */
+      draw(performance.now());
+    }
+
+    /* ================================= boot ================================== */
+    canvas.addEventListener("webglcontextlost", (e) => {
+      e.preventDefault();
+      stopLoop();
+      /* recover by reloading, but never loop on a device that keeps losing GL */
+      const last = +(sessionStorage.getItem("bhCtxLost") || 0);
+      const nowMs = start + perfNow() * 1000;
+      if (nowMs - last > 30000) {
+        sessionStorage.setItem("bhCtxLost", String(nowMs));
+        location.reload();
+      }
+    });
+
+    allocTargets();
+
+    if (reduce) {
+      /* no motion: settle the camera at its final framing and paint one frame.
+         The pan still needs to follow scroll, so repaint (rAF-throttled) when
+         the page scrolls — but never run a continuous animation loop. */
+      forceFade = 1;
+      cam.dist = cam.tDist;
+      cam.yaw = cam.tYaw;
+      cam.pitch = cam.tPitch;
+      cam.auto = false;
+      renderStatic();
+      let scrollRAF = 0;
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (scrollRAF) return;
+          scrollRAF = requestAnimationFrame(() => {
+            scrollRAF = 0;
+            renderStatic();
+          });
+        },
+        { passive: true }
+      );
+    } else {
+      document.addEventListener("visibilitychange", () => {
+        tabVisible = !document.hidden;
+        syncLoop();
+      });
+      syncLoop();
+    }
+
+    /* fade the scroll cue away the moment the visitor starts scrolling */
+    if (cue) {
+      const hideCue = () => {
+        if (window.scrollY > 30) {
+          cue.classList.add("bh-hide");
+          window.removeEventListener("scroll", hideCue);
+        }
+      };
+      window.addEventListener("scroll", hideCue, { passive: true });
+    }
+  }
+</script>

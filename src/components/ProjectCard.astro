@@ -1,0 +1,40 @@
+---
+import type { Project } from "../data/cv";
+import ArrowDownRight from "./icons/ArrowDownRight.astro";
+
+interface Props {
+  project: Project;
+  index: number;
+}
+
+const { project, index } = Astro.props;
+---
+
+<a
+  href="#"
+  class="project-card group relative flex flex-col justify-between bg-white/[0.03] border border-white/10 rounded-2xl p-6 md:p-8 min-h-[280px] overflow-hidden hover-trigger transition-colors hover:bg-white/[0.06] hover:border-brand/40"
+>
+  <!-- Faint background letter -->
+  <span
+    class="absolute -bottom-8 -right-2 font-display font-black text-[10rem] leading-none text-outline opacity-[0.07] pointer-events-none select-none uppercase"
+  >
+    {project.title.slice(0, 1)}
+  </span>
+
+  <div class="relative z-10 flex items-start justify-between">
+    <span class="font-mono text-xs text-brand uppercase">0{index + 1}</span>
+    <span class="text-brand opacity-0 group-hover:opacity-100 transition-opacity">
+      <ArrowDownRight />
+    </span>
+  </div>
+
+  <div class="relative z-10 mt-12">
+    <h3
+      class="font-display text-3xl md:text-4xl font-bold uppercase tracking-tighter mb-3 group-hover:text-brand transition-colors duration-300"
+    >
+      {project.title}
+    </h3>
+    <p class="font-mono text-xs text-white mb-3">{project.tech}</p>
+    <p class="font-sans text-muted text-sm leading-relaxed">{project.desc}</p>
+  </div>
+</a>

@@ -1,0 +1,20 @@
+---
+import { CV_DATA } from "../data/cv";
+import ProjectCard from "./ProjectCard.astro";
+---
+
+<section id="projects">
+  <div class="flex justify-between items-end mb-3 px-1 reveal-section">
+    <div class="font-mono text-xs uppercase tracking-widest text-muted">
+      (01) — Selected Projects
+    </div>
+    <h2 class="font-display text-2xl md:text-3xl font-bold">Featured Logic</h2>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 reveal-section">
+    {
+      CV_DATA.projects.map((project, i) => (
+        <ProjectCard project={project} index={i} />
+      ))
+    }
+  </div>
+</section>

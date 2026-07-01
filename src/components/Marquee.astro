@@ -1,0 +1,13 @@
+---
+import { CV_DATA } from "../data/cv";
+
+const skills = CV_DATA.skills.join(" + ");
+---
+
+<div
+  class="w-full overflow-hidden py-8 bg-brand text-dark font-display font-bold text-3xl md:text-5xl uppercase whitespace-nowrap flex items-center reveal-section hover-trigger rounded-2xl"
+>
+  <div class="animate-marquee">
+    {skills} + {skills} +
+  </div>
+</div>

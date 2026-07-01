@@ -1,0 +1,74 @@
+---
+import "../styles/global.css";
+import Cursor from "../components/Cursor";
+import Loader from "../components/Loader";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body
+    class="font-sans relative w-full bg-dark min-h-screen selection:bg-brand selection:text-dark"
+  >
+    <Loader client:load />
+    <slot />
+    <Cursor client:load />
+
+    <script>
+      import gsap from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Reveal sections on scroll
+      gsap.utils.toArray(".reveal-section").forEach((sec) => {
+        gsap.fromTo(
+          sec as HTMLElement,
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: { trigger: sec as HTMLElement, start: "top 90%" },
+          }
+        );
+      });
+
+      // Divider lines growing
+      gsap.utils.toArray(".grow-line").forEach((line) => {
+        gsap.fromTo(
+          line as HTMLElement,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            duration: 1.5,
+            ease: "power4.out",
+            scrollTrigger: { trigger: line as HTMLElement, start: "top 90%" },
+          }
+        );
+      });
+    </script>
+  </body>
+</html>

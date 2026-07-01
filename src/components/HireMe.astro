@@ -1,0 +1,12 @@
+---
+import { CV_DATA } from "../data/cv";
+import ArrowRight from "./icons/ArrowRight.astro";
+---
+
+<a
+  href={CV_DATA.contact.email}
+  class="hover-trigger group flex items-center justify-between bg-brand text-dark rounded-xl px-5 py-4 font-display font-bold text-lg uppercase tracking-tight hover:scale-[1.02] transition-transform hero-fade opacity-0"
+>
+  <span>Hire Me</span>
+  <span class="group-hover:translate-x-1 transition-transform"><ArrowRight /></span>
+</a>

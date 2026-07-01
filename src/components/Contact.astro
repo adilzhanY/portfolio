@@ -1,0 +1,64 @@
+---
+import { CV_DATA } from "../data/cv";
+import ArrowRight from "./icons/ArrowRight.astro";
+
+const year = new Date().getFullYear();
+const city = CV_DATA.location.split(",")[0];
+const links = [
+  { name: "Email", url: CV_DATA.contact.email, external: false },
+  { name: "GitHub", url: CV_DATA.contact.github, external: true },
+  { name: "LinkedIn", url: CV_DATA.contact.linkedin, external: true },
+];
+---
+
+<footer
+  class="relative bg-brand text-dark rounded-2xl py-16 md:py-24 px-6 md:px-12 overflow-hidden reveal-section"
+>
+  <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12">
+    <div>
+      <h2
+        class="font-display text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none mb-6"
+      >
+        Let's build<br />something.
+      </h2>
+      <p class="font-mono text-dark/70 text-lg max-w-md">
+        Available for freelance and open to full-time opportunities.
+      </p>
+    </div>
+
+    <div
+      class="flex flex-col justify-end items-start md:items-end font-mono text-xl uppercase tracking-wider space-y-4"
+    >
+      {
+        links.map((link) => (
+          <a
+            href={link.url}
+            target={link.external ? "_blank" : undefined}
+            class="hover-trigger flex items-center group"
+          >
+            <span class="group-hover:mr-4 transition-all">{link.name}</span>
+            <span class="opacity-0 group-hover:opacity-100 transition-opacity">
+              <ArrowRight />
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  <div
+    class="mt-24 pt-8 border-t border-dark/20 flex flex-col md:flex-row justify-between items-center font-mono text-xs uppercase relative z-10"
+  >
+    <div>© {year} {CV_DATA.name} ({CV_DATA.nickname})</div>
+    <div class="mt-4 md:mt-0">Designed &amp; Engineered in {city}</div>
+  </div>
+
+  <!-- Huge background decoration -->
+  <div
+    class="absolute -bottom-[10%] left-0 w-full text-center pointer-events-none opacity-5"
+  >
+    <span class="font-display font-black text-[30vw] leading-none uppercase"
+      >{CV_DATA.nickname}</span
+    >
+  </div>
+</footer>
