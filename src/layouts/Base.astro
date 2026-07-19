@@ -1,7 +1,6 @@
 ---
 import "../styles/global.css";
 import Cursor from "../components/Cursor";
-import Loader from "../components/Loader";
 
 interface Props {
   title: string;
@@ -22,7 +21,7 @@ const { title } = Astro.props;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&family=Workbench&display=swap"
       rel="stylesheet"
     />
 
@@ -31,7 +30,6 @@ const { title } = Astro.props;
   <body
     class="font-sans relative w-full bg-dark min-h-screen selection:bg-brand selection:text-dark"
   >
-    <Loader client:load />
     <slot />
     <Cursor client:load />
 
@@ -40,6 +38,27 @@ const { title } = Astro.props;
       import { ScrollTrigger } from "gsap/ScrollTrigger";
 
       gsap.registerPlugin(ScrollTrigger);
+
+      // Opening sequence: the dust backdrop is visible immediately, the
+      // astronaut point cloud assembles on its own, then the header and hero
+      // copy drift in once the cloud has mostly taken shape.
+      const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        intro.timeScale(100); // effectively instant, no motion
+      }
+      intro
+        .fromTo(
+          "[data-logo]",
+          { opacity: 0, y: -12 },
+          { opacity: 1, y: 0, duration: 0.8 },
+          1.4
+        )
+        .fromTo(
+          ".hero-fade",
+          { opacity: 0, y: 26 },
+          { opacity: 1, y: 0, duration: 1, stagger: 0.14 },
+          1.6
+        );
 
       // Reveal sections on scroll
       gsap.utils.toArray(".reveal-section").forEach((sec) => {

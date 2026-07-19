@@ -11,7 +11,7 @@
  */
 import { CV_DATA } from "../data/cv";
 
-const firstName = CV_DATA.name.split(" ")[0];
+const [firstName, lastName] = CV_DATA.name.split(" ");
 ---
 
 <section id="hero" class="relative min-h-screen overflow-hidden">
@@ -20,14 +20,14 @@ const firstName = CV_DATA.name.split(" ")[0];
   <div
     class="relative z-10 flex min-h-screen flex-col justify-center px-6 md:px-14 pointer-events-none"
   >
-    <div class="max-w-xl pointer-events-auto">
+    <div class="max-w-3xl pointer-events-auto">
       <a href="#contact" class="pill hero-fade opacity-0 mb-8">
         open to work <span aria-hidden="true">&rarr;</span>
       </a>
       <h1
-        class="hero-fade opacity-0 font-display font-bold tracking-tight leading-[0.95] text-6xl md:text-8xl"
+        class="hero-fade opacity-0 font-[family-name:var(--font-pixel)] leading-[1.05] text-6xl md:text-8xl xl:text-[7.5rem]"
       >
-        {firstName}.
+        {firstName}<br />{lastName}<span class="text-brand">.</span>
       </h1>
       <p
         class="hero-fade opacity-0 mt-6 text-xl md:text-2xl font-light text-light/80 leading-snug max-w-md"
