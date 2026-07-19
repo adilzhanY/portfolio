@@ -1,17 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dark: #030303;
-  --color-light: #f4f4f5;
-  --color-brand: #ccff00; /* Electric neon for accents */
-  --color-muted: #a1a1aa;
+  --color-dark: #000000;
+  --color-light: #f5f5f4;
+  --color-brand: #ff4a1a; /* Ember orange, from the point-cloud reference art */
+  --color-brand-dim: #b33512;
+  --color-muted: #8a8a8a;
 
-  --font-sans: "Inter", sans-serif;
-  --font-display: "Syne", sans-serif;
+  --font-sans: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
+  --font-display: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
-
-  --text-vw-huge: 18vw;
-  --text-vw-large: 10vw;
 }
 
 html {
@@ -25,35 +23,60 @@ body {
   cursor: none; /* Custom cursor */
 }
 
+/* The ember pill — like the "swipe →" chip in the reference art */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 9999px;
+  background: rgba(255, 74, 26, 0.09);
+  border: 1px solid rgba(255, 74, 26, 0.25);
+  color: var(--color-brand);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+/* Dotted rule: a row of particles instead of a solid line */
+.dot-rule {
+  height: 1px;
+  background-image: radial-gradient(
+    circle,
+    rgba(245, 245, 244, 0.45) 1px,
+    transparent 1px
+  );
+  background-size: 7px 1px;
+  background-repeat: repeat-x;
+}
+
 .text-outline {
   color: transparent;
-  -webkit-text-stroke: 1px rgba(244, 244, 245, 0.2);
+  -webkit-text-stroke: 1px rgba(245, 245, 244, 0.25);
 }
 
-.text-outline-brand {
-  color: transparent;
-  -webkit-text-stroke: 1px #ccff00;
-}
-
-/* Custom Cursor */
+/* Custom Cursor: small white particle, ember on hover */
 #cursor {
   pointer-events: none;
   position: fixed;
   top: 0;
   left: 0;
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background-color: #ccff00;
-  mix-blend-mode: difference;
+  background-color: #f5f5f4;
+  box-shadow: 0 0 12px rgba(245, 245, 244, 0.8);
   transform: translate(-50%, -50%);
   z-index: 9999;
-  transition: width 0.2s, height 0.2s;
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
 }
 #cursor.hovering {
-  width: 60px;
-  height: 60px;
-  background-color: #f4f4f5;
+  width: 34px;
+  height: 34px;
+  background-color: var(--color-brand);
+  box-shadow: 0 0 24px rgba(255, 74, 26, 0.7);
+  mix-blend-mode: normal;
+  opacity: 0.85;
 }
 
 /* Marquee Animation */
@@ -66,7 +89,12 @@ body {
   }
 }
 .animate-marquee {
-  animation: marquee 15s linear infinite;
+  animation: marquee 22s linear infinite;
   display: inline-block;
   white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
 }

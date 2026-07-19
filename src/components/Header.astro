@@ -1,0 +1,33 @@
+---
+import { CV_DATA } from "../data/cv";
+
+const nav = [
+  { name: "projects", href: "#projects" },
+  { name: "experience", href: "#experience" },
+  { name: "contact", href: "#contact" },
+];
+---
+
+<header
+  class="fixed top-0 inset-x-0 z-40 flex items-center justify-between px-6 md:px-14 py-5 mix-blend-difference"
+>
+  <a
+    href="#hero"
+    data-logo
+    class="font-display font-bold text-xl tracking-tight opacity-0"
+  >
+    {CV_DATA.nickname}<span class="text-brand">.</span>
+  </a>
+  <nav class="flex items-center gap-5 md:gap-8">
+    {
+      nav.map((item) => (
+        <a
+          href={item.href}
+          class="hero-fade opacity-0 font-mono text-xs uppercase tracking-widest text-light/70 hover:text-light transition-colors"
+        >
+          {item.name}
+        </a>
+      ))
+    }
+  </nav>
+</header>

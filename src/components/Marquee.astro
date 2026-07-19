@@ -1,13 +1,26 @@
 ---
 import { CV_DATA } from "../data/cv";
-
-const skills = CV_DATA.skills.join(" + ");
 ---
 
 <div
-  class="w-full overflow-hidden py-8 bg-brand text-dark font-display font-bold text-3xl md:text-5xl uppercase whitespace-nowrap flex items-center reveal-section hover-trigger rounded-2xl"
+  class="w-full overflow-hidden py-10 md:py-14 whitespace-nowrap reveal-section hover-trigger"
 >
-  <div class="animate-marquee">
-    {skills} + {skills} +
+  <div
+    class="animate-marquee font-display font-bold tracking-tight text-4xl md:text-6xl"
+  >
+    {
+      [0, 1].map(() => (
+        <>
+          {CV_DATA.skills.map((skill, i) => (
+            <span class={i % 2 === 0 ? "text-outline" : "text-light"}>
+              {skill}
+              <span class="text-brand mx-5 text-2xl md:text-4xl align-middle">
+                &bull;
+              </span>
+            </span>
+          ))}
+        </>
+      ))
+    }
   </div>
 </div>

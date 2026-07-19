@@ -1,0 +1,293 @@
+---
+/*
+ * Hero section in the point-cloud art style. The astronaut reference image
+ * (public/art/astronaut.png — itself a point-cloud render) is sampled
+ * pixel-by-pixel on the client and rebuilt as a live particle cloud:
+ * particles fly in from scattered positions, breathe in place, repel from
+ * the cursor, and reddish source pixels glow ember-orange.
+ *
+ * Canvas 2D, DPR-aware, pauses when the tab is hidden; reduced-motion users
+ * get the assembled cloud as a single still frame.
+ */
+import { CV_DATA } from "../data/cv";
+
+const firstName = CV_DATA.name.split(" ")[0];
+---
+
+<section id="hero" class="relative min-h-screen overflow-hidden">
+  <canvas id="cloud-canvas" class="absolute inset-0 h-full w-full"></canvas>
+
+  <div
+    class="relative z-10 flex min-h-screen flex-col justify-center px-6 md:px-14 pointer-events-none"
+  >
+    <div class="max-w-xl pointer-events-auto">
+      <a href="#contact" class="pill hero-fade opacity-0 mb-8">
+        open to work <span aria-hidden="true">&rarr;</span>
+      </a>
+      <h1
+        class="hero-fade opacity-0 font-display font-bold tracking-tight leading-[0.95] text-6xl md:text-8xl"
+      >
+        {firstName}.
+      </h1>
+      <p
+        class="hero-fade opacity-0 mt-6 text-xl md:text-2xl font-light text-light/80 leading-snug max-w-md"
+      >
+        {CV_DATA.role.replace(" & ", " and ")}.<br />
+        Building precise, fast things for the web.
+      </p>
+      <p
+        class="hero-fade opacity-0 mt-8 font-mono text-xs uppercase tracking-widest text-muted"
+      >
+        {CV_DATA.nickname} — {CV_DATA.location}
+      </p>
+    </div>
+  </div>
+
+  <div
+    class="absolute bottom-8 left-6 md:left-14 z-10 font-mono text-xs uppercase tracking-widest text-muted hero-fade opacity-0"
+  >
+    scroll <span aria-hidden="true">&darr;</span>
+  </div>
+</section>
+
+<script>
+  const canvas = document.getElementById("cloud-canvas") as HTMLCanvasElement | null;
+  const ctx = canvas?.getContext("2d");
+
+  if (canvas && ctx) {
+    const reduce =
+      typeof matchMedia === "function" &&
+      matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    interface P {
+      tx: number; // target (home) position within the cloud, centered on 0,0
+      ty: number;
+      x: number; // current position, same space
+      y: number;
+      size: number;
+      alpha: number;
+      ember: boolean;
+      phase: number;
+    }
+
+    let particles: P[] = [];
+    let W = 0;
+    let H = 0;
+    let dpr = 1;
+    /* Cloud placement, recomputed on resize */
+    let cx = 0;
+    let cy = 0;
+    let scale = 1;
+    let assembleT = -1; // seconds since assembly started, <0 = not started
+
+    const mouse = { x: -1e5, y: -1e5 };
+
+    const img = new Image();
+    img.src = "/art/astronaut.png";
+    img.decode().then(sample).catch(() => {
+      /* image missing: hero simply has no cloud */
+    });
+
+    function sample() {
+      /* Read the image at a coarse grid; every bright cell becomes a particle. */
+      const GRID = 210;
+      const off = document.createElement("canvas");
+      const ratio = img.naturalHeight / img.naturalWidth;
+      off.width = GRID;
+      off.height = Math.round(GRID * ratio);
+      const octx = off.getContext("2d", { willReadFrequently: true })!;
+      octx.drawImage(img, 0, 0, off.width, off.height);
+      const data = octx.getImageData(0, 0, off.width, off.height).data;
+
+      const raw: P[] = [];
+      for (let gy = 0; gy < off.height; gy++) {
+        for (let gx = 0; gx < off.width; gx++) {
+          const i = (gy * off.width + gx) * 4;
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+          if (lum < 26) continue;
+          /* dimmer cells survive less often — keeps the point-cloud airiness */
+          if (Math.random() > 0.25 + (lum / 255) * 0.75) continue;
+          const ember = r > 90 && r > g * 1.7 && r > b * 1.7;
+          /* gamma-lift: the source render is mostly dim grey dots */
+          const l = Math.sqrt(lum / 255);
+          raw.push({
+            /* unit space: x,y in [-0.5, 0.5], y already aspect-corrected */
+            tx: gx / off.width - 0.5,
+            ty: (gy / off.height - 0.5) * ratio,
+            x: 0,
+            y: 0,
+            size: 1 + l * 1.6,
+            alpha: ember ? 0.95 : 0.35 + l * 0.65,
+            ember,
+            phase: Math.random() * Math.PI * 2,
+          });
+        }
+      }
+
+      const isCoarse = matchMedia("(pointer: coarse)").matches;
+      const cap = isCoarse ? 5000 : 12000;
+      while (raw.length > cap) {
+        raw.splice(Math.floor(Math.random() * raw.length), 1);
+      }
+      particles = raw;
+
+      /* scatter start positions across the viewport */
+      for (const p of particles) {
+        const a = Math.random() * Math.PI * 2;
+        const d = 0.7 + Math.random() * 1.2;
+        p.x = p.tx + Math.cos(a) * d;
+        p.y = p.ty + Math.sin(a) * d;
+      }
+
+      layout();
+      if (reduce) {
+        for (const p of particles) {
+          p.x = p.tx;
+          p.y = p.ty;
+        }
+        drawStatic();
+      } else {
+        assembleT = 0;
+        startLoop();
+      }
+    }
+
+    function layout() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = canvas.clientWidth;
+      H = canvas.clientHeight;
+      canvas.width = Math.max(2, Math.round(W * dpr));
+      canvas.height = Math.max(2, Math.round(H * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const wide = W > 768;
+      scale = Math.min(H * 1.0, wide ? W * 0.52 : W * 1.05);
+      /* right-aligned on desktop (text sits left), centered on mobile */
+      cx = wide ? W * 0.68 : W * 0.5;
+      cy = H * 0.52;
+      canvas.style.opacity = wide ? "1" : "0.45";
+    }
+
+    function drawParticles(t: number) {
+      ctx.clearRect(0, 0, W, H);
+      const sway = reduce ? 0 : Math.sin(t * 0.4) * 0.012;
+      for (const p of particles) {
+        /* gentle breathing drift around the home position */
+        const jx = reduce ? 0 : Math.sin(t * 1.1 + p.phase) * 0.0016;
+        const jy = reduce ? 0 : Math.cos(t * 0.9 + p.phase * 1.3) * 0.0016;
+        let sx = cx + (p.x + jx + sway * p.ty) * scale;
+        let sy = cy + (p.y + jy) * scale;
+
+        /* cursor repulsion, in screen space */
+        const dx = sx - mouse.x;
+        const dy = sy - mouse.y;
+        const d2 = dx * dx + dy * dy;
+        const R = 110;
+        if (d2 < R * R && d2 > 0.01) {
+          const d = Math.sqrt(d2);
+          const f = ((R - d) / R) * 26;
+          sx += (dx / d) * f;
+          sy += (dy / d) * f;
+        }
+
+        const tw = reduce ? 1 : 0.8 + 0.2 * Math.sin(t * 2.4 + p.phase * 2);
+        ctx.fillStyle = p.ember
+          ? `rgba(255,74,26,${p.alpha * tw})`
+          : `rgba(245,245,244,${p.alpha * tw})`;
+        ctx.fillRect(sx, sy, p.size, p.size);
+      }
+    }
+
+    function drawStatic() {
+      drawParticles(0);
+    }
+
+    /* --------------------------- animation loop --------------------------- */
+    let rafId = 0;
+    let last = 0;
+    const start = performance.now();
+
+    function tick(now: number) {
+      rafId = requestAnimationFrame(tick);
+      const t = (now - start) / 1000;
+      /* rAF timestamps can precede the performance.now() taken in startLoop,
+         so clamp: a negative first dt must not knock assembleT below zero */
+      const dt = Math.min(0.1, Math.max(0.001, (now - last) / 1000));
+      last = now;
+
+      if (assembleT >= 0) {
+        assembleT += dt;
+        /* critically-damped pull toward home; done after ~2.5s */
+        const k = 1 - Math.pow(0.04, dt);
+        let settled = true;
+        for (const p of particles) {
+          p.x += (p.tx - p.x) * k;
+          p.y += (p.ty - p.y) * k;
+          if (Math.abs(p.tx - p.x) + Math.abs(p.ty - p.y) > 0.0004) {
+            settled = false;
+          }
+        }
+        if (settled && assembleT > 2.5) {
+          for (const p of particles) {
+            p.x = p.tx;
+            p.y = p.ty;
+          }
+          assembleT = -1;
+        }
+      }
+      drawParticles(t);
+    }
+
+    function startLoop() {
+      if (rafId) return;
+      last = performance.now();
+      rafId = requestAnimationFrame(tick);
+    }
+    function stopLoop() {
+      cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+
+    if (!reduce) {
+      /* only animate while the hero is on screen and the tab is visible */
+      let onScreen = true;
+      new IntersectionObserver(
+        (entries) => {
+          onScreen = entries[0].isIntersecting;
+          if (particles.length === 0) return;
+          if (onScreen && !document.hidden) startLoop();
+          else stopLoop();
+        },
+        { threshold: 0 }
+      ).observe(canvas);
+
+      document.addEventListener("visibilitychange", () => {
+        if (particles.length === 0) return;
+        if (!document.hidden && onScreen) startLoop();
+        else stopLoop();
+      });
+
+      window.addEventListener("pointermove", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+      });
+      window.addEventListener("pointerleave", () => {
+        mouse.x = -1e5;
+        mouse.y = -1e5;
+      });
+    }
+
+    let resizeT = 0;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeT);
+      resizeT = window.setTimeout(() => {
+        layout();
+        if (reduce) drawStatic();
+      }, 150);
+    });
+  }
+</script>

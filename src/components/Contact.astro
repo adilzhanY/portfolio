@@ -11,54 +11,46 @@ const links = [
 ];
 ---
 
-<footer
-  class="relative bg-brand text-dark rounded-2xl py-16 md:py-24 px-6 md:px-12 overflow-hidden reveal-section"
->
-  <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12">
-    <div>
-      <h2
-        class="font-display text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none mb-6"
-      >
-        Let's build<br />something.
-      </h2>
-      <p class="font-mono text-dark/70 text-lg max-w-md">
-        Available for freelance and open to full-time opportunities.
-      </p>
-    </div>
+<footer id="contact" class="px-6 md:px-14 pt-24 md:pt-36 pb-10">
+  <div class="reveal-section">
+    <span class="pill mb-10">open to work <span aria-hidden="true">&rarr;</span></span>
+    <h2
+      class="font-display font-bold tracking-tight leading-[0.95] text-5xl md:text-8xl mb-8"
+    >
+      Let's build<br />something<span class="text-brand">.</span>
+    </h2>
+    <p class="text-light/70 font-light text-lg md:text-xl max-w-md">
+      Available for freelance and open to full-time opportunities.
+    </p>
+  </div>
 
+  <div
+    class="reveal-section mt-16 flex flex-col md:flex-row gap-4 md:gap-12 font-mono text-sm uppercase tracking-widest"
+  >
+    {
+      links.map((link) => (
+        <a
+          href={link.url}
+          target={link.external ? "_blank" : undefined}
+          rel={link.external ? "noopener noreferrer" : undefined}
+          class="hover-trigger group flex items-center gap-2 text-light/80 hover:text-brand transition-colors"
+        >
+          {link.name}
+          <span class="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
+            <ArrowRight />
+          </span>
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="mt-24">
+    <div class="dot-rule w-full"></div>
     <div
-      class="flex flex-col justify-end items-start md:items-end font-mono text-xl uppercase tracking-wider space-y-4"
+      class="pt-6 flex flex-col md:flex-row justify-between items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted"
     >
-      {
-        links.map((link) => (
-          <a
-            href={link.url}
-            target={link.external ? "_blank" : undefined}
-            class="hover-trigger flex items-center group"
-          >
-            <span class="group-hover:mr-4 transition-all">{link.name}</span>
-            <span class="opacity-0 group-hover:opacity-100 transition-opacity">
-              <ArrowRight />
-            </span>
-          </a>
-        ))
-      }
+      <div>&copy; {year} {CV_DATA.name} ({CV_DATA.nickname})</div>
+      <div>Designed &amp; engineered in {city}</div>
     </div>
-  </div>
-
-  <div
-    class="mt-24 pt-8 border-t border-dark/20 flex flex-col md:flex-row justify-between items-center font-mono text-xs uppercase relative z-10"
-  >
-    <div>© {year} {CV_DATA.name} ({CV_DATA.nickname})</div>
-    <div class="mt-4 md:mt-0">Designed &amp; Engineered in {city}</div>
-  </div>
-
-  <!-- Huge background decoration -->
-  <div
-    class="absolute -bottom-[10%] left-0 w-full text-center pointer-events-none opacity-5"
-  >
-    <span class="font-display font-black text-[30vw] leading-none uppercase"
-      >{CV_DATA.nickname}</span
-    >
   </div>
 </footer>
