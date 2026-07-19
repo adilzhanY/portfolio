@@ -1,0 +1,74 @@
+.card-swap-container {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  transform: translate(5%, 20%);
+  transform-origin: bottom right;
+
+  perspective: 900px;
+  overflow: visible;
+}
+
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 12px;
+  border: 1px solid rgba(245, 245, 244, 0.25);
+  background: #050505;
+  overflow: hidden;
+  cursor: pointer;
+
+  transform-style: preserve-3d;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* header strip on each showcase card, echoing the site's mono labels */
+.card-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid rgba(245, 245, 244, 0.12);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 244, 0.85);
+}
+
+.card-label::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--color-brand);
+  box-shadow: 0 0 10px rgba(255, 74, 26, 0.8);
+}
+
+.card-label span {
+  margin-left: auto;
+  color: rgba(245, 245, 244, 0.4);
+}
+
+.card-shot {
+  width: 100%;
+  height: calc(100% - 2.4rem);
+  object-fit: cover;
+  object-position: top left;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .card-swap-container {
+    transform: scale(0.75) translate(25%, 25%);
+  }
+}
+
+@media (max-width: 480px) {
+  .card-swap-container {
+    transform: scale(0.55) translate(25%, 25%);
+  }
+}
