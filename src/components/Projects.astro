@@ -18,7 +18,12 @@ import ArrowRight from "./icons/ArrowRight.astro";
       CV_DATA.projects.map((project, i) => (
         <article class="reveal-section group border-t border-transparent">
           <div class="dot-rule w-full" />
-          <div class="hover-trigger grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-8 items-baseline py-8 md:py-10 transition-colors duration-300 group-hover:bg-white/[0.025]">
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover-trigger grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-8 items-baseline py-8 md:py-10 transition-colors duration-300 group-hover:bg-white/[0.025]"
+          >
             <div class="md:col-span-1 font-mono text-sm text-brand">
               {String(i + 1).padStart(2, "0")}
             </div>
@@ -34,7 +39,7 @@ import ArrowRight from "./icons/ArrowRight.astro";
             <p class="md:col-span-3 font-mono text-xs uppercase tracking-wider text-muted leading-relaxed">
               {project.tech}
             </p>
-          </div>
+          </a>
         </article>
       ))
     }

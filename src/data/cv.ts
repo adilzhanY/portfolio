@@ -12,6 +12,7 @@ export interface Project {
   title: string;
   tech: string;
   desc: string;
+  link: string;
 }
 
 export interface Education {
@@ -43,21 +44,23 @@ export const CV_DATA: CV = {
   role: "Software Engineering Student & Full-Stack Developer",
   location: "Potsdam, Germany",
   contact: {
-    email: "mailto:youremail@gmail.com",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
+    email: "mailto:adilzhan1112@gmail.com",
+    github: "https://github.com/adilzhanY",
+    linkedin: "https://linkedin.com/in/adilzhanyerzhan",
   },
   skills: [
     "Rust",
     "TypeScript",
     "React",
+    "React Native",
     "Next.js",
-    "Actix Web",
+    "Expo",
+    "Flutter",
+    "Node.js",
     "Tailwind CSS",
-    "AWS",
     "PostgreSQL",
     "Supabase",
-    "Vapi AI",
+    "AWS",
   ],
   experience: [
     {
@@ -67,43 +70,51 @@ export const CV_DATA: CV = {
       date: "04 2025 - 08 2025",
       location: "Remote",
       bullets: [
-        "Engineered a suite of full-stack applications using Rust (Actix, Sled DB) and TypeScript frameworks (Mithril.js, React, Next.js).",
-        "Developed an internal AI-assisted content management system with robust versioning and citation handling.",
-        "Integrated secure payment APIs (Stripe, PayPal, Klarna) into PoC applications.",
-        "Pioneered an AI-powered SQL manager to automatically generate and execute MySQL and PostgreSQL queries.",
+        "Engineered a suite of full-stack applications using Rust (Actix, Sled DB) and TypeScript frameworks including Mithril.js, React, and Next.js.",
+        "Developed an internal AI-assisted content management system with robust versioning, export options, and citation handling.",
+        "Integrated secure payment APIs from Stripe, PayPal, and Klarna into proof-of-concept applications.",
+      ],
+    },
+    {
+      id: 2,
+      company: "ClimaNova",
+      role: "Team Lead (Frontend Programming Course Project)",
+      date: "Spring 2024",
+      location: "Potsdam, Germany",
+      bullets: [
+        "Led the mobile application team for ClimaNova, a cross-platform weather app built in Flutter.",
+        "Coordinated a team of developers end to end, tracking progress and running regular planning calls.",
+        "Drove the project to one of the top grades in the course through clear task delegation and hands-on technical leadership.",
       ],
     },
   ],
   projects: [
     {
-      id: "vitron",
-      title: "Vitron",
-      tech: "React Native, Expo, TS, NeonDB, AWS, Nest.js, Rust",
-      desc: "All-in-one fitness app for tracking meals, weight, and habits. Features AI-powered image flow via AWS Lambda (Rust) & OpenAI for meal photo analysis.",
+      id: "whaleabyss",
+      title: "Whale Abyss",
+      tech: "Next.js, TypeScript, Tailwind, PostgreSQL, Drizzle, Zustand, NextAuth, Yandex Cloud",
+      desc: "Full-scale e-commerce platform for Genshin Impact boosting, built and launched solo: real-time order automation via Telegram Bot, full payment processing, and a CI/CD auto-deploy pipeline. 150+ paying customers within the first 10 days.",
+      link: "https://github.com/adilzhanY/whaleabyss",
     },
     {
-      id: "resume",
-      title: "AI Resume Analyzer",
-      tech: "React, TS, Vite, Tailwind, PDF.js, Zustand",
-      desc: "Tool with AI-driven ATS scoring and content summarization. Integrated PDF.js for document processing and built a responsive feedback interface.",
+      id: "grit",
+      title: "Grit",
+      tech: "Next.js, React 19, TypeScript, Expo, React Native, Supabase, Dexie",
+      desc: "Gamified all-in-one life tracker for habits, food, steps, weight, and focus, unified by one XP economy. Monorepo sharing a platform-agnostic core across web and mobile, with local-first offline storage and delta cloud sync.",
+      link: "https://github.com/adilzhanY/grit",
     },
     {
-      id: "converso",
-      title: "Converso",
-      tech: "Next.js, TS, React 19, Vapi AI, Supabase",
-      desc: "Real-time AI teaching platform with voice interaction. Features modular architecture, secure auth, and robust error tracking via Sentry.",
-    },
-    {
-      id: "taskapi",
-      title: "Task Mgmt API",
-      tech: "Rust, Actix Web, Serde, JSON",
-      desc: "High-performance REST API with thread-safe shared state (Mutex), custom persistent JSON storage, CORS middleware, and auth validation.",
+      id: "torq",
+      title: "Torq",
+      tech: "React Native, Expo, TypeScript, NativeWind, Supabase",
+      desc: "Offline-first workout tracker for Android with live set logging, rest timers, a searchable 1,500-exercise catalog with animated demos, and personal records tracking.",
+      link: "https://github.com/adilzhanY/torq",
     },
   ],
   education: {
     uni: "University of Europe for Applied Sciences",
     degree: "B.Sc in Software Engineering",
     date: "09 2022 - 02 2026",
-    gpa: "83.47/100",
+    gpa: "2.0 (German scale)",
   },
 };
