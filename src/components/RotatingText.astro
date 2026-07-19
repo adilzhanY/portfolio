@@ -1,0 +1,116 @@
+---
+/*
+ * Rotating word in a highlighted box, in the style of reactbits' RotatingText:
+ * an ember pill whose width animates to fit each new word while the letters
+ * stagger out through the top and the next word's letters stagger in from
+ * below. GSAP-driven; reduced-motion users get instant word swaps.
+ */
+interface Props {
+  words: string[];
+  interval?: number;
+  class?: string;
+}
+
+const { words, interval = 2600, class: className = "" } = Astro.props;
+---
+
+<span
+  class:list={[
+    "rot-box inline-flex items-center overflow-hidden align-bottom",
+    "bg-brand text-dark rounded-[0.35em] px-[0.35em] pb-[0.08em]",
+    className,
+  ]}
+  data-words={JSON.stringify(words)}
+  data-interval={interval}
+>
+  <span class="rot-word inline-flex whitespace-pre">{words[0]}</span>
+</span>
+
+<script>
+  import gsap from "gsap";
+
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.querySelectorAll<HTMLElement>(".rot-box").forEach((box) => {
+    const words: string[] = JSON.parse(box.dataset.words || "[]");
+    const interval = Number(box.dataset.interval) || 2600;
+    const wordEl = box.querySelector<HTMLElement>(".rot-word");
+    if (!wordEl || words.length < 2) return;
+
+    let index = 0;
+
+    function setLetters(word: string) {
+      wordEl!.innerHTML = "";
+      for (const ch of word) {
+        const s = document.createElement("span");
+        s.className = "inline-block will-change-transform";
+        s.textContent = ch;
+        wordEl!.appendChild(s);
+      }
+    }
+
+    /* measure the box width a word needs, via an invisible clone */
+    function measure(word: string) {
+      const clone = box.cloneNode(false) as HTMLElement;
+      clone.style.cssText =
+        "position:absolute;visibility:hidden;width:auto;left:-9999px";
+      clone.textContent = word;
+      box.parentElement!.appendChild(clone);
+      const w = clone.getBoundingClientRect().width;
+      clone.remove();
+      return w;
+    }
+
+    function lockWidth() {
+      box.style.width = `${box.getBoundingClientRect().width}px`;
+    }
+
+    setLetters(words[0]);
+
+    if (reduce) {
+      setInterval(() => {
+        index = (index + 1) % words.length;
+        box.style.width = "auto";
+        setLetters(words[index]);
+      }, interval);
+      return;
+    }
+
+    /* fonts change metrics; only lock the width once they are ready */
+    document.fonts.ready.then(() => {
+      lockWidth();
+      setInterval(() => {
+        index = (index + 1) % words.length;
+        const next = words[index];
+
+        const tl = gsap.timeline();
+        tl.to([...wordEl!.children], {
+          yPercent: -120,
+          duration: 0.28,
+          stagger: 0.025,
+          ease: "power2.in",
+        })
+          .to(
+            box,
+            { width: measure(next), duration: 0.45, ease: "power3.inOut" },
+            "<0.1"
+          )
+          /* the incoming tween is created here, after the letters have been
+             swapped — GSAP resolves targets at creation time */
+          .add(() => {
+            setLetters(next);
+            gsap.fromTo(
+              [...wordEl!.children],
+              { yPercent: 120 },
+              {
+                yPercent: 0,
+                duration: 0.38,
+                stagger: 0.03,
+                ease: "back.out(1.6)",
+              }
+            );
+          }, "-=0.15");
+      }, interval);
+    });
+  });
+</script>

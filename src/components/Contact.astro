@@ -1,6 +1,7 @@
 ---
 import { CV_DATA } from "../data/cv";
 import ArrowRight from "./icons/ArrowRight.astro";
+import RotatingText from "./RotatingText.astro";
 
 const year = new Date().getFullYear();
 const city = CV_DATA.location.split(",")[0];
@@ -15,9 +16,12 @@ const links = [
   <div class="reveal-section">
     <span class="pill mb-10">open to work <span aria-hidden="true">&rarr;</span></span>
     <h2
-      class="font-display font-bold tracking-tight leading-[0.95] text-5xl md:text-8xl mb-8"
+      class="font-display font-bold tracking-tight leading-[1.05] text-5xl md:text-8xl mb-8"
     >
-      Let's build<br />something<span class="text-brand">.</span>
+      Let's build<br />
+      <RotatingText words={["systems", "apps", "websites", "ideas"]} /><span
+        class="text-brand">.</span
+      >
     </h2>
     <p class="text-light/70 font-light text-lg md:text-xl max-w-md">
       Available for freelance and open to full-time opportunities.
