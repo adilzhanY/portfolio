@@ -4,7 +4,7 @@ import Galaxy from "../components/Galaxy";
 import Header from "../components/Header.astro";
 import PointCloudHero from "../components/PointCloudHero.astro";
 import Projects from "../components/Projects.astro";
-import Marquee from "../components/Marquee.astro";
+import SkillsLoop from "../components/SkillsLoop";
 import Experience from "../components/Experience.astro";
 import Contact from "../components/Contact.astro";
 import { CV_DATA } from "../data/cv";
@@ -30,7 +30,11 @@ import { CV_DATA } from "../data/cv";
   <main>
     <PointCloudHero />
     <Projects />
-    <Marquee />
+    <div class="reveal-section py-12 md:py-16">
+      <div class="dot-rule w-full mb-12"></div>
+      <SkillsLoop client:visible />
+      <div class="dot-rule w-full mt-12"></div>
+    </div>
     <Experience />
     <Contact />
   </main>
