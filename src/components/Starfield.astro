@@ -1,0 +1,532 @@
+---
+/*
+ * Fixed full-viewport starfield backdrop for the whole site. Content scrolls
+ * over it and the space stays behind the page the whole way down.
+ *
+ * This is the lightweight remnant of the old GARGANTUA black hole renderer:
+ * the expensive per-pixel Schwarzschild geodesic ray tracer, the accretion
+ * disk, the photon ring and all the relativistic machinery have been removed.
+ * What's left is the cheap procedural starfield (cube-projected star cells +
+ * a tilted galactic band + drifting nebulae) plus the bloom/composite post
+ * pass that gives the brighter stars their glow. The camera keeps its slow
+ * majestic drift, so the stars gently sail across the page.
+ *
+ * Rendering pauses when the tab is hidden (saves GPU/battery),
+ * prefers-reduced-motion paints a single still frame, and the canvas hides
+ * itself (falling back to the plain dark background) if WebGL2 is unavailable.
+ */
+---
+
+<!-- Fixed full-viewport starfield behind all content; the page scrolls over it. -->
+<canvas
+  id="bh-canvas"
+  class="fixed inset-0 -z-10 block h-full w-full bg-dark"
+></canvas>
+
+<noscript><style>#bh-canvas { display: none; }</style></noscript>
+
+<style>
+  /* Let vertical swipes scroll the page freely on touch devices. */
+  #bh-canvas {
+    touch-action: pan-y;
+  }
+</style>
+
+<script>
+  /* ==========================================================================
+     Procedural starfield — the deep-space backdrop, no black hole.
+     ======================================================================== */
+
+  const VERT = `#version 300 es
+layout(location=0) in vec2 aPos;
+void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }`;
+
+  /* ---------------------------- scene shader ------------------------------ */
+  const SCENE_FRAG = `#version 300 es
+precision highp float;
+precision highp int;
+out vec4 fragColor;
+
+uniform vec2  uRes;
+uniform float uTime;
+uniform vec3  uCamRight, uCamUp, uCamFwd;
+
+/* ------------------------- hashing & noise ------------------------------ */
+uint uhash(uint x){
+  x ^= x >> 16; x *= 0x7feb352du;
+  x ^= x >> 15; x *= 0x846ca68bu;
+  x ^= x >> 16; return x;
+}
+float hash1(uint x){ return float(uhash(x)) / 4294967295.0; }
+float hash13(vec3 p){
+  uvec3 q = uvec3(ivec3(floor(p)) + 4096);
+  return hash1(uhash(q.x + uhash(q.y + uhash(q.z))));
+}
+float hash12(vec2 p){
+  uvec2 q = uvec2(ivec2(floor(p)) + 4096);
+  return hash1(uhash(q.x + uhash(q.y)));
+}
+float vnoise(vec3 p){
+  vec3 i = floor(p), f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  float a = hash13(i + vec3(0,0,0)), b = hash13(i + vec3(1,0,0));
+  float c = hash13(i + vec3(0,1,0)), d = hash13(i + vec3(1,1,0));
+  float e = hash13(i + vec3(0,0,1)), g = hash13(i + vec3(1,0,1));
+  float h = hash13(i + vec3(0,1,1)), k = hash13(i + vec3(1,1,1));
+  return mix(mix(mix(a,b,f.x), mix(c,d,f.x), f.y),
+             mix(mix(e,g,f.x), mix(h,k,f.x), f.y), f.z);
+}
+float fbm(vec3 p){
+  float v = 0.0, a = 0.5;
+  for (int i = 0; i < 5; i++){
+    v += a * vnoise(p);
+    p = p * 2.13 + vec3(11.3, 7.7, 5.1);
+    a *= 0.52;
+  }
+  return v;
+}
+/* ----------------------- background: stars & nebula --------------------- */
+/* project a direction onto a cube face -> stable 2D domain for star cells */
+vec3 cubeProject(vec3 d){
+  vec3 ad = abs(d);
+  if (ad.x >= ad.y && ad.x >= ad.z) return vec3(d.yz / ad.x, d.x > 0.0 ? 0.0 : 1.0);
+  if (ad.y >= ad.z)                 return vec3(d.xz / ad.y, d.y > 0.0 ? 2.0 : 3.0);
+  return vec3(d.xy / ad.z, d.z > 0.0 ? 4.0 : 5.0);
+}
+vec3 starLayer(vec2 uv, float face, float n, float bright, float t){
+  vec2 g = uv * n;
+  vec2 cell = floor(g);
+  vec2 f = fract(g) - 0.5;
+  float seed = hash12(cell + vec2(face * 731.0, face * 517.0));
+  /* most cells are empty space */
+  if (seed < 0.82) return vec3(0.0);
+  float s2 = hash12(cell + vec2(face * 113.0 + 57.0, 91.0));
+  float s3 = hash12(cell + vec2(31.0, face * 197.0 + 13.0));
+  vec2 off = (vec2(s2, s3) - 0.5) * 0.62;
+  float d = length(f - off);
+  /* brightness: steep power law -> few brilliant stars, many faint ones */
+  float mag = pow(hash12(cell + vec2(7.0, face * 401.0)), 14.0) * 22.0 + 0.07;
+  /* subtract the tail level at the cell border so the gaussian dies fully
+     inside its cell — otherwise gamma lifts clipped tails into faint squares */
+  float core = max(exp(-d * d * n * n * 0.55) - 0.004, 0.0) * 1.004;
+  float star = mag * core * bright;
+  /* twinkle, gently */
+  star *= 0.78 + 0.22 * sin(t * (1.5 + s2 * 3.0) + s3 * 41.0);
+  /* stellar color: blue-white .. amber */
+  vec3 tint = mix(vec3(0.62, 0.75, 1.0), vec3(1.0, 0.82, 0.55), s3 * s3);
+  tint = mix(tint, vec3(1.0), 0.62);
+  return star * tint;
+}
+vec3 background(vec3 dir, float t){
+  vec3 col = vec3(0.0);
+  vec3 cp = cubeProject(dir);
+  col += starLayer(cp.xy, cp.z, 24.0,  1.35, t);  /* sparse brilliant stars */
+  col += starLayer(cp.xy + 0.37, cp.z, 64.0, 0.45, t * 0.7); /* dense faint dust */
+
+  /* a tilted galactic band + drifting nebulae */
+  vec3 bandN = normalize(vec3(0.34, 0.91, 0.22));
+  float bd = dot(dir, bandN);                 /* manual square: pow(x<0) is UB */
+  float band = exp(-bd * bd * 14.0);
+  float neb  = fbm(dir * 5.0 + vec3(2.0));
+  float neb2 = fbm(dir * 11.0 - vec3(5.0));
+  vec3 nebCol = mix(vec3(0.045, 0.05, 0.10), vec3(0.10, 0.055, 0.045), neb2);
+  nebCol += vec3(0.03, 0.045, 0.08) * pow(neb, 2.0) * 2.0;
+  col += band * nebCol * (0.35 + 1.3 * neb) * 0.38;
+  col += vec3(0.003, 0.004, 0.007);  /* deep-space floor, never pure black */
+  return col;
+}
+
+/* --------------------------------- main --------------------------------- */
+void main(){
+  vec2 uv = (gl_FragCoord.xy * 2.0 - uRes) / uRes.y;
+
+  /* tiny golden-ratio jitter hides banding */
+  float j = hash12(gl_FragCoord.xy + fract(uTime) * 61.8) - 0.5;
+  uv += j * (1.2 / uRes.y);
+
+  vec3 rd = normalize(uCamFwd * 1.35 + uCamRight * uv.x + uCamUp * uv.y);
+  vec3 col = background(rd, uTime);
+
+  fragColor = vec4(col, 1.0);
+}`;
+  /* --------------------------- post-processing ---------------------------- */
+  const BRIGHT_FRAG = `#version 300 es
+precision highp float;
+out vec4 o;
+uniform sampler2D uTex;
+uniform vec2 uTexel;
+void main(){
+  /* proper 4x box downsample: 4 bilinear taps cover the full 4x4 footprint,
+     so sub-pixel star deltas average smoothly instead of aliasing */
+  vec2 uv = gl_FragCoord.xy * uTexel * 4.0;
+  vec3 c = vec3(0.0);
+  c += texture(uTex, uv + vec2( uTexel.x,  uTexel.y)).rgb;
+  c += texture(uTex, uv + vec2(-uTexel.x,  uTexel.y)).rgb;
+  c += texture(uTex, uv + vec2( uTexel.x, -uTexel.y)).rgb;
+  c += texture(uTex, uv + vec2(-uTexel.x, -uTexel.y)).rgb;
+  c *= 0.25;
+  c = min(c, vec3(10.0));   /* tame star deltas so bloom stays a glow, not a flare */
+  float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  /* high threshold: only the brightest stars bloom */
+  o = vec4(c * smoothstep(1.0, 2.2, l), 1.0);
+}`;
+
+  const BLUR_FRAG = `#version 300 es
+precision highp float;
+out vec4 o;
+uniform sampler2D uTex;
+uniform vec2 uTexel;
+uniform vec2 uDir;
+void main(){
+  vec2 uv = gl_FragCoord.xy * uTexel;
+  vec2 d = uDir * uTexel;
+  vec3 c = texture(uTex, uv).rgb * 0.227027;
+  c += (texture(uTex, uv + d * 1.3846).rgb + texture(uTex, uv - d * 1.3846).rgb) * 0.316216;
+  c += (texture(uTex, uv + d * 3.2308).rgb + texture(uTex, uv - d * 3.2308).rgb) * 0.070270;
+  o = vec4(c, 1.0);
+}`;
+
+  const COMPOSITE_FRAG = `#version 300 es
+precision highp float;
+precision highp int;
+out vec4 o;
+uniform sampler2D uScene;
+uniform sampler2D uBloom;
+uniform vec2  uRes;
+uniform float uTime;
+uniform float uFade;     /* 0 = black, 1 = fully revealed */
+
+vec3 aces(vec3 x){
+  return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);
+}
+uint ghash(uint x){
+  x ^= x >> 16; x *= 0x7feb352du;
+  x ^= x >> 15; x *= 0x846ca68bu;
+  x ^= x >> 16; return x;
+}
+float grain(vec2 p, float t){
+  uvec2 q = uvec2(p);
+  uint n = ghash(q.x + ghash(q.y + ghash(uint(t * 977.0))));
+  return float(n) / 4294967295.0;
+}
+void main(){
+  vec2 uv = gl_FragCoord.xy / uRes;
+  vec2 cc = uv - 0.5;
+  float r2 = dot(cc, cc);
+
+  /* chromatic aberration grows toward the frame edge */
+  vec2 ca = cc * r2 * 0.055;
+  vec3 col;
+  col.r = texture(uScene, uv - ca).r;
+  col.g = texture(uScene, uv).g;
+  col.b = texture(uScene, uv + ca).b;
+
+  col += texture(uBloom, uv).rgb * 0.9;
+
+  col = aces(col * 1.05);
+  col = pow(col, vec3(1.0 / 2.2));
+
+  /* film grain + vignette + fade-from-black */
+  col += (grain(gl_FragCoord.xy, uTime) - 0.5) * 0.028;
+  col *= 1.0 - r2 * 0.55;
+  col *= uFade;
+  o = vec4(col, 1.0);
+}`;
+
+  /* ============================ WebGL plumbing ============================= */
+  const canvas = document.getElementById("bh-canvas") as HTMLCanvasElement | null;
+
+  const gl =
+    canvas &&
+    canvas.getContext("webgl2", { antialias: false, alpha: false, depth: false, stencil: false });
+
+  if (!canvas || !gl) {
+    /* no WebGL2: drop the canvas; the site falls back to its plain dark bg. */
+    if (canvas) canvas.style.display = "none";
+  } else {
+    runStarfield(canvas, gl);
+  }
+
+  function runStarfield(canvas: HTMLCanvasElement, gl: WebGL2RenderingContext) {
+    const reduce =
+      typeof matchMedia === "function" &&
+      matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* RGBA16F is texture-filterable unconditionally in WebGL2; the extension is
+       only needed to RENDER to it. (OES_texture_float_linear is for 32-bit only.) */
+    const HDR = !!gl.getExtension("EXT_color_buffer_float");
+
+    function compile(type: number, src: string) {
+      const s = gl.createShader(type)!;
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(s), src);
+        throw new Error("shader compile failed");
+      }
+      return s;
+    }
+    function program(fsSrc: string) {
+      const p = gl.createProgram()!;
+      gl.attachShader(p, compile(gl.VERTEX_SHADER, VERT));
+      gl.attachShader(p, compile(gl.FRAGMENT_SHADER, fsSrc));
+      gl.linkProgram(p);
+      if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+        console.error(gl.getProgramInfoLog(p));
+        throw new Error("program link failed");
+      }
+      return p;
+    }
+    function uniforms(p: WebGLProgram, names: string[]) {
+      const u: Record<string, WebGLUniformLocation | null> = {};
+      for (const n of names) u[n] = gl.getUniformLocation(p, n);
+      return u;
+    }
+
+    let progScene: WebGLProgram, progBright: WebGLProgram, progBlur: WebGLProgram, progComp: WebGLProgram;
+    try {
+      progScene = program(SCENE_FRAG);
+      progBright = program(BRIGHT_FRAG);
+      progBlur = program(BLUR_FRAG);
+      progComp = program(COMPOSITE_FRAG);
+    } catch (e) {
+      /* a driver that can't compile the shader: drop the canvas */
+      canvas.style.display = "none";
+      return;
+    }
+
+    const uScene = uniforms(progScene, ["uRes","uTime","uCamRight","uCamUp","uCamFwd"]);
+    const uBright = uniforms(progBright, ["uTex","uTexel"]);
+    const uBlur = uniforms(progBlur, ["uTex","uTexel","uDir"]);
+    const uComp = uniforms(progComp, ["uScene","uBloom","uRes","uTime","uFade"]);
+
+    /* fullscreen triangle */
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+    const vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+    type RT = { tex: WebGLTexture; fbo: WebGLFramebuffer; w: number; h: number };
+    function makeTarget(w: number, h: number): RT {
+      const tex = gl.createTexture()!;
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texStorage2D(gl.TEXTURE_2D, 1, HDR ? gl.RGBA16F : gl.RGBA8, w, h);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      const fbo = gl.createFramebuffer()!;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      return { tex, fbo, w, h };
+    }
+
+    let sceneRT: RT | null = null, bloomA: RT | null = null, bloomB: RT | null = null;
+    let renderScale = 1.0;          /* dynamic resolution, adjusted by FPS */
+    let W = 0, H = 0;
+
+    function allocTargets() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = Math.max(2, Math.round(canvas.clientWidth * dpr));
+      H = Math.max(2, Math.round(canvas.clientHeight * dpr));
+      canvas.width = W; canvas.height = H;
+      for (const rt of [sceneRT, bloomA, bloomB]) if (rt) { gl.deleteTexture(rt.tex); gl.deleteFramebuffer(rt.fbo); }
+      const sw = Math.max(2, Math.round(W * renderScale));
+      const sh = Math.max(2, Math.round(H * renderScale));
+      sceneRT = makeTarget(sw, sh);
+      bloomA = makeTarget(Math.max(2, sw >> 2), Math.max(2, sh >> 2));
+      bloomB = makeTarget(bloomA.w, bloomA.h);
+    }
+
+    let resizeT = 0;   /* mobile address-bar show/hide spams resize — debounce */
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeT);
+      resizeT = window.setTimeout(() => {
+        allocTargets();
+        if (reduce) renderStatic();   /* no loop in reduced-motion: redraw once */
+      }, 150);
+    });
+
+    /* ============================== camera ================================== */
+    /* Only the view direction matters for the starfield, so all we need is a
+       slowly drifting yaw/pitch to make the stars sail across the page. */
+    const cam = {
+      yaw: 0.45, pitch: 0.07,
+      tYaw: 0.45, tPitch: 0.07,
+    };
+
+    /* ============================== render loop ============================== */
+    const start = performance.now();
+    function perfNow() { return (performance.now() - start) / 1000; }
+
+    let fpsEMA = 60, lastFrame = 0, frameCount = 0;
+    let dispHz = 60, lastScaleAdj = -999;   /* estimated refresh cap, last change */
+
+    function camera(t: number, dts: number) {
+      /* all motion is dt-corrected so 30 Hz phones and 144 Hz monitors agree */
+      const f = dts * 60;
+      const k = (c: number) => 1 - Math.pow(1 - c, f);
+      /* slow majestic drift (never in reduced-motion) */
+      if (!reduce) {
+        cam.tYaw += 0.00065 * f;
+        cam.tPitch += (0.12 + Math.sin(t * 0.05) * 0.05 - cam.tPitch) * k(0.002);
+      }
+      cam.yaw   += (cam.tYaw   - cam.yaw)   * k(0.06);
+      cam.pitch += (cam.tPitch - cam.pitch) * k(0.06);
+
+      const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+      const cy = Math.cos(cam.yaw),   sy = Math.sin(cam.yaw);
+      const fwd = norm3([-cp * sy, -sp, -cp * cy]);
+      const right = norm3(cross3(fwd, [0, 1, 0]));
+      const up = cross3(right, fwd);
+      return { fwd, right, up };
+    }
+    function cross3(a: number[], b: number[]) {
+      return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+    }
+    function norm3(a: number[]) {
+      const l = Math.hypot(a[0], a[1], a[2]) || 1;
+      return [a[0]/l, a[1]/l, a[2]/l];
+    }
+
+    let forceFade = -1;   /* >= 0 overrides the timed fade (reduced-motion) */
+
+    function draw(now: number) {
+      const t = perfNow();
+      const dt = now - lastFrame; lastFrame = now;
+
+      /* dynamic resolution: hold near the display's own ceiling, whatever it is */
+      if (dt > 0 && dt < 500) {
+        const inst = 1000 / dt;
+        fpsEMA = fpsEMA * 0.95 + inst * 0.05;
+        dispHz = Math.min(240, Math.max(dispHz * 0.9995, inst));
+        if (++frameCount % 40 === 0) {
+          if (fpsEMA < dispHz * 0.7 && renderScale > 0.4) {
+            renderScale = Math.max(0.4, renderScale - 0.1);
+            allocTargets(); fpsEMA = dispHz * 0.85; lastScaleAdj = frameCount;
+          } else if (fpsEMA > dispHz * 0.93 && renderScale < 1.0 && frameCount - lastScaleAdj > 120) {
+            renderScale = Math.min(1.0, renderScale + 0.05);
+            allocTargets(); fpsEMA = dispHz * 0.85; lastScaleAdj = frameCount;
+          }
+        }
+      }
+
+      const c = camera(t, Math.min(0.1, Math.max(0.0001, dt / 1000)));
+      const fade = forceFade >= 0 ? forceFade : Math.min(1, Math.max(0, (t - 0.4) / 5.0));
+
+      const scene = sceneRT!, bA = bloomA!, bB = bloomB!;
+
+      /* pass 1: render the starfield into the HDR scene target */
+      gl.bindFramebuffer(gl.FRAMEBUFFER, scene.fbo);
+      gl.viewport(0, 0, scene.w, scene.h);
+      gl.useProgram(progScene);
+      gl.uniform2f(uScene.uRes, scene.w, scene.h);
+      gl.uniform1f(uScene.uTime, t);
+      gl.uniform3fv(uScene.uCamRight, c.right);
+      gl.uniform3fv(uScene.uCamUp, c.up);
+      gl.uniform3fv(uScene.uCamFwd, c.fwd);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+      /* pass 2: bright extraction at quarter res */
+      gl.bindFramebuffer(gl.FRAMEBUFFER, bA.fbo);
+      gl.viewport(0, 0, bA.w, bA.h);
+      gl.useProgram(progBright);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, scene.tex);
+      gl.uniform1i(uBright.uTex, 0);
+      gl.uniform2f(uBright.uTexel, 1 / scene.w, 1 / scene.h);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+      /* passes 3..6: separable gaussian, two rounds */
+      gl.useProgram(progBlur);
+      gl.uniform1i(uBlur.uTex, 0);
+      gl.uniform2f(uBlur.uTexel, 1 / bA.w, 1 / bA.h);
+      for (let i = 0; i < 3; i++) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, bB.fbo);
+        gl.bindTexture(gl.TEXTURE_2D, bA.tex);
+        gl.uniform2f(uBlur.uDir, 1, 0);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, bA.fbo);
+        gl.bindTexture(gl.TEXTURE_2D, bB.tex);
+        gl.uniform2f(uBlur.uDir, 0, 1);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+
+      /* pass 7: composite to screen */
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0, 0, W, H);
+      gl.useProgram(progComp);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, scene.tex);
+      gl.uniform1i(uComp.uScene, 0);
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, bA.tex);
+      gl.uniform1i(uComp.uBloom, 1);
+      gl.uniform2f(uComp.uRes, W, H);
+      gl.uniform1f(uComp.uTime, t);
+      gl.uniform1f(uComp.uFade, fade);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+
+    /* ----- loop control: render while the tab is visible (it's a permanent
+       full-page backdrop, so it stays on screen). Pauses on tab switch. ----- */
+    let running = false, rafId = 0;
+    let tabVisible = !document.hidden;
+
+    function tick(now: number) {
+      if (!running) return;
+      rafId = requestAnimationFrame(tick);
+      draw(now);
+    }
+    function startLoop() {
+      if (running) return;
+      running = true;
+      lastFrame = performance.now();
+      rafId = requestAnimationFrame(tick);
+    }
+    function stopLoop() {
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+    function syncLoop() {
+      if (tabVisible) startLoop();
+      else stopLoop();
+    }
+    function renderStatic() {
+      /* single fully-revealed frame for reduced-motion / fallback redraws */
+      draw(performance.now());
+    }
+
+    /* ================================= boot ================================== */
+    canvas.addEventListener("webglcontextlost", (e) => {
+      e.preventDefault();
+      stopLoop();
+      /* recover by reloading, but never loop on a device that keeps losing GL */
+      const last = +(sessionStorage.getItem("bhCtxLost") || 0);
+      const nowMs = start + perfNow() * 1000;
+      if (nowMs - last > 30000) {
+        sessionStorage.setItem("bhCtxLost", String(nowMs));
+        location.reload();
+      }
+    });
+
+    allocTargets();
+
+    if (reduce) {
+      /* no motion: paint one fully-revealed frame and leave it. */
+      forceFade = 1;
+      renderStatic();
+    } else {
+      document.addEventListener("visibilitychange", () => {
+        tabVisible = !document.hidden;
+        syncLoop();
+      });
+      syncLoop();
+    }
+  }
+</script>
