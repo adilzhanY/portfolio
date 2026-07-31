@@ -4,7 +4,6 @@ import ArrowRight from "./icons/ArrowRight.astro";
 import RotatingText from "./RotatingText.astro";
 
 const year = new Date().getFullYear();
-const city = CV_DATA.location.split(",")[0];
 const links = [
   { name: "Email", url: CV_DATA.contact.email, external: false },
   { name: "GitHub", url: CV_DATA.contact.github, external: true },
@@ -54,7 +53,6 @@ const links = [
       class="pt-6 flex flex-col md:flex-row justify-between items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted"
     >
       <div>&copy; {year} {CV_DATA.name} ({CV_DATA.nickname})</div>
-      <div>Designed &amp; engineered in {city}</div>
     </div>
   </div>
 </footer>
