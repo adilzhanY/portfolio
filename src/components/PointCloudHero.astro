@@ -12,43 +12,195 @@
 import { CV_DATA } from "../data/cv";
 
 const [firstName, lastName] = CV_DATA.name.split(" ");
+
+/* The telemetry rail: the facts a visitor would otherwise have to scroll for,
+   spread along the bottom edge of the hero. */
+const stack = CV_DATA.skills.slice(0, 5);
+const latest = CV_DATA.projects[0];
+
+const telemetry = [
+  { label: "status", lines: ["Open to work", "internships & freelance"] },
+  { label: "based in", lines: [CV_DATA.location, "UTC+2 · remote ok"] },
+  {
+    label: "core stack",
+    lines: [stack.slice(0, 2).join(" · "), stack.slice(2).join(" · ")],
+  },
+  {
+    label: "latest ship",
+    lines: [latest.title, "150+ customers in 10 days"],
+    accent: true,
+  },
+];
+
+const sections = [
+  { n: "01", name: "projects", href: "#projects" },
+  { n: "02", name: "stack", href: "#stack" },
+  { n: "03", name: "experience", href: "#experience" },
+  { n: "04", name: "contact", href: "#contact" },
+];
 ---
 
-<section id="hero" class="relative min-h-screen overflow-hidden">
-  <canvas id="cloud-canvas" class="absolute inset-0 h-full w-full"></canvas>
+<section
+  id="hero"
+  class="relative min-h-screen flex flex-col overflow-hidden"
+>
+  <canvas id="cloud-canvas" class="hero-cloud absolute inset-0 h-full w-full"
+  ></canvas>
+
+  <!-- Scrim: the cloud reaches the bottom edge, the telemetry rail sits on it. -->
+  <div
+    class="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-dark via-dark/85 to-transparent"
+  >
+  </div>
+
+  <!-- Ember hairline in the left margin, tying the copy column to the rail. -->
+  <div
+    class="hero-hairline pointer-events-none absolute left-3 md:left-7 top-[24%] bottom-[26%] w-px"
+  >
+  </div>
 
   <div
-    class="relative z-10 flex min-h-screen flex-col justify-center px-6 md:px-14 pointer-events-none"
+    class="relative z-10 flex flex-1 flex-col justify-center px-6 md:px-14 pt-28 pb-10 pointer-events-none"
   >
     <div class="max-w-3xl pointer-events-auto">
-      <a href="#contact" class="pill hero-fade opacity-0 mb-8">
-        open to work <span aria-hidden="true">&rarr;</span>
+      <a href="#contact" class="pill hover-trigger hero-fade opacity-0 mb-8">
+        <span class="hero-led" aria-hidden="true"></span>
+        open to work / 2026
       </a>
       <h1
-        class="hero-fade opacity-0 font-[family-name:var(--font-pixel)] leading-[1.05] text-6xl md:text-8xl xl:text-[7.5rem]"
+        class="hero-fade opacity-0 font-[family-name:var(--font-pixel)] leading-[1.06] text-5xl md:text-7xl xl:text-[6.5rem]"
       >
         {firstName}<br />{lastName}<span class="text-brand">.</span>
       </h1>
       <p
-        class="hero-fade opacity-0 mt-6 text-xl md:text-2xl font-light text-light/80 leading-snug max-w-md"
+        class="hero-fade opacity-0 mt-6 text-lg md:text-xl font-light text-light/80 leading-relaxed max-w-xl"
       >
-        {CV_DATA.role.replace(" & ", " and ")}.<br />
-        Building precise, fast things for the web.
+        {CV_DATA.role.replace(" & ", " and ")}.
+        <b class="font-medium text-light"
+          >Building precise, fast things for the web.</b
+        >
       </p>
-      <p
-        class="hero-fade opacity-0 mt-8 font-mono text-xs uppercase tracking-widest text-muted"
-      >
-        {CV_DATA.nickname} — {CV_DATA.location}
-      </p>
+      <div class="hero-fade opacity-0 mt-9 flex flex-wrap gap-3">
+        <a href="#projects" class="hero-btn hover-trigger">
+          view projects <span aria-hidden="true">&rarr;</span>
+        </a>
+        <a href={CV_DATA.contact.email} class="hero-btn ghost hover-trigger">
+          email me
+        </a>
+      </div>
     </div>
   </div>
 
-  <div
-    class="absolute bottom-8 left-6 md:left-14 z-10 font-mono text-xs uppercase tracking-widest text-muted hero-fade opacity-0"
+  <!-- Section index on the right edge: navigation and balance for the rail. -->
+  <nav
+    class="hero-fade opacity-0 hidden lg:grid absolute right-14 top-1/2 -translate-y-1/2 z-10 gap-3 text-right"
+    aria-label="Sections"
   >
-    scroll <span aria-hidden="true">&darr;</span>
+    {
+      sections.map((s) => (
+        <a
+          href={s.href}
+          class="hover-trigger font-mono text-xs uppercase tracking-[0.2em] text-light/45 hover:text-light transition-colors"
+        >
+          <span class="text-brand mr-3">{s.n}</span>
+          {s.name}
+        </a>
+      ))
+    }
+  </nav>
+
+  <div
+    class="hero-fade opacity-0 relative z-10 shrink-0 px-6 md:px-14 pb-6 md:pb-8"
+  >
+    <div
+      class="flex justify-between gap-6 font-mono text-[10px] uppercase tracking-[0.24em] text-muted mb-3"
+    >
+      <span>01 / identity</span>
+      <span>scroll <span aria-hidden="true">&darr;</span></span>
+    </div>
+    <div class="dot-rule w-full opacity-60"></div>
+    <dl class="mt-5 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5">
+      {
+        telemetry.map((cell) => (
+          <div class="border-l border-brand/35 pl-4">
+            <dt class="font-mono text-[10px] uppercase tracking-[0.24em] text-muted mb-1.5">
+              {cell.label}
+            </dt>
+            <dd class="font-mono text-xs md:text-sm leading-relaxed text-light/90">
+              {cell.lines.map((line, i) => (
+                <span
+                  class:list={[
+                    "block",
+                    cell.accent && i === cell.lines.length - 1 && "text-brand",
+                  ]}
+                >
+                  {line}
+                </span>
+              ))}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
   </div>
 </section>
+
+<style>
+  /* The cloud sits right of the copy on desktop — fade its left edge so the
+     headline and the telemetry rail never compete with it. */
+  @media (min-width: 768px) {
+    .hero-cloud {
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 32%);
+      mask-image: linear-gradient(to right, transparent 0%, #000 32%);
+    }
+  }
+
+  .hero-hairline {
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgba(255, 74, 26, 0.55),
+      transparent
+    );
+  }
+
+  .hero-led {
+    width: 5px;
+    height: 5px;
+    border-radius: 9999px;
+    background: var(--color-brand);
+    box-shadow: 0 0 8px var(--color-brand);
+  }
+
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.6rem;
+    border: 1px solid var(--color-brand);
+    background: var(--color-brand);
+    color: var(--color-dark);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .hero-btn:hover {
+    background: transparent;
+    color: var(--color-brand);
+  }
+  .hero-btn.ghost {
+    background: transparent;
+    border-color: rgba(245, 245, 244, 0.18);
+    color: rgba(245, 245, 244, 0.85);
+  }
+  .hero-btn.ghost:hover {
+    border-color: var(--color-brand);
+    color: var(--color-brand);
+  }
+</style>
 
 <script>
   const canvas = document.getElementById("cloud-canvas") as HTMLCanvasElement | null;
