@@ -1,101 +1,149 @@
 @import "tailwindcss";
 
+/* ============================================================
+   DEEP FIELD
+   The site itself is ink and paper. It has no accent colour of
+   its own — each project owns one, and it floods the interface
+   whenever that project is open. See #wash below.
+   ============================================================ */
 @theme {
-  --color-dark: #000000;
-  --color-light: #f5f5f4;
-  --color-brand: #ff4a1a; /* Ember orange, from the point-cloud reference art */
-  --color-brand-dim: #b33512;
-  --color-muted: #8a8a8a;
+  --color-ink: #0b0b0c;
+  --color-ink-soft: #141416;
+  --color-paper: #edebe7;
+  --color-muted: #8b8884;
 
-  --font-sans: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
-  --font-display: "Helvetica Neue", "Inter", Helvetica, Arial, sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
-  --font-pixel: "Workbench", "JetBrains Mono", monospace;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Big Shoulders Display", "Archivo Narrow", Impact, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--color-ink);
 }
 
+/* No background on <body> on purpose: html paints the canvas, which leaves
+   #wash (z-index -1) free to sit between the canvas and the content. */
 body {
-  background-color: var(--color-dark);
-  color: var(--color-light);
+  color: var(--color-paper);
   overflow-x: hidden;
-  cursor: none; /* Custom cursor */
 }
 
-/* The ember pill — like the "swipe →" chip in the reference art */
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 1.1rem;
-  border-radius: 9999px;
-  background: rgba(255, 74, 26, 0.09);
-  border: 1px solid rgba(255, 74, 26, 0.25);
-  color: var(--color-brand);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
+@media (pointer: fine) {
+  body {
+    cursor: none; /* replaced by #cursor */
+  }
 }
 
-/* Dotted rule: a row of particles instead of a solid line */
-.dot-rule {
-  height: 1px;
-  background-image: radial-gradient(
-    circle,
-    rgba(245, 245, 244, 0.45) 1px,
-    transparent 1px
+/* The wash: one fixed layer the whole site paints through. Hovering a
+   project on the index tints it; opening a project fills it. */
+#wash {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--wash, transparent);
+  opacity: var(--wash-opacity, 0);
+  transition: background-color 0.55s ease, opacity 0.55s ease;
+  pointer-events: none;
+  /* Colour arrives from the left rather than filling the screen flatly, so it
+     reads as light entering the room. */
+  -webkit-mask-image: linear-gradient(
+    100deg,
+    #000 0%,
+    rgb(0 0 0 / 0.72) 42%,
+    transparent 84%
   );
-  background-size: 7px 1px;
-  background-repeat: repeat-x;
+  mask-image: linear-gradient(
+    100deg,
+    #000 0%,
+    rgb(0 0 0 / 0.72) 42%,
+    transparent 84%
+  );
 }
 
-.text-outline {
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(245, 245, 244, 0.25);
+/* Hairline used instead of a border so section edges stay quiet. */
+.rule {
+  height: 1px;
+  width: 100%;
+  background-color: rgb(237 235 231 / 0.14);
 }
 
-/* Custom Cursor: small white particle, ember on hover */
+/* ---------- display type ----------
+   Big Shoulders is condensed, so it carries very tight leading. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 0.86;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* ---------- link underline that draws in ---------- */
+.ulink {
+  position: relative;
+  display: inline-block;
+}
+.ulink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.15em;
+  height: 1px;
+  width: 100%;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ulink:hover::after,
+.ulink:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* ---------- custom cursor ---------- */
 #cursor {
   pointer-events: none;
   position: fixed;
   top: 0;
   left: 0;
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background-color: #f5f5f4;
-  box-shadow: 0 0 12px rgba(245, 245, 244, 0.8);
+  background-color: var(--color-paper);
   transform: translate(-50%, -50%);
   z-index: 9999;
-  transition: width 0.2s, height 0.2s, background-color 0.2s;
+  transition: width 0.25s, height 0.25s, opacity 0.25s;
+  mix-blend-mode: difference;
 }
 #cursor.hovering {
-  width: 34px;
-  height: 34px;
-  background-color: var(--color-brand);
-  box-shadow: 0 0 24px rgba(255, 74, 26, 0.7);
-  mix-blend-mode: normal;
+  width: 44px;
+  height: 44px;
   opacity: 0.85;
 }
 
-/* Marquee Animation */
-@keyframes marquee {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+/* ---------- accessibility floor ---------- */
+:focus-visible {
+  outline: 2px solid var(--color-paper);
+  outline-offset: 4px;
 }
-.animate-marquee {
-  animation: marquee 22s linear infinite;
-  display: inline-block;
-  white-space: nowrap;
-}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee {
-    animation: none;
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

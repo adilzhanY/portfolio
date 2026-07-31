@@ -1,12 +1,21 @@
 ---
 import "../styles/global.css";
 import Cursor from "../components/Cursor";
+import SiteNav from "../components/SiteNav.astro";
+import SiteFooter from "../components/SiteFooter.astro";
 
 interface Props {
   title: string;
+  description?: string;
+  /** The contact page is already a closing screen, so it hides the footer. */
+  hideFooter?: boolean;
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  description = "Adilzhan Yerzhan — software engineer in Potsdam. Three products, built alone.",
+  hideFooter = false,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -16,78 +25,52 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <meta name="description" content={description} />
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&family=Workbench&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400..700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
 
     <meta name="generator" content={Astro.generator} />
   </head>
   <body
-    class="font-sans relative w-full bg-dark min-h-screen selection:bg-brand selection:text-dark"
+    class="font-sans font-light antialiased selection:bg-paper selection:text-ink"
   >
-    <slot />
+    <!-- The single colour layer the whole site paints through. -->
+    <div id="wash"></div>
+
+    <SiteNav />
+    <main id="main">
+      <slot />
+    </main>
+    {!hideFooter && <SiteFooter />}
+
     <Cursor client:load />
 
     <script>
-      import gsap from "gsap";
-      import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-      gsap.registerPlugin(ScrollTrigger);
-
-      // Opening sequence: the dust backdrop is visible immediately, the
-      // astronaut point cloud assembles on its own, then the header and hero
-      // copy drift in once the cloud has mostly taken shape.
-      const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
-      if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        intro.timeScale(100); // effectively instant, no motion
+      // One gesture per page, not a sequence. The colour change between pages
+      // is the motion that carries this design; everything else stays still.
+      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document
+          .querySelectorAll<HTMLElement>("[data-rise]")
+          .forEach((el, i) => {
+            el.animate(
+              [
+                { opacity: 0, transform: "translateY(18px)" },
+                { opacity: 1, transform: "translateY(0)" },
+              ],
+              {
+                duration: 700,
+                delay: 70 * i,
+                easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+                fill: "backwards",
+              }
+            );
+          });
       }
-      intro
-        .fromTo(
-          "[data-logo]",
-          { opacity: 0, y: -12 },
-          { opacity: 1, y: 0, duration: 0.8 },
-          1.4
-        )
-        .fromTo(
-          ".hero-fade",
-          { opacity: 0, y: 26 },
-          { opacity: 1, y: 0, duration: 1, stagger: 0.14 },
-          1.6
-        );
-
-      // Reveal sections on scroll
-      gsap.utils.toArray(".reveal-section").forEach((sec) => {
-        gsap.fromTo(
-          sec as HTMLElement,
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: { trigger: sec as HTMLElement, start: "top 90%" },
-          }
-        );
-      });
-
-      // Divider lines growing
-      gsap.utils.toArray(".grow-line").forEach((line) => {
-        gsap.fromTo(
-          line as HTMLElement,
-          { scaleX: 0 },
-          {
-            scaleX: 1,
-            duration: 1.5,
-            ease: "power4.out",
-            scrollTrigger: { trigger: line as HTMLElement, start: "top 90%" },
-          }
-        );
-      });
     </script>
   </body>
 </html>

@@ -1,0 +1,137 @@
+---
+import Base from "../../layouts/Base.astro";
+import { CV_DATA } from "../../data/cv";
+import type { Project } from "../../data/cv";
+
+export function getStaticPaths() {
+  const projects = CV_DATA.projects;
+  return projects.map((project, i) => ({
+    params: { slug: project.slug },
+    // The projects link to each other in a loop, so there is always a next one.
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+interface Props {
+  project: Project;
+  next: Project;
+}
+
+const { project, next } = Astro.props;
+
+const facts = [
+  { term: "role", detail: project.role },
+  { term: "year", detail: project.year },
+  { term: "stack", detail: project.stack.join(" · ") },
+];
+---
+
+<Base
+  title={`${project.title} — ${CV_DATA.name}`}
+  description={project.summary}
+>
+  <!-- The page opens fully in the project's colour and drains back to ink
+       as you read. This is the payoff for opening it. -->
+  <div
+    class="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[130vh]"
+    style={`background-image:linear-gradient(180deg, ${project.accent} 0%, ${project.accentDeep} 46%, var(--color-ink) 92%)`}
+  >
+  </div>
+
+  <article class="px-6 pb-4 pt-28 md:px-10 md:pt-32">
+    <header>
+      <p data-rise class="font-mono text-[0.7rem] uppercase tracking-[0.22em]">
+        {project.year} &middot; {project.role}
+      </p>
+      <h1
+        data-rise
+        class="display mt-4 text-[4.5rem] leading-[0.84] sm:text-[7rem] md:text-[13vw]"
+      >
+        {project.title}
+      </h1>
+    </header>
+
+    <div
+      data-rise
+      class="mt-12 grid gap-10 md:mt-16 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] md:gap-16"
+    >
+      <div>
+        <p class="text-xl leading-relaxed md:text-[1.6rem] md:leading-[1.45]">
+          {project.summary}
+        </p>
+        <div class="mt-10 space-y-6 text-paper/80 md:mt-12 md:text-lg">
+          {project.body.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </div>
+
+      <aside>
+        <dl class="font-mono text-[0.72rem] uppercase tracking-[0.14em]">
+          {
+            facts.map((fact) => (
+              <div class="flex items-start justify-between gap-6 border-b border-paper/25 py-3">
+                <dt class="shrink-0 opacity-60">{fact.term}</dt>
+                <dd class="text-right">{fact.detail}</dd>
+              </div>
+            ))
+          }
+          <div
+            class="flex items-start justify-between gap-6 border-b border-paper/25 py-3"
+          >
+            <dt class="shrink-0 opacity-60">code</dt>
+            <dd class="text-right">
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="ulink">github &nearr;</a
+              >
+            </dd>
+          </div>
+        </dl>
+
+        <p
+          class="mt-8 font-mono text-[0.72rem] uppercase tracking-[0.16em] opacity-70"
+        >
+          {project.metric}
+        </p>
+
+        {
+          project.image ? (
+            <img
+              src={project.image}
+              alt={`${project.title} interface`}
+              class="mt-10 w-full border border-paper/20"
+              loading="lazy"
+            />
+          ) : (
+            <div class="mt-10 border border-paper/20 p-6">
+              <p class="font-mono text-[0.7rem] uppercase tracking-[0.18em] opacity-60">
+                built with
+              </p>
+              <ul class="mt-4 space-y-1.5 text-sm">
+                {project.stack.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+
+    <nav class="mt-24 md:mt-32" aria-label="Project">
+      <div class="rule"></div>
+      <a
+        href={`/work/${next.slug}`}
+        class="group flex flex-wrap items-baseline justify-between gap-4 py-7"
+      >
+        <span class="label">next project</span>
+        <span
+          class="display text-[3rem] leading-[0.9] transition-opacity group-hover:opacity-70 sm:text-[4.5rem] md:text-[6vw]"
+          >{next.title} &rarr;</span
+        >
+      </a>
+      <div class="rule"></div>
+    </nav>
+  </article>
+</Base>

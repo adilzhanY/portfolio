@@ -1,0 +1,66 @@
+---
+import Base from "../layouts/Base.astro";
+import { CV_DATA } from "../data/cv";
+
+const year = new Date().getFullYear();
+const emailAddress = CV_DATA.contact.email.replace("mailto:", "");
+
+const links = [
+  { name: "github", url: CV_DATA.contact.github },
+  { name: "linkedin", url: CV_DATA.contact.linkedin },
+];
+---
+
+<Base title={`Contact — ${CV_DATA.name}`} hideFooter>
+  <section
+    class="flex min-h-screen flex-col justify-between px-6 pb-8 pt-28 md:px-10 md:pt-32"
+  >
+    <div>
+      <p data-rise class="label">open to work — internships &amp; freelance</p>
+      <h1
+        data-rise
+        class="display mt-4 text-[4rem] leading-[0.84] sm:text-[6rem] md:text-[11vw]"
+      >
+        Say hello
+      </h1>
+
+      <a
+        data-rise
+        href={CV_DATA.contact.email}
+        class="ulink mt-10 inline-block text-2xl md:mt-14 md:text-[2.6rem]"
+      >
+        {emailAddress}
+      </a>
+
+      <p data-rise class="mt-10 max-w-md leading-relaxed text-paper/70">
+        I read everything and answer properly. Based in {CV_DATA.location},
+        happy to work remote.
+      </p>
+    </div>
+
+    <div data-rise class="mt-20">
+      <div class="rule"></div>
+      <div
+        class="mt-6 flex flex-col gap-4 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted sm:flex-row sm:items-center sm:justify-between"
+      >
+        <span>&copy; {year} {CV_DATA.name}</span>
+        <ul class="flex gap-6">
+          {
+            links.map((link) => (
+              <li>
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="ulink transition-colors hover:text-paper"
+                >
+                  {link.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>

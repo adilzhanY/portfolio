@@ -1,0 +1,36 @@
+---
+import { CV_DATA } from "../data/cv";
+
+const year = new Date().getFullYear();
+
+const links = [
+  { name: "email", url: CV_DATA.contact.email, external: false },
+  { name: "github", url: CV_DATA.contact.github, external: true },
+  { name: "linkedin", url: CV_DATA.contact.linkedin, external: true },
+];
+---
+
+<footer class="px-6 pb-8 pt-24 md:px-10 md:pt-32">
+  <div class="rule"></div>
+  <div
+    class="mt-6 flex flex-col gap-4 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted sm:flex-row sm:items-center sm:justify-between"
+  >
+    <span>&copy; {year} {CV_DATA.name}</span>
+    <ul class="flex gap-6">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.url}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
+              class="ulink transition-colors hover:text-paper"
+            >
+              {link.name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>
