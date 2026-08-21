@@ -9,6 +9,9 @@ export interface GalleryImage {
   src: string;
   alt: string;
   caption?: string;
+  /** Intrinsic pixel size, so the browser reserves space before loading. */
+  w: number;
+  h: number;
 }
 
 export interface Project {
@@ -27,6 +30,8 @@ export interface Project {
   /** Small screenshot for the index. Omit for a text-only row. */
   image?: string;
   imageAlt?: string;
+  imageW?: number;
+  imageH?: number;
   /** Phone screenshots render narrower than desktop ones. */
   phone?: boolean;
   /** Wide, short screenshots render under the text instead of beside it. */
@@ -63,7 +68,7 @@ export const CV_DATA: CV = {
   name: "Adilzhan Yerzhan",
   tagline: "Software engineer, Potsdam, Germany",
   intro:
-    "I design, build, launch, and run my own products end to end: an e-commerce storefront with real paying customers, and offline-first apps for training and habits. Currently finishing a B.Sc in Software Engineering, open to internships and freelance work.",
+    "I design, build, launch, and run my own products end to end: an e-commerce storefront with real paying customers, and offline-first apps for training and habits. I hold a B.Sc in Software Engineering (February 2026) and am open to full-time, contract, freelance, and remote roles.",
   contact: {
     email: "adilzhan1112@gmail.com",
     github: "https://github.com/adilzhanY",
@@ -89,7 +94,7 @@ export const CV_DATA: CV = {
     {
       id: "whale-abyss",
       title: "Whale Abyss",
-      year: "2025",
+      year: "2026",
       summary:
         "E-commerce platform for Genshin Impact boosting, built and launched alone. Paid orders flow straight into a Telegram bot, payments clear end to end, CI/CD deploys on every push.",
       metric: "150+ paying customers in the first 10 days",
@@ -104,8 +109,10 @@ export const CV_DATA: CV = {
       ],
       link: "https://github.com/adilzhanY/whaleabyss",
       live: "https://whaleabyss.ru",
-      image: "/projects/whaleabyss.webp",
-      imageAlt: "Whale Abyss storefront",
+      image: "/projects/whaleabyss-preview.webp",
+      imageAlt: "Whale Abyss, the abyss cleared",
+      imageW: 1200,
+      imageH: 646,
       problem:
         "Game boosting services are sold through Discord servers and spreadsheets. Orders get lost, payments are handled by hand, and neither the customer nor the booster knows what state an order is in. Whale Abyss replaces that with a real storefront.",
       solution: [
@@ -125,28 +132,36 @@ export const CV_DATA: CV = {
           src: "/projects/gallery/whaleabyss-hero.webp",
           alt: "Whale Abyss landing page",
           caption: "Landing page",
+          w: 1600,
+          h: 862,
         },
         {
           src: "/projects/gallery/whaleabyss-services.webp",
           alt: "Whale Abyss service catalog",
           caption: "Service catalog",
+          w: 1600,
+          h: 1000,
         },
         {
           src: "/projects/gallery/whaleabyss-cart.webp",
           alt: "Whale Abyss cart and checkout",
           caption: "Cart and checkout",
+          w: 1600,
+          h: 1000,
         },
         {
           src: "/projects/gallery/whaleabyss-reviews.webp",
           alt: "Whale Abyss reviews",
           caption: "Moderated reviews",
+          w: 1600,
+          h: 1000,
         },
       ],
     },
     {
       id: "torq",
       title: "Torq",
-      year: "2025",
+      year: "2026",
       summary:
         "A gym app that tells you how strong you actually are. Every set is scored with the DOTS formula, normalised for bodyweight and sex, and turned into a rank across nine tiers, with percentiles from 400k+ OpenPowerlifting lifters.",
       metric: "Nine rank tiers, 243 tests, local-first with free sync",
@@ -158,9 +173,10 @@ export const CV_DATA: CV = {
         "Vitest",
       ],
       link: "https://github.com/adilzhanY/torq",
-      image: "/projects/torq.webp",
-      imageAlt: "Torq rank screen",
-      phone: true,
+      image: "/projects/torq-preview.webp",
+      imageAlt: "Torq, strength ranked",
+      imageW: 1200,
+      imageH: 646,
       problem:
         "Most gym apps tell you how much you lifted, almost none tell you how strong that makes you. Raw kilos are meaningless across bodyweights: the same 100 kg bench is a different achievement at 60 kg than at 110 kg. Torq scores every set with the DOTS formula, the same normalisation powerlifting uses, and turns it into a rank you climb.",
       solution: [
@@ -180,26 +196,36 @@ export const CV_DATA: CV = {
           src: "/projects/gallery/torq-home.webp",
           alt: "Torq home screen with today's session",
           caption: "Today's session",
+          w: 738,
+          h: 1400,
         },
         {
           src: "/projects/gallery/torq-live.webp",
           alt: "Torq live set logger",
           caption: "Live logger",
+          w: 738,
+          h: 1400,
         },
         {
           src: "/projects/gallery/torq-ranks.webp",
           alt: "Torq nine rank tiers",
           caption: "Nine tiers",
+          w: 738,
+          h: 1400,
         },
         {
           src: "/projects/gallery/torq-stats.webp",
           alt: "Torq progress chart with tier bands",
           caption: "The climb",
+          w: 738,
+          h: 1400,
         },
         {
           src: "/projects/gallery/torq-history.webp",
           alt: "Torq session history timeline",
           caption: "History",
+          w: 738,
+          h: 1400,
         },
       ],
       galleryPhones: true,
@@ -215,6 +241,8 @@ export const CV_DATA: CV = {
       link: "https://github.com/adilzhanY/OpenHyprWhisper",
       image: "/projects/openhyprwhisper.webp",
       imageAlt: "OpenHyprWhisper recording pill",
+      imageW: 380,
+      imageH: 70,
       wide: true,
       problem:
         "Linux on Wayland has no system-wide voice dictation, and the cloud alternatives ship your audio to someone else's servers. OpenHyprWhisper is dictation that works in every app and never lets audio leave the machine.",
@@ -235,47 +263,84 @@ export const CV_DATA: CV = {
           src: "/projects/openhyprwhisper.webp",
           alt: "OpenHyprWhisper animated recording pill",
           caption: "The recording pill",
+          w: 380,
+          h: 70,
         },
       ],
     },
     {
       id: "grit",
       title: "Grit",
-      year: "2025",
+      year: "2026",
       summary:
-        "A life tracker that stops asking you to open five different apps. Habits, food, steps, weight, and focus in one XP economy, shared core across web and mobile, works offline and syncs deltas.",
-      metric: "One XP economy across web and mobile",
+        "A life tracker that stops asking you to open five different apps. Habits, food, steps, weight, and focus in one XP economy, with web, mobile, and a Hyprland desktop panel sharing one domain core, offline-first with delta sync.",
+      metric: "One XP economy across web, mobile, and desktop",
       stack: [
         "Next.js",
         "React 19",
         "Expo",
         "React Native",
+        "Quickshell",
         "Supabase",
         "Dexie",
       ],
       link: "https://github.com/adilzhanY/grit",
-      image: "/projects/grit.webp",
-      imageAlt: "Grit life tracker",
+      image: "/projects/grit-preview.webp",
+      imageAlt: "Grit, one life, one XP economy",
+      imageW: 1200,
+      imageH: 630,
       problem:
         "Habits live in one app, food in another, steps in a third, and each one hands you a separate streak to feel guilty about. Grit puts habits, food, steps, weight, and focus into a single XP economy, so an ordinary day still adds up to something.",
       solution: [
         "The model is one economy: daily non-negotiables pay +10 XP, things you are quitting cost XP and reset a clean streak whose milestones pay bonuses, big personal wins pay +100, life milestones +1000. A daily log tracks food as calories eaten minus burnt, steps, and weight, and a focus timer feeds the same system. Levels are a pure function of total XP and can drop if you slip.",
         "Every XP change is an append-only ledger entry, so XP, level, and streaks are always derivable from history, and the same ledger doubles as the substrate for conflict-free cloud sync. Sync is a delta push/pull against Supabase, last-write-wins per row with tombstones for deletes, behind row-level security.",
-        "It is an npm workspaces monorepo: a pure TypeScript domain core with no DOM and no React Native holds the rules once, and two apps obey it. The web app is Next.js 16 with React 19, an installable PWA storing data local-first in IndexedDB via Dexie. The mobile app is Expo React Native sharing the exact same core, so both platforms level up identically.",
+        "It is an npm workspaces monorepo: a pure TypeScript domain core with no DOM and no React Native holds the rules once, and every client obeys it. The web app is Next.js 16 with React 19, an installable PWA storing data local-first in IndexedDB via Dexie. The mobile app is Expo React Native sharing the exact same core, so both platforms level up identically.",
+        "The third client is a Quickshell (QML) panel for Hyprland: one keypress slides the whole tracker in from the screen edge, with daily quests, per-task focus ranks, streak cards for bad habits, a food log with a fasting timer, and an XP shop. It is keyboard-first with a vim layer, scriptable over IPC, and stores its data in one local JSON snapshot.",
       ],
       achievements: [
-        "One shared domain package drives web and mobile with identical rules",
+        "One shared domain package drives web, mobile, and a native desktop panel with identical rules",
         "Local-first on both platforms: fully usable offline, deltas sync when a connection returns",
         "Append-only XP ledger makes state derivable and sync conflicts rare",
         "Installable PWA on web, native notifications and audio on mobile",
       ],
       gallery: [
         {
-          src: "/projects/grit.webp",
-          alt: "Grit dashboard with XP, tasks, and daily log",
-          caption: "The dashboard",
+          src: "/projects/gallery/grit-myday.webp",
+          alt: "Grit My Day view with daily quests",
+          caption: "My Day and quests",
+          w: 500,
+          h: 870,
+        },
+        {
+          src: "/projects/gallery/grit-focus.webp",
+          alt: "Grit focus timer with per-task ranks",
+          caption: "Focus ranks",
+          w: 500,
+          h: 870,
+        },
+        {
+          src: "/projects/gallery/grit-bad.webp",
+          alt: "Grit bad habit streak cards",
+          caption: "Clean streaks",
+          w: 500,
+          h: 870,
+        },
+        {
+          src: "/projects/gallery/grit-food.webp",
+          alt: "Grit daily food log with fasting timer",
+          caption: "Daily log",
+          w: 500,
+          h: 870,
+        },
+        {
+          src: "/projects/gallery/grit-stats.webp",
+          alt: "Grit XP ledger and stats",
+          caption: "The ledger",
+          w: 500,
+          h: 870,
         },
       ],
+      galleryPhones: true,
     },
     {
       id: "lacuna",
@@ -319,8 +384,9 @@ export const CV_DATA: CV = {
     {
       company: "B.Sc Software Engineering",
       role: "University of Europe for Applied Sciences",
-      date: "2022 to 2026",
-      detail: "Potsdam, Germany. GPA 2.0 (German scale).",
+      date: "09.2022 to 02.2026",
+      detail:
+        "Potsdam, Germany. Graduated February 2026 with a GPA of 2.0 (German scale).",
     },
   ],
 };

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CV_DATA } from "@/data/cv";
+import TechChip from "@/components/TechChip";
 
 const sectionHeading =
   "mt-11 border-t border-faint pt-5 text-[0.8rem] font-semibold tracking-[0.09em] text-muted uppercase";
@@ -33,7 +34,7 @@ export default function HomePage() {
     CV_DATA;
 
   return (
-    <div className="mx-auto max-w-[880px] px-5 pt-10 pb-14 leading-relaxed md:px-8 md:pt-14">
+    <div className="mx-auto max-w-[1200px] px-5 pt-10 pb-14 leading-relaxed md:px-8 md:pt-14">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">{name}</h1>
         <p className="mt-0.5 text-muted">{tagline}</p>
@@ -71,16 +72,18 @@ export default function HomePage() {
         <div
           key={project.id}
           className={[
-            "grid gap-6 py-5",
+            "grid gap-6 py-7 md:gap-10",
             project.image && !project.wide
-              ? "sm:grid-cols-[minmax(0,1fr)_150px]"
+              ? project.phone
+                ? "md:grid-cols-[minmax(0,1fr)_200px]"
+                : "md:grid-cols-[minmax(0,1fr)_400px]"
               : "",
             i < projects.length - 1 ? "border-b border-faint" : "",
           ].join(" ")}
         >
           <div>
             <div className="flex flex-wrap items-baseline gap-2.5">
-              <h3 className="text-[1.05rem] font-semibold">
+              <h3 className="text-lg font-semibold">
                 <Link
                   href={`/projects#${project.id}`}
                   className="hover:underline hover:underline-offset-3"
@@ -98,34 +101,42 @@ export default function HomePage() {
                 Details
               </Link>
             </div>
-            <p className="mt-1.5 max-w-[62ch] text-[15px] text-body">
+            <p className="mt-2 max-w-[68ch] text-[15px] text-body">
               {project.summary}
             </p>
-            <p className="mt-1.5 text-[13.5px] font-medium text-accent">
+            <p className="mt-2 text-[13.5px] font-medium text-accent">
               {project.metric}
             </p>
-            <p className="mt-2 font-mono text-xs text-muted">
-              {project.stack.join(" · ")}
-            </p>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {project.stack.map((item) => (
+                <TechChip key={item} name={item} />
+              ))}
+            </div>
             {project.image && project.wide && (
               <img
                 src={project.image}
                 alt={project.imageAlt}
+                width={project.imageW}
+                height={project.imageH}
                 loading="lazy"
-                className="mt-3 block w-full max-w-[380px] rounded-md border border-faint"
+                decoding="async"
+                className="mt-4 block w-full max-w-[480px] rounded-lg border border-faint"
               />
             )}
           </div>
           {project.image && !project.wide && (
-            <div className="self-start">
+            <div className="self-center">
               <img
                 src={project.image}
                 alt={project.imageAlt}
-                loading="lazy"
+                width={project.imageW}
+                height={project.imageH}
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
                 className={
                   project.phone
-                    ? "block w-full max-w-[160px] rounded-md border border-faint sm:ml-auto sm:max-w-[110px]"
-                    : "block w-full max-w-[200px] rounded-md border border-faint sm:max-w-[150px]"
+                    ? "block w-full max-w-[240px] rounded-lg border border-faint md:ml-auto md:max-w-[200px]"
+                    : "block w-full rounded-lg border border-faint"
                 }
               />
             </div>
@@ -164,12 +175,7 @@ export default function HomePage() {
 
       <div className="mt-3.5 flex flex-wrap gap-2">
         {skills.map((skill) => (
-          <span
-            key={skill}
-            className="rounded-[5px] border border-faint bg-chip px-2 py-0.5 font-mono text-[12.5px] text-body"
-          >
-            {skill}
-          </span>
+          <TechChip key={skill} name={skill} />
         ))}
       </div>
     </div>

@@ -5,7 +5,7 @@ export default function SiteFooter() {
 
   return (
     <footer className="border-t border-faint">
-      <div className="mx-auto flex max-w-[880px] flex-wrap justify-between gap-2 px-5 py-5 text-[13px] text-muted md:px-8">
+      <div className="mx-auto flex max-w-[1200px] flex-wrap justify-between gap-2 px-5 py-5 text-[13px] text-muted md:px-8">
         <span>
           © {year} {CV_DATA.name}
         </span>

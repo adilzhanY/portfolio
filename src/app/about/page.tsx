@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { CV_DATA } from "@/data/cv";
+import TechChip from "@/components/TechChip";
 
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Software engineering student in Potsdam, Germany. Experience, education, skills, and languages.",
+    "Software engineer in Potsdam, Germany. Experience, education, skills, and languages.",
 };
 
 const sectionHeading =
@@ -14,15 +15,16 @@ export default function AboutPage() {
   const { skills, languages, experience } = CV_DATA;
 
   return (
-    <div className="mx-auto max-w-[880px] px-5 pt-10 pb-14 leading-relaxed md:px-8 md:pt-14">
+    <div className="mx-auto max-w-[1200px] px-5 pt-10 pb-14 leading-relaxed md:px-8 md:pt-14">
       <h1 className="text-2xl font-semibold tracking-tight">About</h1>
 
       <div className="mt-4 max-w-[70ch] space-y-3">
         <p>
-          I&apos;m Adilzhan, a software engineering student in Potsdam,
-          Germany. I like the whole arc of a product: finding a real problem,
-          designing the thing, building it, shipping it, and then keeping it
-          running with real users on it.
+          I&apos;m Adilzhan, a software engineer in Potsdam, Germany, with a
+          B.Sc in Software Engineering completed in February 2026. I like the
+          whole arc of a product: finding a real problem, designing the thing,
+          building it, shipping it, and then keeping it running with real
+          users on it.
         </p>
         <p>
           That is how I learn. Whale Abyss taught me payments, webhooks, and
@@ -34,7 +36,8 @@ export default function AboutPage() {
         <p>
           I work across the stack: TypeScript and React on the front, Node.js
           and Rust on the back, React Native and Expo on mobile, PostgreSQL and
-          SQLite underneath. I&apos;m open to internships and freelance work.
+          SQLite underneath. I&apos;m open to full-time positions as well as
+          contract, freelance, and remote work.
         </p>
       </div>
 
@@ -69,12 +72,7 @@ export default function AboutPage() {
 
       <div className="mt-3.5 flex flex-wrap gap-2">
         {skills.map((skill) => (
-          <span
-            key={skill}
-            className="rounded-[5px] border border-faint bg-chip px-2 py-0.5 font-mono text-[12.5px] text-body"
-          >
-            {skill}
-          </span>
+          <TechChip key={skill} name={skill} />
         ))}
       </div>
 

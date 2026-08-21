@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CV_DATA } from "@/data/cv";
+import TechChip from "@/components/TechChip";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -14,7 +15,7 @@ export default function ProjectsPage() {
   const { projects } = CV_DATA;
 
   return (
-    <div className="mx-auto max-w-[880px] px-5 pt-10 pb-14 leading-relaxed md:px-8 md:pt-14">
+    <div className="mx-auto max-w-[1200px] px-5 pt-10 pb-14 leading-relaxed md:px-8 md:pt-14">
       <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
       <p className="mt-2 max-w-[70ch] text-body">
         Each of these is a real product, not a tutorial build. I design, build,
@@ -54,70 +55,74 @@ export default function ProjectsPage() {
             {project.metric}
           </p>
 
-          <h3 className={subHeading}>The problem</h3>
-          <p className="mt-2 max-w-[72ch] text-[15px] text-body">
-            {project.problem}
-          </p>
+          <div
+            className={
+              project.gallery.length > 0
+                ? "mt-2 grid gap-x-12 gap-y-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)]"
+                : "mt-2 max-w-[75ch]"
+            }
+          >
+            <div>
+              <h3 className={subHeading}>The problem</h3>
+              <p className="mt-2 text-[15px] text-body">{project.problem}</p>
 
-          <h3 className={subHeading}>What I built</h3>
-          {project.solution.map((paragraph) => (
-            <p key={paragraph} className="mt-2 max-w-[72ch] text-[15px] text-body">
-              {paragraph}
-            </p>
-          ))}
-
-          <h3 className={subHeading}>Highlights</h3>
-          <ul className="mt-2 max-w-[72ch] space-y-1 text-[15px] text-body">
-            {project.achievements.map((item) => (
-              <li key={item} className="flex gap-2.5">
-                <span className="mt-[1px] shrink-0 font-medium text-accent">
-                  ·
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-
-          <h3 className={subHeading}>Stack</h3>
-          <div className="mt-2.5 flex flex-wrap gap-2">
-            {project.stack.map((item) => (
-              <span
-                key={item}
-                className="rounded-[5px] border border-faint bg-chip px-2 py-0.5 font-mono text-[12.5px] text-body"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-
-          {project.gallery.length > 0 && (
-            <div
-              className={[
-                "mt-6 grid gap-4",
-                project.galleryPhones
-                  ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-5"
-                  : project.gallery.length > 1
-                    ? "sm:grid-cols-2"
-                    : "",
-              ].join(" ")}
-            >
-              {project.gallery.map((shot) => (
-                <figure key={shot.src} className="min-w-0">
-                  <img
-                    src={shot.src}
-                    alt={shot.alt}
-                    loading="lazy"
-                    className="block w-full rounded-md border border-faint"
-                  />
-                  {shot.caption && (
-                    <figcaption className="mt-1.5 text-[12.5px] text-muted">
-                      {shot.caption}
-                    </figcaption>
-                  )}
-                </figure>
+              <h3 className={subHeading}>What I built</h3>
+              {project.solution.map((paragraph) => (
+                <p key={paragraph} className="mt-2 text-[15px] text-body">
+                  {paragraph}
+                </p>
               ))}
+
+              <h3 className={subHeading}>Highlights</h3>
+              <ul className="mt-2 space-y-1 text-[15px] text-body">
+                {project.achievements.map((item) => (
+                  <li key={item} className="flex gap-2.5">
+                    <span className="mt-[1px] shrink-0 font-medium text-accent">
+                      ·
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <h3 className={subHeading}>Stack</h3>
+              <div className="mt-2.5 flex flex-wrap gap-2">
+                {project.stack.map((item) => (
+                  <TechChip key={item} name={item} />
+                ))}
+              </div>
             </div>
-          )}
+
+            {project.gallery.length > 0 && (
+              <aside
+                className={[
+                  "self-start lg:sticky lg:top-8",
+                  project.galleryPhones
+                    ? "grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-2"
+                    : "grid gap-5 sm:grid-cols-2 lg:grid-cols-1",
+                ].join(" ")}
+              >
+                {project.gallery.map((shot) => (
+                  <figure key={shot.src} className="min-w-0">
+                    <img
+                      src={shot.src}
+                      alt={shot.alt}
+                      width={shot.w}
+                      height={shot.h}
+                      loading="lazy"
+                      decoding="async"
+                      className="block w-full rounded-lg border border-faint"
+                    />
+                    {shot.caption && (
+                      <figcaption className="mt-1.5 text-[12.5px] text-muted">
+                        {shot.caption}
+                      </figcaption>
+                    )}
+                  </figure>
+                ))}
+              </aside>
+            )}
+          </div>
         </section>
       ))}
     </div>

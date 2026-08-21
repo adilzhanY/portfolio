@@ -4,7 +4,7 @@ import { CV_DATA } from "@/data/cv";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Get in touch with Adilzhan Yerzhan: email, GitHub, LinkedIn. Based in Potsdam, Germany, open to internships and freelance work.",
+    "Get in touch with Adilzhan Yerzhan: email, GitHub, LinkedIn. Based in Potsdam, Germany, open to full-time, contract, freelance, and remote work.",
 };
 
 const rowClass =
@@ -15,7 +15,7 @@ export default function ContactPage() {
   const { contact } = CV_DATA;
 
   return (
-    <div className="mx-auto max-w-[880px] px-5 pt-10 pb-14 leading-relaxed md:px-8 md:pt-14">
+    <div className="mx-auto max-w-[1200px] px-5 pt-10 pb-14 leading-relaxed md:px-8 md:pt-14">
       <h1 className="text-2xl font-semibold tracking-tight">Contact</h1>
 
       <p className="mt-4 max-w-[60ch]">
@@ -55,7 +55,9 @@ export default function ContactPage() {
         </div>
         <div className={`${rowClass} border-b`}>
           <span className={labelClass}>Open to</span>
-          <span className="text-[15px]">Internships and freelance work</span>
+          <span className="text-[15px]">
+            Full-time, contract, freelance, and remote work
+          </span>
         </div>
       </div>
     </div>

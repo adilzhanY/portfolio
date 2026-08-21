@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CV_DATA } from "@/data/cv";
 
 const links = [
   { href: "/", label: "Home" },
@@ -18,11 +17,11 @@ export default function SiteNav() {
   return (
     <header className="border-b border-faint bg-white">
       <nav
-        className="mx-auto flex max-w-[880px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-4 md:px-8"
+        className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-4 md:px-8"
         aria-label="Main"
       >
         <Link href="/" className="font-semibold tracking-tight">
-          {CV_DATA.name}
+          qantrr
         </Link>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
           {links.map((link) => {
