@@ -26,8 +26,8 @@ const TECH: Record<string, { icon: IconType; color: string }> = {
   React: { icon: SiReact, color: "#087EA4" },
   "React Native": { icon: SiReact, color: "#087EA4" },
   "React 19": { icon: SiReact, color: "#087EA4" },
-  "Next.js": { icon: SiNextdotjs, color: "#000000" },
-  Expo: { icon: SiExpo, color: "#000000" },
+  "Next.js": { icon: SiNextdotjs, color: "var(--color-ink)" },
+  Expo: { icon: SiExpo, color: "var(--color-ink)" },
   Flutter: { icon: SiFlutter, color: "#02569B" },
   "Node.js": { icon: SiNodedotjs, color: "#5FA04E" },
   "Tailwind CSS": { icon: SiTailwindcss, color: "#0891B2" },
@@ -39,7 +39,7 @@ const TECH: Record<string, { icon: IconType; color: string }> = {
   Vitest: { icon: SiVitest, color: "#6E9F18" },
   CUDA: { icon: SiNvidia, color: "#76B900" },
   Python: { icon: SiPython, color: "#3776AB" },
-  SQLite: { icon: SiSqlite, color: "#003B57" },
+  SQLite: { icon: SiSqlite, color: "#3D7EA8" },
 };
 
 export default function TechChip({ name }: { name: string }) {
@@ -47,7 +47,7 @@ export default function TechChip({ name }: { name: string }) {
   const Icon = tech?.icon;
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-faint bg-chip py-1 pr-3 pl-2.5 font-mono text-[12.5px] text-body">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-faint bg-chip py-1 pr-3 pl-2.5 font-mono text-[0.78125rem] text-body">
       {Icon && (
         <Icon
           aria-hidden="true"

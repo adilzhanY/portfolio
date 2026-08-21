@@ -2,7 +2,10 @@ export interface Experience {
   company: string;
   role: string;
   date: string;
+  /** One-line version, shown on the Home page. */
   detail: string;
+  /** Full story, shown on the /experience timeline. */
+  bullets: string[];
 }
 
 export interface GalleryImage {
@@ -48,6 +51,14 @@ export interface Project {
   galleryPhones?: boolean;
 }
 
+export interface Certification {
+  issuer: "IBM" | "Meta" | "Next.js";
+  title: string;
+  /** Where the certificate is hosted, shown as the small source label. */
+  platform: string;
+  url: string;
+}
+
 export interface CV {
   name: string;
   tagline: string;
@@ -56,23 +67,26 @@ export interface CV {
     email: string;
     github: string;
     linkedin: string;
+    telegram: string;
     location: string;
   };
   skills: string[];
   languages: string[];
   projects: Project[];
   experience: Experience[];
+  certifications: Certification[];
 }
 
 export const CV_DATA: CV = {
   name: "Adilzhan Yerzhan",
-  tagline: "Software engineer, Potsdam, Germany",
+  tagline: "Full-Stack Web and Mobile Developer",
   intro:
     "I design, build, launch, and run my own products end to end: an e-commerce storefront with real paying customers, and offline-first apps for training and habits. I hold a B.Sc in Software Engineering (February 2026) and am open to full-time, contract, freelance, and remote roles.",
   contact: {
     email: "adilzhan1112@gmail.com",
     github: "https://github.com/adilzhanY",
     linkedin: "https://linkedin.com/in/adilzhanyerzhan",
+    telegram: "https://t.me/kowiqx",
     location: "Potsdam, Germany",
   },
   skills: [
@@ -369,37 +383,32 @@ export const CV_DATA: CV = {
       ],
       galleryPhones: true,
     },
-    {
-      id: "lacuna",
-      title: "lacuna",
-      year: "2026",
-      summary:
-        "Grammar practice by filling in the gaps. A sheet is one grammar topic and twenty sentences with blanks. You fill them in, lacuna grades them, and the topic comes back on an FSRS schedule, the same algorithm Anki uses. Runs locally against one SQLite file.",
-      metric: "43 German topics, 900 blanks, scheduled by FSRS",
-      stack: ["Rust", "axum", "sqlx", "Next.js", "SQLite", "FSRS"],
-      link: "https://github.com/adilzhanY/lacuna",
-      problem:
-        "Spaced repetition works, but Anki is built for vocabulary cards, not grammar drills. Exercise books have the drills but never bring a topic back right before you forget it. lacuna applies the FSRS scheduler that Anki uses to whole grammar topics instead of single cards.",
-      solution: [
-        "A sheet is one grammar topic and twenty sentences with blanks in them. You fill them in, lacuna grades the answers, and the topic is rescheduled with FSRS, so weak topics come back soon and mastered ones drift far into the future. A dashboard shows what is due and how the topics are developing.",
-        "The backend is Rust with axum, sqlx, and the fsrs crate, running everything against one SQLite file. The frontend is Next.js, and the TypeScript types are generated from the Rust structs by the test suite, so the two sides cannot drift apart. The German pack ships 43 topics with hand-written sheets, and a cargo test validates every shipped sheet.",
-      ],
-      achievements: [
-        "Full loop works end to end: answer, grade, reschedule, dashboard",
-        "43 German grammar topics, 860 sentences, 900 blanks shipped",
-        "TypeScript types generated from Rust structs, checked in CI by the test suite",
-        "Everything runs locally against a single SQLite file",
-      ],
-      gallery: [],
-    },
   ],
   experience: [
+    {
+      company: "Independent products",
+      role: "Solo developer and operator",
+      date: "2024 to present",
+      detail:
+        "Designed, built, launched, and still operate my own products: Whale Abyss, Torq, Grit, and OpenHyprWhisper.",
+      bullets: [
+        "Whale Abyss: a production e-commerce platform for game boosting with real payments, 150+ paying customers in the first 10 days, live at whaleabyss.ru and operated by me since launch.",
+        "Torq: an offline-first gym app that scores every set with the DOTS formula and ranks strength across nine tiers, backed by 243 tests.",
+        "Grit: a gamified life tracker with one XP economy shared across a Next.js web app, an Expo mobile app, and a Quickshell desktop panel.",
+        "OpenHyprWhisper: fully local voice dictation for the Hyprland desktop built on whisper.cpp, published open source.",
+      ],
+    },
     {
       company: "intuivo",
       role: "Software Engineering Intern, remote",
       date: "04.2025 to 08.2025",
       detail:
         "Full-stack apps in Rust (Actix, Sled) and TypeScript (React, Next.js, Mithril). Built an AI-assisted CMS with versioning and citations, integrated Stripe, PayPal, and Klarna.",
+      bullets: [
+        "Engineered a suite of full-stack applications using Rust (Actix, Sled DB) and TypeScript frameworks including Mithril.js, React, and Next.js.",
+        "Developed an internal AI-assisted content management system with robust versioning, export options, and citation handling.",
+        "Integrated secure payment APIs from Stripe, PayPal, and Klarna into proof-of-concept applications.",
+      ],
     },
     {
       company: "ClimaNova",
@@ -407,6 +416,11 @@ export const CV_DATA: CV = {
       date: "Spring 2024",
       detail:
         "Led the mobile team building a cross-platform Flutter weather app. One of the top grades in the course.",
+      bullets: [
+        "Led the mobile application team for ClimaNova, a cross-platform weather app built in Flutter.",
+        "Coordinated a team of developers end to end, tracking progress and running regular planning calls.",
+        "Drove the project to one of the top grades in the course through clear task delegation and hands-on technical leadership.",
+      ],
     },
     {
       company: "B.Sc Software Engineering",
@@ -414,6 +428,48 @@ export const CV_DATA: CV = {
       date: "09.2022 to 02.2026",
       detail:
         "Potsdam, Germany. Graduated February 2026 with a GPA of 2.0 (German scale).",
+      bullets: [
+        "Graduated February 2026 with a GPA of 2.0 (German scale).",
+        "Studied in Potsdam, Germany, building most of my portfolio projects alongside the degree.",
+      ],
+    },
+  ],
+  certifications: [
+    {
+      issuer: "IBM",
+      title: "Developing Front-End Apps with React",
+      platform: "Coursera",
+      url: "https://www.coursera.org/account/accomplishments/certificate/2TH7IUI9QFDV",
+    },
+    {
+      issuer: "Meta",
+      title: "Programming in Python",
+      platform: "Coursera",
+      url: "https://www.coursera.org/account/accomplishments/certificate/7WVVV2L7ZBBB",
+    },
+    {
+      issuer: "IBM",
+      title: "Introduction to Software Engineering",
+      platform: "Coursera",
+      url: "https://www.coursera.org/account/accomplishments/verify/YTYTG9BLNHIW",
+    },
+    {
+      issuer: "IBM",
+      title: "Introduction to Cloud Computing",
+      platform: "Coursera",
+      url: "https://www.coursera.org/account/accomplishments/verify/1C8Y36GDK6NQ",
+    },
+    {
+      issuer: "IBM",
+      title: "Getting Started with Git and GitHub",
+      platform: "Coursera",
+      url: "https://www.coursera.org/account/accomplishments/verify/UGJQQFUKEFLW",
+    },
+    {
+      issuer: "Next.js",
+      title: "Next.js App Router Fundamentals",
+      platform: "nextjs.org",
+      url: "https://nextjs.org/learn/certificate?course=dashboard-app&user=104689&certId=dashboard-app-104689-1758793315594",
     },
   ],
 };
