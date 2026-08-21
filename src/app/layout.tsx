@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import Analytics from "@/components/Analytics";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://qantrr.com"),
   title: {
     default: "Adilzhan Yerzhan - Software Engineer",
     template: "%s - Adilzhan Yerzhan",
@@ -13,6 +14,22 @@ export const metadata: Metadata = {
     "Adilzhan Yerzhan, software engineer in Potsdam. Products designed, built, and launched solo.",
   icons: {
     icon: "/favicon.svg",
+  },
+  openGraph: {
+    title: "Adilzhan Yerzhan - Full-Stack Web and Mobile Developer",
+    description:
+      "Products designed, built, launched, and operated solo: e-commerce with real customers, offline-first apps, and open source.",
+    url: "https://qantrr.com",
+    siteName: "qantrr",
+    type: "website",
+    images: [{ url: "/og.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Adilzhan Yerzhan - Full-Stack Web and Mobile Developer",
+    description:
+      "Products designed, built, launched, and operated solo: e-commerce with real customers, offline-first apps, and open source.",
+    images: ["/og.png"],
   },
 };
 
