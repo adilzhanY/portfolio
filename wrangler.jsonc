@@ -1,0 +1,9 @@
+{
+  // Cloudflare Workers config: serves the static Next.js export.
+  "name": "portfolio",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}
