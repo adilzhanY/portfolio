@@ -1,6 +1,8 @@
 import { FaEnvelope, FaGithub, FaLinkedin, FaTelegram } from "react-icons/fa6";
 import { FiChevronRight } from "react-icons/fi";
-import { CV_DATA } from "@/data/cv";
+import { getContent } from "@/data/cv";
+import { PROFILE } from "@/data/structure";
+import type { Locale } from "@/i18n/config";
 import VisitorCount from "@/components/VisitorCount";
 
 function ContactCard({
@@ -36,8 +38,9 @@ function ContactCard({
   );
 }
 
-export default function SiteFooter() {
-  const { name, contact } = CV_DATA;
+export default function SiteFooter({ locale }: { locale: Locale }) {
+  const { contact, handles } = PROFILE;
+  const { name, footer, location, ui } = getContent(locale);
   const year = new Date().getFullYear();
 
   return (
@@ -46,30 +49,27 @@ export default function SiteFooter() {
         <div className="grid items-start gap-10 md:grid-cols-2">
           <div>
             <h2 className="text-3xl font-semibold tracking-tight">
-              Let&apos;s work together.
+              {footer.heading}
             </h2>
-            <p className="mt-4 leading-relaxed text-body">
-              Open to full-time, contract, freelance, and remote work. Based in
-              Potsdam, Germany. I read everything and answer properly.
-            </p>
+            <p className="mt-4 leading-relaxed text-body">{footer.blurb}</p>
           </div>
           <div className="space-y-3">
             <ContactCard
               href={`mailto:${contact.email}`}
-              label="Email"
+              label={footer.emailLabel}
               value={contact.email}
               icon={<FaEnvelope aria-hidden="true" className="h-[18px] w-[18px]" />}
             />
             <ContactCard
               href={contact.linkedin}
-              label="Let's connect"
-              value="linkedin.com/in/adilzhanyerzhan"
+              label={footer.linkedinLabel}
+              value={handles.linkedin}
               icon={<FaLinkedin aria-hidden="true" className="h-[18px] w-[18px]" />}
             />
             <ContactCard
               href={contact.telegram}
-              label="Telegram"
-              value="t.me/kowiqx"
+              label={footer.telegramLabel}
+              value={handles.telegram}
               icon={<FaTelegram aria-hidden="true" className="h-[18px] w-[18px]" />}
             />
           </div>
@@ -78,41 +78,41 @@ export default function SiteFooter() {
         <div className="mt-12 flex flex-wrap items-end justify-between gap-4 border-t border-faint pt-6">
           <div>
             <p className="text-sm text-muted italic">
-              Designed, built, and operated end to end.
+              {footer.credit}
             </p>
             <p className="mt-1.5 text-sm text-muted">
               <span className="font-medium text-ink">{name}</span>
               <span className="mx-2">/</span>
-              Potsdam, Germany
+              {location}
               <span className="mx-2">/</span>© {year}
             </p>
           </div>
           <div className="flex items-center gap-3.5">
-            <VisitorCount />
+            <VisitorCount template={ui.visitors} />
             <a
               href={contact.github}
-              aria-label="GitHub"
+              aria-label={ui.social.github}
               className="text-muted transition-colors hover:text-ink"
             >
               <FaGithub aria-hidden="true" className="h-5 w-5" />
             </a>
             <a
               href={contact.linkedin}
-              aria-label="LinkedIn"
+              aria-label={ui.social.linkedin}
               className="text-muted transition-colors hover:text-ink"
             >
               <FaLinkedin aria-hidden="true" className="h-5 w-5" />
             </a>
             <a
               href={contact.telegram}
-              aria-label="Telegram"
+              aria-label={ui.social.telegram}
               className="text-muted transition-colors hover:text-ink"
             >
               <FaTelegram aria-hidden="true" className="h-5 w-5" />
             </a>
             <a
               href={`mailto:${contact.email}`}
-              aria-label="Email"
+              aria-label={ui.social.email}
               className="text-muted transition-colors hover:text-ink"
             >
               <FaEnvelope aria-hidden="true" className="h-5 w-5" />

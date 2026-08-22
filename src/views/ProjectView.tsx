@@ -1,79 +1,62 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { FiArrowLeft, FiExternalLink } from "react-icons/fi";
-import { notFound } from "next/navigation";
-import { CV_DATA } from "@/data/cv";
+import { getCV, getContent } from "@/data/cv";
+import { localePath, type Locale } from "@/i18n/config";
 import TechChip from "@/components/TechChip";
 
 const subHeading =
   "mt-8 text-[0.8rem] font-semibold tracking-[0.09em] text-muted uppercase";
 
-export function generateStaticParams() {
-  return CV_DATA.projects.map((project) => ({ slug: project.id }));
-}
-
-export async function generateMetadata({
-  params,
+export default function ProjectView({
+  locale,
+  slug,
 }: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const project = CV_DATA.projects.find((p) => p.id === slug);
-  if (!project) return {};
-  return {
-    title: project.title,
-    description: project.summary,
-  };
-}
-
-export default async function ProjectPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
+  locale: Locale;
+  slug: string;
 }) {
-  const { slug } = await params;
-  const project = CV_DATA.projects.find((p) => p.id === slug);
-  if (!project) notFound();
+  const project = getCV(locale).projects.find((p) => p.id === slug);
+  if (!project) return null;
+  const { ui } = getContent(locale);
 
   return (
     <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8">
       <div>
-      <Link
-        href="/projects"
-        className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink hover:underline hover:underline-offset-3"
-      >
-        <FiArrowLeft aria-hidden="true" className="h-3.5 w-3.5" />
-        All projects
-      </Link>
+        <Link
+          href={localePath(locale, "/projects")}
+          className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink hover:underline hover:underline-offset-3"
+        >
+          <FiArrowLeft aria-hidden="true" className="h-3.5 w-3.5" />
+          {ui.project.back}
+        </Link>
 
-      <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {project.title}
-        </h1>
-        <span className="font-mono text-xs text-muted">{project.year}</span>
-        <span className="flex flex-wrap gap-x-3 text-sm">
-          <a
-            href={project.link}
-            className="inline-flex items-center gap-1 text-muted hover:text-ink hover:underline hover:underline-offset-3"
-          >
-            GitHub
-            <FiExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
-          </a>
-          {project.live && (
+        <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {project.title}
+          </h1>
+          <span className="font-mono text-xs text-muted">{project.year}</span>
+          <span className="flex flex-wrap gap-x-3 text-sm">
             <a
-              href={project.live}
-              className="inline-flex items-center gap-1 font-medium text-accent hover:underline hover:underline-offset-3"
+              href={project.link}
+              className="inline-flex items-center gap-1 text-muted hover:text-ink hover:underline hover:underline-offset-3"
             >
-              Live site
+              {ui.project.github}
               <FiExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
             </a>
-          )}
-        </span>
-      </div>
+            {project.live && (
+              <a
+                href={project.live}
+                className="inline-flex items-center gap-1 font-medium text-accent hover:underline hover:underline-offset-3"
+              >
+                {ui.project.live}
+                <FiExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
+              </a>
+            )}
+          </span>
+        </div>
 
-      <p className="mt-1.5 text-[0.84375rem] font-medium text-accent">
-        {project.metric}
-      </p>
+        <p className="mt-1.5 text-[0.84375rem] font-medium text-accent">
+          {project.metric}
+        </p>
       </div>
 
       {project.image && (
@@ -89,17 +72,17 @@ export default async function ProjectPage({
       )}
 
       <div>
-        <h2 className={subHeading}>The problem</h2>
+        <h2 className={subHeading}>{ui.project.problem}</h2>
         <p className="mt-2 text-[0.9375rem] text-body">{project.problem}</p>
 
-        <h2 className={subHeading}>What I built</h2>
+        <h2 className={subHeading}>{ui.project.built}</h2>
         {project.solution.map((paragraph) => (
           <p key={paragraph} className="mt-2 text-[0.9375rem] text-body">
             {paragraph}
           </p>
         ))}
 
-        <h2 className={subHeading}>Highlights</h2>
+        <h2 className={subHeading}>{ui.project.highlights}</h2>
         <ul className="mt-2 space-y-1 text-[0.9375rem] text-body">
           {project.achievements.map((item) => (
             <li key={item} className="flex gap-2.5">
@@ -111,7 +94,7 @@ export default async function ProjectPage({
           ))}
         </ul>
 
-        <h2 className={subHeading}>Stack</h2>
+        <h2 className={subHeading}>{ui.project.stack}</h2>
         <div className="mt-2.5 flex flex-wrap gap-2">
           {project.stack.map((item) => (
             <TechChip key={item} name={item} />
@@ -121,7 +104,7 @@ export default async function ProjectPage({
 
       {project.gallery.length > 0 && (
         <>
-          <h2 className={subHeading}>In detail</h2>
+          <h2 className={subHeading}>{ui.project.inDetail}</h2>
           <div
             className={[
               "mt-3 grid gap-5",

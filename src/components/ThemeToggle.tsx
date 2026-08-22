@@ -12,7 +12,7 @@ import { FiMoon, FiSun } from "react-icons/fi";
  * growing out of the button; browsers without it get a 350ms color
  * cross-fade instead.
  */
-export default function ThemeToggle() {
+export default function ThemeToggle({ label }: { label: string }) {
   const toggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     const root = document.documentElement;
     const next = root.classList.contains("dark") ? "light" : "dark";
@@ -75,7 +75,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       className="theme-toggle"
-      aria-label="Toggle dark mode"
+      aria-label={label}
     >
       <FiSun aria-hidden="true" className="icon-sun" />
       <FiMoon aria-hidden="true" className="icon-moon" />

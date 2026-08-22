@@ -1,30 +1,24 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
-import { CV_DATA } from "@/data/cv";
+import { getCV, getContent } from "@/data/cv";
+import { localePath, type Locale } from "@/i18n/config";
 import TechChip from "@/components/TechChip";
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description:
-    "Products designed, built, launched, and operated solo: Whale Abyss, Torq, OpenHyprWhisper, and Grit.",
-};
-
-export default function ProjectsPage() {
-  const { projects } = CV_DATA;
+export default function ProjectsView({ locale }: { locale: Locale }) {
+  const { projects } = getCV(locale);
+  const { ui } = getContent(locale);
 
   return (
     <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8">
-      <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
-      <p className="mt-2 text-body">
-        Each of these is a real product, not a tutorial build. Click one for
-        the full case study.
-      </p>
+      <h1 className="text-2xl font-semibold tracking-tight">
+        {ui.projects.heading}
+      </h1>
+      <p className="mt-2 text-body">{ui.projects.intro}</p>
 
       {projects.map((project, i) => (
         <Link
           key={project.id}
-          href={`/projects/${project.id}`}
+          href={localePath(locale, `/projects/${project.id}`)}
           className={[
             "group grid items-center gap-6 py-7 md:grid-cols-[minmax(0,1fr)_420px] md:gap-10",
             i < projects.length - 1 ? "border-b border-faint" : "",
@@ -39,9 +33,7 @@ export default function ProjectsPage() {
                 {project.year}
               </span>
             </div>
-            <p className="mt-2 text-[0.9375rem] text-body">
-              {project.summary}
-            </p>
+            <p className="mt-2 text-[0.9375rem] text-body">{project.summary}</p>
             <p className="mt-2 text-[0.84375rem] font-medium text-accent">
               {project.metric}
             </p>
@@ -51,7 +43,7 @@ export default function ProjectsPage() {
               ))}
             </div>
             <p className="mt-3 inline-flex items-center gap-1.5 text-[0.84375rem] font-medium text-muted group-hover:text-ink">
-              Read the case study
+              {ui.projects.readCaseStudy}
               <FiArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
             </p>
           </div>

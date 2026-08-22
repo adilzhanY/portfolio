@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
  * the API is unreachable (adblocker, or the visitor-counter setting is
  * off), so it can never break the footer.
  */
-export default function VisitorCount() {
+export default function VisitorCount({ template }: { template: string }) {
   const [count, setCount] = useState<string | null>(null);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function VisitorCount() {
 
   return (
     <span className="rounded-full border border-faint px-3.5 py-1.5 text-xs text-muted">
-      Visited by {count} people
+      {template.replace("{{count}}", count)}
     </span>
   );
 }

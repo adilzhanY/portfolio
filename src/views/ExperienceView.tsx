@@ -1,21 +1,16 @@
-import type { Metadata } from "next";
-import { CV_DATA } from "@/data/cv";
+import { getCV, getContent } from "@/data/cv";
+import type { Locale } from "@/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Experience",
-  description:
-    "Career timeline: solo products in production, a software engineering internship at intuivo, team leadership, and a B.Sc in Software Engineering.",
-};
-
-export default function ExperiencePage() {
-  const { experience } = CV_DATA;
+export default function ExperienceView({ locale }: { locale: Locale }) {
+  const { experience } = getCV(locale);
+  const { ui } = getContent(locale);
 
   return (
     <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8">
-      <h1 className="text-2xl font-semibold tracking-tight">Experience</h1>
-      <p className="mt-2 text-body">
-        What I actually did in each role, newest first.
-      </p>
+      <h1 className="text-2xl font-semibold tracking-tight">
+        {ui.experience.heading}
+      </h1>
+      <p className="mt-2 text-body">{ui.experience.intro}</p>
 
       <div className="relative mt-10">
         {/* the spine */}
@@ -28,7 +23,7 @@ export default function ExperiencePage() {
           const left = i % 2 === 0;
           return (
             <div
-              key={entry.company}
+              key={entry.id}
               className="relative pb-10 last:pb-0 md:grid md:grid-cols-2 md:gap-x-14"
             >
               {/* the dot */}

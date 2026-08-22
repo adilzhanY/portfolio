@@ -1,22 +1,29 @@
 import type { MetadataRoute } from "next";
-import { CV_DATA } from "@/data/cv";
+import { PROJECTS } from "@/data/structure";
+import { LOCALES, localePath } from "@/i18n/config";
+import { SITE_URL, alternatesFor } from "@/i18n/metadata";
 
 export const dynamic = "force-static";
 
-const BASE = "https://qantrr.com";
-
 export default function sitemap(): MetadataRoute.Sitemap {
-  const pages = ["", "/projects", "/experience"].map((path) => ({
-    url: `${BASE}${path}`,
-    changeFrequency: "monthly" as const,
-    priority: path === "" ? 1 : 0.8,
-  }));
+  const paths = [
+    "",
+    "/projects",
+    "/experience",
+    ...PROJECTS.map((project) => `/projects/${project.id}`),
+  ];
 
-  const projects = CV_DATA.projects.map((project) => ({
-    url: `${BASE}/projects/${project.id}`,
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
-  return [...pages, ...projects];
+  return LOCALES.flatMap((locale) =>
+    paths.map((path) => ({
+      url: `${SITE_URL}${localePath(locale, path || "/")}`,
+      changeFrequency: "monthly" as const,
+      priority: path === "" ? 1 : path.startsWith("/projects/") ? 0.6 : 0.8,
+      alternates: {
+        languages: alternatesFor(locale, path || "/").languages as Record<
+          string,
+          string
+        >,
+      },
+    })),
+  );
 }

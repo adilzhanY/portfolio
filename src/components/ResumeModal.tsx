@@ -11,12 +11,21 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url,
 ).toString();
 
-const CV_FILE = "/CV_Adilzhan_Yerzhan.pdf";
+import type { UiCopy } from "@/content/types";
+
 const ZOOM_MIN = 0.5;
 const ZOOM_MAX = 3;
 const ZOOM_STEP = 0.25;
 
-export default function ResumeModal({ onClose }: { onClose: () => void }) {
+export default function ResumeModal({
+  onClose,
+  labels,
+  file: CV_FILE,
+}: {
+  onClose: () => void;
+  labels: UiCopy["resume"];
+  file: string;
+}) {
   const [numPages, setNumPages] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [pageWidth, setPageWidth] = useState(820);
@@ -56,7 +65,7 @@ export default function ResumeModal({ onClose }: { onClose: () => void }) {
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Resume viewer"
+      aria-label={labels.viewer}
     >
       {/* toolbar */}
       <div
@@ -68,7 +77,7 @@ export default function ResumeModal({ onClose }: { onClose: () => void }) {
           onClick={() => zoomBy(-ZOOM_STEP)}
           disabled={zoom <= ZOOM_MIN}
           className={toolBtn}
-          aria-label="Zoom out"
+          aria-label={labels.zoomOut}
         >
           <FiMinus aria-hidden="true" className="h-4 w-4" />
         </button>
@@ -80,7 +89,7 @@ export default function ResumeModal({ onClose }: { onClose: () => void }) {
           onClick={() => zoomBy(ZOOM_STEP)}
           disabled={zoom >= ZOOM_MAX}
           className={toolBtn}
-          aria-label="Zoom in"
+          aria-label={labels.zoomIn}
         >
           <FiPlus aria-hidden="true" className="h-4 w-4" />
         </button>
@@ -91,14 +100,14 @@ export default function ResumeModal({ onClose }: { onClose: () => void }) {
           className="flex h-9 items-center gap-2 rounded-full px-3.5 text-[0.84375rem] font-medium text-white/90 transition-colors hover:bg-white/15"
         >
           <FiDownload aria-hidden="true" className="h-4 w-4" />
-          Download
+          {labels.download}
         </a>
         <span className="mx-2 h-5 w-px bg-white/25" aria-hidden="true" />
         <button
           type="button"
           onClick={onClose}
           className={toolBtn}
-          aria-label="Close"
+          aria-label={labels.close}
         >
           <FiX aria-hidden="true" className="h-4 w-4" />
         </button>
@@ -115,14 +124,14 @@ export default function ResumeModal({ onClose }: { onClose: () => void }) {
             onLoadSuccess={({ numPages: n }) => setNumPages(n)}
             loading={
               <p className="mt-20 text-center text-sm text-white/80">
-                Loading resume…
+                {labels.loading}
               </p>
             }
             error={
               <p className="mt-20 text-center text-sm text-white/80">
-                Could not load the PDF.{" "}
+                {labels.error}{" "}
                 <a href={CV_FILE} download className="underline">
-                  Download it instead.
+                  {labels.errorAction}
                 </a>
               </p>
             }

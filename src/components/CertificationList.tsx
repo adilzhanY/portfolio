@@ -1,9 +1,9 @@
 import { FiExternalLink } from "react-icons/fi";
 import { SiMeta, SiNextdotjs } from "react-icons/si";
-import { CV_DATA } from "@/data/cv";
-import type { Certification } from "@/data/cv";
+import { CERTIFICATIONS } from "@/data/structure";
+import type { CertificationStructure } from "@/data/structure";
 
-function IssuerIcon({ issuer }: { issuer: Certification["issuer"] }) {
+function IssuerIcon({ issuer }: { issuer: CertificationStructure["issuer"] }) {
   if (issuer === "Meta")
     return (
       <SiMeta aria-hidden="true" className="h-6 w-6" style={{ color: "#0081FB" }} />
@@ -21,8 +21,8 @@ function IssuerIcon({ issuer }: { issuer: Certification["issuer"] }) {
   );
 }
 
-export default function CertificationList() {
-  const { certifications } = CV_DATA;
+export default function CertificationList({ label }: { label: string }) {
+  const certifications = CERTIFICATIONS;
 
   return (
     <div className="mt-2">
@@ -49,7 +49,7 @@ export default function CertificationList() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 rounded-full border border-muted/50 px-4 py-1.5 text-sm font-semibold text-body transition-colors hover:border-ink hover:bg-chip"
           >
-            Show credential
+            {label}
             <FiExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
           </a>
         </div>
