@@ -36,6 +36,11 @@ export interface ProjectStructure {
   gallery: GalleryShot[];
   /** Phone galleries render as a row of tall shots. */
   galleryPhones?: boolean;
+  /**
+   * When the first N gallery shots are steps of one process rather than
+   * separate views, they play as an animation instead of sitting in a grid.
+   */
+  replayCount?: number;
 }
 
 export interface CertificationStructure {
@@ -56,11 +61,13 @@ export const PROFILE = {
     github: "https://github.com/adilzhanY",
     linkedin: "https://linkedin.com/in/adilzhanyerzhan",
     telegram: "https://t.me/kowiqx",
+    booking: "https://cal.com/adilzhan/15min",
   },
   /** Shown verbatim on the contact cards. */
   handles: {
     linkedin: "linkedin.com/in/adilzhanyerzhan",
     telegram: "t.me/kowiqx",
+    booking: "cal.com/adilzhan/15min",
   },
 } as const;
 
@@ -149,6 +156,9 @@ export const PROJECTS: ProjectStructure[] = [
     image: "/projects/ohw-preview.webp",
     imageW: 1200,
     imageH: 630,
+    // recording -> transcribing -> polishing -> done is one pass of dictation.
+    // The fifth shot is the light theme, which is a variant, not a step.
+    replayCount: 4,
     gallery: [
       { id: "recording", src: "/projects/gallery/ohw-recording.webp", w: 1160, h: 187 },
       { id: "transcribing", src: "/projects/gallery/ohw-transcribing.webp", w: 1160, h: 187 },

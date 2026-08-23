@@ -1,8 +1,9 @@
 import { FaEnvelope, FaGithub, FaLinkedin, FaTelegram } from "react-icons/fa6";
-import { FiChevronRight } from "react-icons/fi";
+import Link from "next/link";
+import { FiCalendar, FiChevronRight } from "react-icons/fi";
 import { getContent } from "@/data/cv";
 import { PROFILE } from "@/data/structure";
-import type { Locale } from "@/i18n/config";
+import { localePath, type Locale } from "@/i18n/config";
 import VisitorCount from "@/components/VisitorCount";
 
 function ContactCard({
@@ -40,11 +41,11 @@ function ContactCard({
 
 export default function SiteFooter({ locale }: { locale: Locale }) {
   const { contact, handles } = PROFILE;
-  const { name, footer, location, ui } = getContent(locale);
+  const { name, footer, location, ui, uses } = getContent(locale);
   const year = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="mt-14 border-t border-faint">
+    <footer id="contact" className="mt-14 border-t border-faint print:hidden">
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid items-start gap-10 md:grid-cols-2">
           <div>
@@ -54,6 +55,16 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
             <p className="mt-4 leading-relaxed text-body">{footer.blurb}</p>
           </div>
           <div className="space-y-3">
+            {/*
+              First card on purpose: picking a slot is one click, where an
+              email is a blank page somebody has to compose.
+            */}
+            <ContactCard
+              href={contact.booking}
+              label={footer.bookingLabel}
+              value={handles.booking}
+              icon={<FiCalendar aria-hidden="true" className="h-[18px] w-[18px]" />}
+            />
             <ContactCard
               href={`mailto:${contact.email}`}
               label={footer.emailLabel}
@@ -85,6 +96,13 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
               <span className="mx-2">/</span>
               {location}
               <span className="mx-2">/</span>© {year}
+              <span className="mx-2">/</span>
+              <Link
+                href={localePath(locale, "/uses")}
+                className="hover:text-ink hover:underline hover:underline-offset-3"
+              >
+                {uses.heading}
+              </Link>
             </p>
           </div>
           <div className="flex items-center gap-3.5">

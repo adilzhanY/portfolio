@@ -3,6 +3,9 @@ import { FiArrowLeft, FiExternalLink } from "react-icons/fi";
 import { getCV, getContent } from "@/data/cv";
 import { localePath, type Locale } from "@/i18n/config";
 import TechChip from "@/components/TechChip";
+import StructuredData from "@/components/StructuredData";
+import SequenceReplay from "@/components/SequenceReplay";
+import { projectSchema } from "@/i18n/schema";
 
 const subHeading =
   "mt-8 text-[0.8rem] font-semibold tracking-[0.09em] text-muted uppercase";
@@ -18,8 +21,14 @@ export default function ProjectView({
   if (!project) return null;
   const { ui } = getContent(locale);
 
+  // Some galleries open with a run of shots that are steps of one process.
+  // Those play as an animation; anything after them stays a normal grid.
+  const sequence = project.gallery.slice(0, project.replayCount ?? 0);
+  const rest = project.gallery.slice(project.replayCount ?? 0);
+
   return (
     <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8">
+      <StructuredData data={projectSchema(locale, project)} />
       <div>
         <Link
           href={localePath(locale, "/projects")}
@@ -94,6 +103,13 @@ export default function ProjectView({
           ))}
         </ul>
 
+        <h2 className={subHeading}>{ui.project.wentWrong}</h2>
+        {project.postmortem.map((paragraph) => (
+          <p key={paragraph} className="mt-2 text-[0.9375rem] text-body">
+            {paragraph}
+          </p>
+        ))}
+
         <h2 className={subHeading}>{ui.project.stack}</h2>
         <div className="mt-2.5 flex flex-wrap gap-2">
           {project.stack.map((item) => (
@@ -105,15 +121,18 @@ export default function ProjectView({
       {project.gallery.length > 0 && (
         <>
           <h2 className={subHeading}>{ui.project.inDetail}</h2>
+
+          {sequence.length > 0 && <SequenceReplay shots={sequence} />}
+
           <div
             className={[
-              "mt-3 grid gap-5",
+              rest.length > 0 ? "mt-3 grid gap-5" : "hidden",
               project.galleryPhones
                 ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
                 : "sm:grid-cols-2",
             ].join(" ")}
           >
-            {project.gallery.map((shot) => (
+            {rest.map((shot) => (
               <figure key={shot.src} className="min-w-0">
                 <img
                   src={shot.src}

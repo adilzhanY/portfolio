@@ -51,8 +51,10 @@ export interface Project {
   problem: string;
   solution: string[];
   achievements: string[];
+  postmortem: string[];
   gallery: GalleryImage[];
   galleryPhones?: boolean;
+  replayCount?: number;
 }
 
 export interface Certification {
@@ -114,6 +116,7 @@ export function getCV(locale: Locale): CV {
       problem: text.problem,
       solution: text.solution,
       achievements: text.achievements,
+      postmortem: text.postmortem,
       gallery: project.gallery.map((shot) => ({
         src: shot.src,
         alt: text.gallery[shot.id]?.alt ?? "",
@@ -122,6 +125,7 @@ export function getCV(locale: Locale): CV {
         h: shot.h,
       })),
       galleryPhones: project.galleryPhones,
+      replayCount: project.replayCount,
     };
   });
 

@@ -16,6 +16,8 @@ export interface ProjectCopy {
   solution: string[];
   /** Concrete results and facts, shown as a list. */
   achievements: string[];
+  /** What went wrong and what changed because of it. */
+  postmortem: string[];
   imageAlt: string;
   /** Keyed by GalleryShot.id. */
   gallery: Record<string, GalleryCopy>;
@@ -84,6 +86,7 @@ export interface UiCopy {
     problem: string;
     built: string;
     highlights: string;
+    wentWrong: string;
     stack: string;
     inDetail: string;
   };
@@ -115,6 +118,15 @@ export interface UiCopy {
   };
 }
 
+export interface UsesCopy {
+  heading: string;
+  intro: string;
+  /** Keyed by UseGroup.id. */
+  groups: Record<string, string>;
+  /** Keyed by UseItem.id. Only the items worth a remark have one. */
+  notes: Record<string, string>;
+}
+
 export interface MetaCopy {
   /** Site-wide default title and the "%s" template for child pages. */
   siteTitle: string;
@@ -126,6 +138,8 @@ export interface MetaCopy {
   projectsDescription: string;
   experienceTitle: string;
   experienceDescription: string;
+  usesTitle: string;
+  usesDescription: string;
 }
 
 export interface Content {
@@ -145,10 +159,12 @@ export interface Content {
     emailLabel: string;
     linkedinLabel: string;
     telegramLabel: string;
+    bookingLabel: string;
     credit: string;
   };
   projects: Record<string, ProjectCopy>;
   experience: Record<ExperienceId, ExperienceCopy>;
   ui: UiCopy;
+  uses: UsesCopy;
   meta: MetaCopy;
 }

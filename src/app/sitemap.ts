@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/projects",
     "/experience",
+    "/uses",
     ...PROJECTS.map((project) => `/projects/${project.id}`),
   ];
 

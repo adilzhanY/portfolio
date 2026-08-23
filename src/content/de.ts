@@ -18,6 +18,7 @@ export const content: Content = {
     emailLabel: "E-Mail",
     linkedinLabel: "Vernetzen wir uns",
     telegramLabel: "Telegram",
+    bookingLabel: "15-Minuten-Gespräch buchen",
     credit: "Von Anfang bis Ende entworfen, gebaut und betrieben.",
   },
 
@@ -26,6 +27,11 @@ export const content: Content = {
       summary:
         "E-Commerce-Plattform für Genshin-Impact-Boosting, allein gebaut und veröffentlicht. Bezahlte Bestellungen laufen direkt in einen Telegram-Bot, Zahlungen laufen vollständig durch, CI/CD deployt bei jedem Push.",
       metric: "150+ zahlende Kunden in den ersten 10 Tagen",
+      postmortem: [
+        "Am 12. Juli bezahlte ein Kunde 2000 RUB für eine Leistung, die deklarierte Quests voraussetzt, und die Bestellung erreichte den Booster ganz ohne Deklaration. Ich lieferte einen Fix aus: drei Wiederholungen des Requests und eine Warnung in Telegram. Am 25. Juli passierte es wieder, gleicher Betrag, Bestellung 96162b2e. Der Fix hielt nicht, weil er auf den falschen Code-Pfad zielte.",
+        "Also hörte ich auf zu raten und ging in die Daten. Von 27 betroffenen Bestellzeilen waren genau zwei kaputt, und fehlerhafte Warenkörbe gab es überhaupt keine. Die eigentliche Ursache war, dass das übergeordnete Element undefined speicherte, sodass die Auswahl des Kunden nur als separate Warenkorbzeilen existierte, und beim Löschen einer solchen Zeile verschwand die Auswahl stillschweigend, ohne Fehler und ohne Logeintrag. Der Fix war ein expliziter Wert plus eine Serverprüfung, die die Verknüpfungen beim Checkout neu liest und 409 zurückgibt, was die Warenkorbseite abfängt und den Dialog erneut öffnet, sodass nichts verloren geht. Danach spielte ich 50 echte bezahlte Bestellungen dagegen. Die Prüfung blockierte genau die zwei kaputten und ließ die anderen 48 durch.",
+        "Zwei Dinge sind geblieben. Eine Prüfung im Client ist gute Bedienbarkeit, keine Garantie, und wenn es um Geld geht, gehört die Regel auf den Server. Und ein Fix ist erst dann ein Fix, wenn die Daten es bestätigen.",
+      ],
       imageAlt: "Whale Abyss, die Abyss ist geschafft",
       problem:
         "Boosting-Dienste werden über Discord-Server und Tabellen verkauft. Bestellungen gehen verloren, Zahlungen laufen per Hand, und weder Kunde noch Booster weiß, in welchem Zustand eine Bestellung ist. Whale Abyss ersetzt das durch einen richtigen Shop.",
@@ -56,6 +62,10 @@ export const content: Content = {
       summary:
         "Eine Gym-App, die dir sagt, wie stark du wirklich bist. Jeder Satz wird mit der DOTS-Formel bewertet, normiert auf Körpergewicht und Geschlecht, und in einen Rang über neun Stufen übersetzt, mit Perzentilen aus über 400.000 OpenPowerlifting-Athleten.",
       metric: "Neun Ränge, 243 Tests, lokal gespeichert mit kostenloser Sync",
+      postmortem: [
+        "Push-Benachrichtigungen legten die ganze App lahm, und ich habe es wochenlang nicht bemerkt. expo-notifications reexportiert einen Helfer, der addPushTokenListener auf Modulebene aufruft, und dieser Aufruf wirft in Expo Go unter Android eine Exception, weil SDK 53 Remote-Push entfernt hat. Eine Exception während require reißt das gesamte Bundle mit, deshalb zeigte die App eine rote runtime-not-ready-Box und stellte nie ein einziges Bild dar. Meine pushSupported()-Guards waren nutzlos, weil der Absturz zur Importzeit passierte, bevor irgendein Code von mir lief. Gefunden habe ich es am 9. August im Emulator, kaputt war es seit der Einführung von Push. Der Fix ist ein dynamischer Import hinter dem Guard. Die Lehre: ein Guard schützt nur Code, der überhaupt zur Ausführung kommt.",
+        "Die zweite Geschichte handelt nicht von Code, sondern von Ehrlichkeit. Ich hatte eine Grundgesamtheit von 2,2 Millionen Athleten angegeben, und diese Zahl war an vier Stellen falsch, auch im Text der Bezahlschranke. Als ich den Datensatz neu aufbaute, lauteten die echten Zahlen: 1,46 Millionen Bestleistungen pro Athlet und zwischen 133.697 und 401.158 für eine einzelne Disziplin. Ich habe jede Stelle korrigiert. Torq schreibt jetzt immer \"unter Wettkampfathleten\" und nennt die Stichprobengröße statt \"die besten N Prozent aller Menschen\", denn alle in dieser Datenbank sind bei offiziellen Wettkämpfen angetreten und damit deutlich stärker als das Publikum im Studio.",
+      ],
       imageAlt: "Torq, Stärke im Rang",
       problem:
         "Die meisten Gym-Apps sagen dir, wie viel du gehoben hast, fast keine sagt dir, wie stark dich das macht. Nackte Kilos sagen über Körpergewichte hinweg nichts aus: dieselben 100 kg auf der Bank sind bei 60 kg eine andere Leistung als bei 110 kg. Torq bewertet jeden Satz mit der DOTS-Formel, derselben Normierung, die auch das Powerlifting benutzt, und macht daraus einen Rang, den du hochkletterst.",
@@ -90,6 +100,10 @@ export const content: Content = {
       summary:
         "Systemweites Diktieren für Hyprland. Taste drücken, sprechen, und whisper.cpp tippt deine Worte in das Textfeld, das gerade den Fokus hat. Vollständig lokal und privat, mit Spracherkennung pro Äußerung für gemischte EN/RU/DE/KK-Sprache, festen Ersetzungen und einem optionalen LLM-Feinschliff.",
       metric: "~0,2 s pro Satz mit warmem Daemon, vollständig offline",
+      postmortem: [
+        "Die erste Version lud das Modell für jede Phrase neu, las also rund 600 MB von der Festplatte, bevor überhaupt ein Wort erschien. Es funktionierte, war aber zu langsam für den echten Gebrauch, und ich landete immer wieder auf der Tastatur. Erst der dauerhaft laufende whisper-server-Daemon, der das Modell im VRAM hält, machte aus der Demo ein Werkzeug, das ich täglich benutze, mit etwa 0,2 s pro Satz.",
+        "Das seltsamere Problem war, dass auch dann Text entstand, wenn man die Aufnahme beendete, ohne etwas zu sagen. Whisper ist auf Sprache trainiert, also gibt es bei nahezu Stille selbstbewusst das Häufigste aus seinen Trainingsdaten aus, meistens \"Thank you.\" Das im Sprachmodell abzufangen war die falsche Ebene. Die Lösung ist ein Stille-Gate auf dem Signalpegel, bevor die Transkription überhaupt startet, damit Stille nichts ergibt statt etwas Plausibles.",
+      ],
       imageAlt: "OpenHyprWhisper, Taste drücken, sprechen, es tippt",
       problem:
         "Linux unter Wayland hat kein systemweites Diktieren, und die Cloud-Alternativen schicken dein Audio auf fremde Server. OpenHyprWhisper ist Diktieren, das in jeder App funktioniert und den Ton nie vom Rechner lässt.",
@@ -133,6 +147,10 @@ export const content: Content = {
       summary:
         "Ein Lebens-Tracker, der aufhört, fünf verschiedene Apps zu verlangen. Gewohnheiten, Essen, Schritte, Gewicht und Fokus in einer XP-Ökonomie, wobei Web, Mobile und ein Hyprland-Desktop-Panel denselben Domain-Kern teilen, offline-first mit Delta-Sync.",
       metric: "Eine XP-Ökonomie über Web, Mobile und Desktop",
+      postmortem: [
+        "Die Synchronisation sah fertig aus, und dann kamen gelöschte Einträge zurück. Die Write-Hooks, die lokale Zeilen mit Zeitstempeln versehen, feuerten auch dann, wenn die Sync-Schicht vom Server geholte Änderungen einspielte. Eine geholte Zeile stempelte ihr eigenes updatedAt neu und sah frisch bearbeitet aus, und ein geholtes Löschen erzeugte einen brandneuen Grabstein. Zwei Geräte konnten dasselbe Löschen endlos hin und her schieben, und jedes meldete ehrlich, es sei gerade eben passiert.",
+        "Der Fix ist klein: ein Suppress-Flag, das die Sync-Schicht um das Einspielen entfernter Änderungen herum setzt, damit die Hooks still bleiben, während die Version vom Server geschrieben wird. Gelernt habe ich daraus: das Schwierige an offline-first ist nicht das Zusammenführen, sondern zu wissen, welche Schreibvorgänge Neuigkeit sind und welche Echo.",
+      ],
       imageAlt: "Grit, ein Leben, eine XP-Ökonomie",
       problem:
         "Gewohnheiten liegen in einer App, Essen in einer zweiten, Schritte in einer dritten, und jede gibt dir eine eigene Serie, wegen der du dich dann schlecht fühlst. Grit steckt Gewohnheiten, Essen, Schritte, Gewicht und Fokus in eine einzige XP-Ökonomie, damit ein gewöhnlicher Tag trotzdem zu etwas zusammenzählt.",
@@ -261,6 +279,7 @@ export const content: Content = {
       problem: "Das Problem",
       built: "Was ich gebaut habe",
       highlights: "Highlights",
+      wentWrong: "Was schiefging",
       stack: "Stack",
       inDetail: "Im Detail",
     },
@@ -298,6 +317,34 @@ export const content: Content = {
     },
   },
 
+  uses: {
+    heading: "Werkzeuge",
+    intro:
+      "Der Rechner und die Werkzeuge, mit denen ich täglich arbeite. Zwei Dinge in dieser Liste habe ich selbst geschrieben, und ungefähr so sind sie entstanden: ich wollte sie auf diesem Desktop haben.",
+    groups: {
+      machine: "Rechner",
+      desktop: "Desktop",
+      editor: "Editor",
+      terminal: "Terminal",
+      everyday: "Täglich",
+    },
+    notes: {
+      gpu: "Darauf laufen whisper.cpp und lokale Modelle für OpenHyprWhisper.",
+      os: "Rolling Release, aktuell mit Kernel 7.1.",
+      wm: "Tiling-Compositor für Wayland. Beide meiner Desktop-Werkzeuge sind dafür gebaut.",
+      dots: "Die Basis, auf der ich meine eigenen Panels aufsetze.",
+      panel: "Mein eigener Life-Tracker, geschrieben in Quickshell und QML.",
+      dictation: "Meine eigene Spracheingabe, vollständig lokal, ohne Cloud.",
+      nvim: "Eine eigene Konfiguration statt einer fertigen Distribution: LSP für TypeScript, React und Tailwind, fzf-lua, Auto-Session.",
+      vscode: "Zum Pairing und wenn ein Projekt es erwartet.",
+      fish: "Die Shell, in der ich wirklich tippe.",
+      atuin: "Shell-Historie, durchsuchbar und synchronisiert.",
+      gh: "Der Großteil meiner GitHub-Arbeit läuft hier statt im Browser.",
+      espanso: "Textbausteine für die Sätze, die ich immer wieder tippe.",
+      font: "Überall: im Terminal und im Editor.",
+    },
+  },
+
   meta: {
     siteTitle: "Adilzhan Yerzhan - Software Engineer",
     titleTemplate: "%s - Adilzhan Yerzhan",
@@ -312,5 +359,8 @@ export const content: Content = {
     experienceTitle: "Erfahrung",
     experienceDescription:
       "Beruflicher Werdegang: eigene Produkte im Produktivbetrieb, ein Praktikum als Software Engineer bei intuivo, Teamleitung und ein B.Sc. in Software Engineering.",
+    usesTitle: "Werkzeuge",
+    usesDescription:
+      "Rechner, Desktop, Editor und Werkzeuge, mit denen ich täglich arbeite: Arch Linux, Hyprland, Neovim und zwei selbst geschriebene Desktop-Werkzeuge.",
   },
 };

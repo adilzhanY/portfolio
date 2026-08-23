@@ -18,6 +18,7 @@ export const content: Content = {
     emailLabel: "Email",
     linkedinLabel: "Let's connect",
     telegramLabel: "Telegram",
+    bookingLabel: "Book a 15 minute call",
     credit: "Designed, built, and operated end to end.",
   },
 
@@ -26,6 +27,11 @@ export const content: Content = {
       summary:
         "E-commerce platform for Genshin Impact boosting, built and launched alone. Paid orders flow straight into a Telegram bot, payments clear end to end, CI/CD deploys on every push.",
       metric: "150+ paying customers in the first 10 days",
+      postmortem: [
+        "On 12 July a customer paid 2000 RUB for a service that requires quest declarations, and the order reached the booster with nothing declared. I shipped a fix that retried the fetch three times and warned in Telegram. On 25 July it happened again, same amount, order 96162b2e. The fix had not held, because it aimed at the wrong code path.",
+        "So I stopped guessing and went to the data. Of 27 gated order lines, exactly two were broken, and there were no bad carts at all. The real cause was that the parent item stored undefined, so the customer's choice existed only as separate cart lines, and deleting one of those lines threw the choice away silently, with no error and no log. The fix was an explicit value plus a server check that re-reads the links at checkout and returns 409, which the cart page catches and re-opens the dialog, so nothing is lost. Then I replayed 50 real paid orders against it. It blocked exactly the two bad ones and passed the other 48.",
+        "Two things stayed with me. A check in the client is good usability, not a guarantee, and if it involves money the rule belongs on the server. And a fix is not a fix until the data says so.",
+      ],
       imageAlt: "Whale Abyss, the abyss cleared",
       problem:
         "Game boosting services are sold through Discord servers and spreadsheets. Orders get lost, payments are handled by hand, and neither the customer nor the booster knows what state an order is in. Whale Abyss replaces that with a real storefront.",
@@ -53,6 +59,10 @@ export const content: Content = {
       summary:
         "A gym app that tells you how strong you actually are. Every set is scored with the DOTS formula, normalised for bodyweight and sex, and turned into a rank across nine tiers, with percentiles from 400k+ OpenPowerlifting lifters.",
       metric: "Nine rank tiers, 243 tests, local-first with free sync",
+      postmortem: [
+        "Push notifications took the whole app down and I did not notice for weeks. expo-notifications re-exports a helper that calls addPushTokenListener at module scope, and that call throws in Expo Go on Android because SDK 53 removed remote push. A throw during require kills the entire bundle, so the app showed a red runtime-not-ready box and never rendered a single frame. My pushSupported() guards were useless, because the crash happened at import time, before any of my code ran. I found it on an emulator on 9 August, and it had been broken since push landed. The fix is a dynamic import behind the guard. The lesson is that a guard only protects code that gets to run.",
+        "The second one was about honesty rather than code. I had claimed a population of 2.2 million lifters, and that number was wrong in four places, including the paywall copy. When I rebuilt the dataset the real figures were 1.46 million per-lifter bests, and between 133,697 and 401,158 for an individual lift. I corrected every surface. Torq now always says \"of competitive lifters\" and names the sample size instead of \"top N% of people\", because everyone in that database entered a sanctioned meet and is a much stronger crowd than the gym floor.",
+      ],
       imageAlt: "Torq, strength ranked",
       problem:
         'Most gym apps tell you how much you lifted, almost none tell you how strong that makes you. Raw kilos are meaningless across bodyweights: the same 100 kg bench is a different achievement at 60 kg than at 110 kg. Torq scores every set with the DOTS formula, the same normalisation powerlifting uses, and turns it into a rank you climb.',
@@ -81,6 +91,10 @@ export const content: Content = {
       summary:
         "System-wide voice dictation for Hyprland. Press a key, speak, and whisper.cpp types your words into whatever text field is focused. Fully local and private, with per-utterance language detection for mixed EN/RU/DE/KK speech, deterministic replacements, and an optional LLM polish pass.",
       metric: "~0.2 s per sentence with the warm daemon, fully offline",
+      postmortem: [
+        "The first version reloaded the model for every phrase, which meant reading roughly 600 MB off disk before a single word appeared. It worked, but it was too slow to actually use, and I kept falling back to the keyboard. Moving to a warm whisper-server daemon that keeps the model in VRAM is what turned a demo into something I use every day, at about 0.2 s per sentence.",
+        "The stranger problem was that stopping without speaking produced text anyway. Whisper is trained on speech, so given near-silence it confidently returns the most common thing in its training data, usually \"Thank you.\" Catching that in the language model was the wrong layer. The fix is a silence gate on the audio peak, before transcription runs at all, so silence produces nothing rather than something plausible.",
+      ],
       imageAlt: "OpenHyprWhisper, press a key, speak, it types",
       problem:
         "Linux on Wayland has no system-wide voice dictation, and the cloud alternatives ship your audio to someone else's servers. OpenHyprWhisper is dictation that works in every app and never lets audio leave the machine.",
@@ -112,6 +126,10 @@ export const content: Content = {
       summary:
         "A life tracker that stops asking you to open five different apps. Habits, food, steps, weight, and focus in one XP economy, with web, mobile, and a Hyprland desktop panel sharing one domain core, offline-first with delta sync.",
       metric: "One XP economy across web, mobile, and desktop",
+      postmortem: [
+        "Sync looked finished, and then deleted rows started coming back. The write hooks that stamp local rows were also firing when the sync layer applied changes pulled from the server, so a pulled row re-stamped its own updatedAt and looked freshly edited, and a pulled delete created a brand new tombstone. Two devices could pass the same delete back and forth indefinitely, each one honestly reporting that it had just happened.",
+        "The fix is small: a suppress flag the sync layer sets around remote applies, so the hooks stay quiet while the server's version is written in. What it taught me is that the hard part of offline-first is not merging, it is knowing which writes are news and which are echoes.",
+      ],
       imageAlt: "Grit, one life, one XP economy",
       problem:
         "Habits live in one app, food in another, steps in a third, and each one hands you a separate streak to feel guilty about. Grit puts habits, food, steps, weight, and focus into a single XP economy, so an ordinary day still adds up to something.",
@@ -228,6 +246,7 @@ export const content: Content = {
       problem: "The problem",
       built: "What I built",
       highlights: "Highlights",
+      wentWrong: "What went wrong",
       stack: "Stack",
       inDetail: "In detail",
     },
@@ -265,6 +284,34 @@ export const content: Content = {
     },
   },
 
+  uses: {
+    heading: "Uses",
+    intro:
+      "The machine and the tools I actually work on every day. Two of the things listed here are my own, which is roughly how they came to exist: I wanted them on this desktop.",
+    groups: {
+      machine: "Machine",
+      desktop: "Desktop",
+      editor: "Editor",
+      terminal: "Terminal",
+      everyday: "Everyday",
+    },
+    notes: {
+      gpu: "Runs whisper.cpp and local models for OpenHyprWhisper.",
+      os: "Rolling release, currently on kernel 7.1.",
+      wm: "Tiling Wayland compositor. Both of my desktop tools target it.",
+      dots: "The base setup I build my own panels on top of.",
+      panel: "My own life tracker, written in Quickshell and QML.",
+      dictation: "My own voice dictation, fully local, no cloud.",
+      nvim: "My own config rather than a distribution: LSP for TypeScript, React and Tailwind, fzf-lua, auto-session.",
+      vscode: "For pairing, and when a project expects it.",
+      fish: "The shell I actually type in.",
+      atuin: "Shell history that is searchable and synced.",
+      gh: "Most of my GitHub work happens here instead of in a browser.",
+      espanso: "Text expansion for the phrases I retype.",
+      font: "Everywhere: terminal and editor.",
+    },
+  },
+
   meta: {
     siteTitle: "Adilzhan Yerzhan - Software Engineer",
     titleTemplate: "%s - Adilzhan Yerzhan",
@@ -279,5 +326,8 @@ export const content: Content = {
     experienceTitle: "Experience",
     experienceDescription:
       "Career timeline: solo products in production, a software engineering internship at intuivo, team leadership, and a B.Sc in Software Engineering.",
+    usesTitle: "Uses",
+    usesDescription:
+      "The machine, desktop, editor and tools I work on every day: Arch Linux, Hyprland, Neovim, and two desktop tools I wrote myself.",
   },
 };
