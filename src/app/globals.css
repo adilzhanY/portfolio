@@ -163,3 +163,93 @@ html.dark .theme-toggle .icon-moon {
 @media (prefers-reduced-motion: reduce) {
   .brand-cursor { animation: none; }
 }
+
+/* ---------- print ----------
+   Ctrl+P on the home page should produce a plain CV, not a screenshot of a
+   website. Screen-only furniture is marked `print:hidden` in the components;
+   this block handles the page itself. */
+@media print {
+  /* Force the light palette regardless of the theme on screen, and drop the
+     ink to true black so it does not print as washed-out grey. */
+  html,
+  html.dark {
+    --surface: #ffffff;
+    --ink: #000000;
+    --body-c: #1a1a1a;
+    --muted-c: #444444;
+    --faint-c: #cccccc;
+    --accent-c: #000000;
+    --chip-c: #ffffff;
+    background: #fff;
+    font-size: 11pt;
+    color-scheme: light;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+
+  body {
+    /* The layout is centred and padded for a browser window; on paper the
+       page margin already does that job. */
+    display: block;
+  }
+
+  main {
+    flex: none;
+  }
+
+  main > div {
+    max-width: none;
+    padding: 0;
+  }
+
+  /* Screenshots are decoration in a CV and eat most of a page each. */
+  img {
+    display: none;
+  }
+
+  /* Keep an entry and its heading together rather than split across pages. */
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  li,
+  figure {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Chips read as plain words once the fills are gone. */
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+/* ---------- narrow-screen hardening ----------
+   One child wider than the screen makes the whole document scroll sideways,
+   which on a phone reads as "the page is narrower than my screen and there is
+   dead space down the right". These three rules remove the usual causes. */
+
+/* `clip`, not `hidden`: `hidden` would turn the root into a scroll container
+   and break the sticky header. `clip` just refuses to scroll sideways. */
+html {
+  overflow-x: clip;
+}
+
+/* A flex or grid child will not shrink below its content by default, so one
+   long word or wide table widens the whole row. Images and icons keep their
+   intrinsic minimum so they do not get squashed. */
+:where(.flex, .grid) > :not(svg, img) {
+  min-width: 0;
+}
+
+/* Russian and German both produce long compounds. Break them instead of
+   letting them set the width of the column. */
+:where(p, h1, h2, h3, h4, li, dd, dt, figcaption, td, th) {
+  overflow-wrap: break-word;
+}

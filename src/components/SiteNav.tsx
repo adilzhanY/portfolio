@@ -26,16 +26,24 @@ export default function SiteNav({
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-faint bg-surface/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-faint bg-surface/90 backdrop-blur print:hidden">
+      {/*
+        Two deliberate shapes instead of one that wraps unpredictably.
+        Narrow: brand and the controls share the first row, links sit on the
+        second. Wide: everything is one row, links pushed to the right.
+      */}
       <nav
-        className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-4 sm:px-6 lg:px-8"
+        className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6 sm:py-4 lg:px-8"
         aria-label={ui.nav.aria}
       >
-        <Link href={localePath(locale, "/")} className="font-bold tracking-tight">
+        <Link
+          href={localePath(locale, "/")}
+          className="order-1 font-bold tracking-tight"
+        >
           qantrr<span className="brand-cursor text-accent">_</span>
         </Link>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+        <div className="order-3 flex w-full min-w-0 items-center gap-x-5 text-sm sm:order-2 sm:ml-auto sm:w-auto">
+          <div className="flex min-w-0 items-center gap-x-5">
             {links.map((link) => {
               const active =
                 link.href === "/"
@@ -57,10 +65,10 @@ export default function SiteNav({
               );
             })}
           </div>
-          <div className="flex items-center gap-3">
-            <LanguageSwitcher locale={locale} label={ui.language.label} />
-            <ThemeToggle label={ui.theme.toggle} />
-          </div>
+        </div>
+        <div className="order-2 ml-auto flex shrink-0 items-center gap-3 sm:order-3 sm:ml-0">
+          <LanguageSwitcher locale={locale} label={ui.language.label} />
+          <ThemeToggle label={ui.theme.toggle} />
         </div>
       </nav>
     </header>

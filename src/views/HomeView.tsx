@@ -9,6 +9,8 @@ import TechChip from "@/components/TechChip";
 import ResumeButton from "@/components/ResumeButton";
 import GitHubActivity from "@/components/GitHubActivity";
 import CertificationList from "@/components/CertificationList";
+import StructuredData from "@/components/StructuredData";
+import { personSchema } from "@/i18n/schema";
 
 const sectionHeading =
   "mt-11 border-t border-faint pt-5 text-[0.8rem] font-semibold tracking-[0.09em] text-muted uppercase";
@@ -21,22 +23,35 @@ export default function HomeView({ locale }: { locale: Locale }) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8">
+      <StructuredData data={personSchema(locale)} />
       <header>
-        <div className="flex items-center gap-5 sm:gap-6">
+        {/*
+          Below `sm` the avatar sits above the name, which gives the name the
+          full column width. Side by side it left roughly 220px for the name,
+          and a name that long pushed the verified badge onto its own line.
+          Stacked, the avatar is the larger of the two sizes: on its own row it
+          has to carry the space a name no longer sits in.
+        */}
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
           <img
             src={PROFILE.avatar}
             alt={name}
             title={ui.home.avatarTitle}
             width={480}
             height={480}
-            className="h-24 w-24 shrink-0 rounded-full border border-faint object-cover sm:h-28 sm:w-28"
+            className="h-36 w-36 shrink-0 rounded-full border border-faint object-cover sm:h-28 sm:w-28"
           />
-          <div>
-            <h1 className="flex flex-wrap items-center gap-2 text-2xl font-semibold tracking-tight">
+          <div className="min-w-0">
+            {/*
+              The badge is inline rather than a flex item, so it flows with the
+              last word of the name instead of becoming its own row when the
+              text wraps. It scales with the heading rather than a fixed size.
+            */}
+            <h1 className="text-2xl font-semibold tracking-tight">
               {name}
               <MdVerified
                 aria-label={ui.home.verified}
-                className="h-6 w-6 shrink-0"
+                className="ml-1.5 inline h-[0.85em] w-[0.85em] align-[-0.12em]"
                 style={{ color: "#1D9BF0" }}
               />
             </h1>
@@ -75,11 +90,25 @@ export default function HomeView({ locale }: { locale: Locale }) {
         <h2 className="mt-8 text-3xl font-semibold tracking-tight md:text-4xl">
           {tagline}
         </h2>
+
+        {/*
+          On screen the contact details are icon links in the header and cards
+          in the footer. Neither survives paper, so print gets them as text.
+        */}
+        <p className="hidden text-sm print:mt-3 print:block">
+          {contact.email}
+          {" / "}
+          {contact.github.replace("https://", "")}
+          {" / "}
+          {contact.linkedin.replace("https://", "")}
+          {" / "}
+          {contact.location}
+        </p>
       </header>
 
       <p className="mt-5">{intro}</p>
 
-      <div className="mt-6">
+      <div className="mt-6 print:hidden">
         <ResumeButton labels={ui.resume} file={RESUME_FILE[locale]} />
       </div>
 
@@ -163,7 +192,7 @@ export default function HomeView({ locale }: { locale: Locale }) {
         </div>
       ))}
 
-      <div className="mt-2 flex justify-center border-t border-faint pt-6">
+      <div className="mt-2 flex justify-center border-t border-faint pt-6 print:hidden">
         <Link
           href={href("/projects")}
           className="inline-flex items-center gap-1.5 rounded-full border border-muted/50 px-5 py-2 text-sm font-semibold text-body transition-colors hover:border-ink hover:bg-chip"
@@ -216,9 +245,11 @@ export default function HomeView({ locale }: { locale: Locale }) {
         ))}
       </div>
 
-      <h2 className={sectionHeading}>{ui.home.sectionActivity}</h2>
+      <div className="print:hidden">
+        <h2 className={sectionHeading}>{ui.home.sectionActivity}</h2>
 
-      <GitHubActivity labels={ui.calendar} />
+        <GitHubActivity labels={ui.calendar} />
+      </div>
 
       <h2 id="certifications" className={`${sectionHeading} scroll-mt-20`}>
         {ui.home.sectionCertifications}
