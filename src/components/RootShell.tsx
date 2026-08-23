@@ -2,6 +2,7 @@ import "@/app/globals.css";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import Analytics from "@/components/Analytics";
+import LanguageHint from "@/components/LanguageHint";
 import { getContent } from "@/data/cv";
 import type { Locale } from "@/i18n/config";
 
@@ -41,6 +42,7 @@ export default function RootShell({
       </head>
       <body className="flex min-h-dvh flex-col font-sans antialiased">
         <Analytics />
+        <LanguageHint locale={locale} />
         <SiteNav locale={locale} ui={ui} />
         <main id="main" className="flex-1">
           {children}

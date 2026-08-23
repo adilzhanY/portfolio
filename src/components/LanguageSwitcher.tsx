@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { FiCheck, FiChevronDown } from "react-icons/fi";
 import { DE, GB, RU } from "country-flag-icons/react/3x2";
+import { HINT_DISMISSED_KEY } from "@/i18n/hints";
 import {
   LOCALES,
   LOCALE_LABELS,
@@ -126,7 +127,16 @@ export default function LanguageSwitcher({
               href={localePath(option, path)}
               hrefLang={option}
               aria-current={active ? "true" : undefined}
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                // Picking a language by hand settles the question, so the
+                // browser-language suggestion bar stops offering.
+                try {
+                  localStorage.setItem(HINT_DISMISSED_KEY, "1");
+                } catch {
+                  // Storage blocked; the bar just reappears next visit.
+                }
+                setOpen(false);
+              }}
               className={[
                 "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors",
                 active
