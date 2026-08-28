@@ -42,7 +42,7 @@ export const content: Content = {
       ],
       achievements: [
         "150+ zahlende Kunden in den ersten 10 Tagen nach dem Start",
-        "Läuft produktiv auf whaleabyss.ru und wird weiterhin von mir betrieben",
+        "Läuft produktiv auf whaleabyss.com und wird weiterhin von mir betrieben",
         "36.000+ Zeilen TypeScript: 80+ Komponenten, 35+ API-Endpunkte, 13 Datenbanktabellen",
         "Echtes Geld auf dem ganzen Weg: Zahlungs-Gateway, signierte Webhooks, Rückerstattungen, Provisionen",
         "Allein entworfen, gebaut, veröffentlicht und betrieben",
@@ -196,7 +196,7 @@ export const content: Content = {
       detail:
         "Ich habe meine eigenen Produkte entworfen, gebaut, veröffentlicht und betreibe sie weiterhin: Whale Abyss, Torq, Grit und OpenHyprWhisper.",
       bullets: [
-        "Whale Abyss: eine produktive E-Commerce-Plattform für Game-Boosting mit echten Zahlungen, 150+ zahlenden Kunden in den ersten 10 Tagen, live auf whaleabyss.ru und seit dem Start von mir betrieben.",
+        "Whale Abyss: eine produktive E-Commerce-Plattform für Game-Boosting mit echten Zahlungen, 150+ zahlenden Kunden in den ersten 10 Tagen, live auf whaleabyss.com und seit dem Start von mir betrieben.",
         "Torq: eine Offline-First-Gym-App, die jeden Satz mit der DOTS-Formel bewertet und Stärke über neun Ränge einordnet, abgesichert durch 243 Tests.",
         "Grit: ein spielerischer Lebens-Tracker mit einer XP-Ökonomie, die sich eine Next.js-Web-App, eine Expo-Mobile-App und ein Quickshell-Desktop-Panel teilen.",
         "OpenHyprWhisper: vollständig lokales Diktieren für den Hyprland-Desktop auf Basis von whisper.cpp, als Open Source veröffentlicht.",

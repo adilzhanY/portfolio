@@ -42,7 +42,7 @@ export const content: Content = {
       ],
       achievements: [
         "150+ paying customers within the first 10 days of launch",
-        "Live in production at whaleabyss.ru, still operated by me",
+        "Live in production at whaleabyss.com, still operated by me",
         "36,000+ lines of TypeScript: 80+ components, 35+ API endpoints, 13 database tables",
         "Real money end to end: payment gateway, signed webhooks, refunds, commission payouts",
         "Designed, built, launched, and operated solo",
@@ -163,7 +163,7 @@ export const content: Content = {
       detail:
         "Designed, built, launched, and still operate my own products: Whale Abyss, Torq, Grit, and OpenHyprWhisper.",
       bullets: [
-        "Whale Abyss: a production e-commerce platform for game boosting with real payments, 150+ paying customers in the first 10 days, live at whaleabyss.ru and operated by me since launch.",
+        "Whale Abyss: a production e-commerce platform for game boosting with real payments, 150+ paying customers in the first 10 days, live at whaleabyss.com and operated by me since launch.",
         "Torq: an offline-first gym app that scores every set with the DOTS formula and ranks strength across nine tiers, backed by 243 tests.",
         "Grit: a gamified life tracker with one XP economy shared across a Next.js web app, an Expo mobile app, and a Quickshell desktop panel.",
         "OpenHyprWhisper: fully local voice dictation for the Hyprland desktop built on whisper.cpp, published open source.",

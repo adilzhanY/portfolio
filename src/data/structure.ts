@@ -118,7 +118,7 @@ export const PROJECTS: ProjectStructure[] = [
       "Yandex Cloud",
     ],
     link: "https://github.com/adilzhanY/whaleabyss",
-    live: "https://whaleabyss.ru",
+    live: "https://whaleabyss.com",
     image: "/projects/whaleabyss-preview.webp",
     imageW: 1200,
     imageH: 646,
