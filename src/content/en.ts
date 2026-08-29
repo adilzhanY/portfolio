@@ -87,6 +87,39 @@ export const content: Content = {
       },
     },
 
+    sendoku: {
+      summary:
+        "An Android sudoku app that can tell you why a puzzle is hard. Every puzzle is solved by a technique solver before you see it, so the level is the hardest human rule it actually needs, and the same solver writes the hints and the 45 lesson course.",
+      metric: "4,200 rated puzzles, 860 tests, 3.1 MB, no internet permission",
+      postmortem: [
+        "The worst bug in this app ended games it had already decided were lost. A wrong digit can break no rule at all, so nothing on the board showed it, but the mistake counter in the header had gone up, which means the app knew and said nothing. Twenty moves later a cell could take no digit whatsoever, every attempt at it cost another mistake, and three attempts finished an Easy puzzle that had been unwinnable since the hidden slip. Two rules came out of it. If a mistake is charged for, it is marked at once, so while a mistake limit runs the marking is not a preference. And a cell is only charged for while its own answer can still be written in it, because past that point the player is paying twice for one error. There is a test file named after the rules.",
+        "The hint engine had the same shape of problem. A hint would rule a digit out of a cell, the player had written no pencil marks there, so nothing visible changed, and the next hint would announce that the cell had only one candidate left. From where the player sat it had two, and the app was telling them to guess. Now every cell a hint touches keeps its true marks, and a hint that leans on an earlier hint says so on the card. Whatever a hint proves has to end up somewhere the player can read it.",
+      ],
+      imageAlt: "Sendoku, harder than it looks",
+      problem:
+        'Every sudoku app calls its hardest level Extreme, and almost none of them can say why a puzzle is hard, because the label comes from clue count rather than from logic. Sendoku rates each puzzle by the hardest human technique needed to finish it, which is why the ladder can keep climbing past where the commercial apps stop.',
+      solution: [
+        "The engine is pure Kotlin with no Android imports: a bitmask solver, a uniqueness counter, a generator, and 28 human techniques plus 4 for Killer, from naked singles up to ALS-XZ and Death Blossom. That one solver is three features at once. It rates the puzzle, it writes the hint, and it guarantees that nothing in the app ever has to be guessed.",
+        "A hint never just gives the digit. It names the technique, lights the cells the argument rests on, writes the argument out, and only then offers to make the move, across four levels of help so the player chooses how far in to go. Every rule has a lesson behind it, one tap away, and the course is 45 lessons over 13 stages worked on a real board, starting at 4x4 grids and ending with chains written the way they are on paper. Finish a lesson and the app hands you a puzzle that needs exactly that rule, picked out of the batch by the same solver that rated it.",
+        "Hard puzzles are too rare to generate on a phone, so 4,000 classic and 200 Killer puzzles ship pre-rated in a gzipped batch of 227 KB, and the generator makes the easy ones on the device when a level runs out. The daily puzzle is seeded from the date, so everybody gets the same grid with no backend, and any puzzle carries a short code you can send to a friend. Killer sudoku is rated on the same scale, because the rater walks the cage rules and the ordinary ones together.",
+        "There is no internet permission in the manifest, which is a claim you can check in the APK rather than take on trust, and the GPL-3.0 licence is what makes the source checkable at all. Storage is Room on the phone, with no account and no cloud. Four themes each carry their own typeface, subset down to the characters the app can draw so eight font files fit in 260 KB, and the app speaks 12 languages including Arabic right to left.",
+      ],
+      achievements: [
+        "860 tests: 681 on the JVM and 179 on a device, over the solver and generator where a silent bug ships broken puzzles",
+        "32 human techniques implemented, 8 difficulty levels, and 45 lessons that teach them",
+        "3.1 MB installed, R8 shrunk, minSdk 26, one Activity and no fragments",
+        "No internet permission at all, so the privacy claim is verifiable rather than asserted",
+        "12 languages, right to left included, and every label stays whole at 200% font scale",
+      ],
+      gallery: {
+        home: { alt: "Sendoku home screen with a game in progress", caption: "Home" },
+        hint: { alt: "A Sendoku hint explaining an X-Wing", caption: "A hint that teaches" },
+        learn: { alt: "The Sendoku course map, 45 lessons", caption: "45 lessons" },
+        killer: { alt: "Killer sudoku with cages", caption: "Killer, same scale" },
+        you: { alt: "The Sendoku record page", caption: "Your record" },
+      },
+    },
+
     openhyprwhisper: {
       summary:
         "System-wide voice dictation for Hyprland. Press a key, speak, and whisper.cpp types your words into whatever text field is focused. Fully local and private, with per-utterance language detection for mixed EN/RU/DE/KK speech, deterministic replacements, and an optional LLM polish pass.",

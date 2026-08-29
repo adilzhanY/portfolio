@@ -96,6 +96,39 @@ export const content: Content = {
       },
     },
 
+    sendoku: {
+      summary:
+        "Eine Sudoku-App für Android, die sagen kann, warum ein Rätsel schwer ist. Jedes Rätsel wird von einem Techniklöser gelöst, bevor du es siehst, deshalb ist die Stufe die schwerste menschliche Regel, die wirklich nötig ist, und derselbe Löser schreibt die Hinweise und den Kurs mit 45 Lektionen.",
+      metric: "4.200 bewertete Rätsel, 860 Tests, 3,1 MB, ohne Internet-Berechtigung",
+      postmortem: [
+        "Der schlimmste Fehler dieser App beendete Partien, die sie längst selbst als verloren erkannt hatte. Eine falsche Ziffer kann gegen keine einzige Regel verstoßen, auf dem Brett war also nichts zu sehen, aber der Fehlerzähler in der Kopfzeile war hochgezählt, die App wusste es und schwieg. Zwanzig Züge später passte in eine Zelle überhaupt keine Ziffer mehr, jeder Versuch dort kostete einen weiteren Fehler, und drei Versuche beendeten ein leichtes Rätsel, das seit jenem verborgenen Ausrutscher nicht mehr zu gewinnen war. Daraus wurden zwei Regeln. Wird ein Fehler berechnet, wird er sofort markiert, bei laufendem Fehlerlimit ist die Markierung deshalb keine Einstellung mehr. Und eine Zelle wird nur so lange berechnet, wie ihre eigene Lösung noch hineingeschrieben werden kann, sonst zahlt jemand zweimal für einen Fehler. Es gibt eine Testdatei, die nach diesen Regeln benannt ist.",
+        "Die Hinweise hatten dasselbe Problem in anderer Form. Ein Hinweis schloss eine Ziffer in einer Zelle aus, der Spieler hatte dort keine Notizen, sichtbar änderte sich also nichts, und der nächste Hinweis verkündete, in der Zelle sei nur noch ein Kandidat übrig. Vom Platz des Spielers aus waren es zwei, und die App forderte ihn zum Raten auf. Jetzt behält jede Zelle, die ein Hinweis berührt, ihre echten Notizen, und ein Hinweis, der auf einem früheren aufbaut, sagt das auf der Karte. Was ein Hinweis beweist, muss dort landen, wo der Spieler es sehen kann.",
+      ],
+      imageAlt: "Sendoku, schwerer als es aussieht",
+      problem:
+        "Jede Sudoku-App nennt ihre höchste Stufe Extreme, und fast keine kann sagen, warum ein Rätsel schwer ist, weil das Etikett aus der Zahl der vorgegebenen Ziffern kommt und nicht aus der Logik. Sendoku bewertet jedes Rätsel nach der schwersten menschlichen Technik, die zum Lösen nötig ist, und deshalb geht die Leiter dort weiter, wo die kommerziellen Apps aufhören.",
+      solution: [
+        "Die Engine ist reines Kotlin ganz ohne Android-Importe: ein Löser über Bitmasken, ein Zähler für die Eindeutigkeit, ein Generator und 28 menschliche Techniken plus 4 für Killer, von nackten Einern bis ALS-XZ und Death Blossom. Dieser eine Löser ist gleich drei Funktionen. Er bewertet das Rätsel, er schreibt den Hinweis, und er garantiert, dass in dieser App nie geraten werden muss.",
+        "Ein Hinweis gibt nie einfach die Ziffer heraus. Er nennt die Technik, hebt die Zellen hervor, auf denen die Begründung ruht, schreibt die Begründung aus und bietet erst dann den Zug an, und das über vier Hilfestufen, damit der Spieler selbst entscheidet, wie tief er hineinschaut. Hinter jeder Regel steht eine Lektion, einen Tipp entfernt, und der Kurs sind 45 Lektionen in 13 Stufen auf einem echten Brett, von 4x4-Gittern bis zu Ketten, die so notiert sind wie auf Papier. Nach einer Lektion reicht die App ein Rätsel heraus, das genau diese Regel braucht, ausgewählt aus dem Paket von demselben Löser, der es bewertet hat.",
+        "Schwere Rätsel sind zu selten, um sie auf dem Telefon zu erzeugen, deshalb liegen 4.000 klassische und 200 Killer fertig bewertet in einem gepackten Paket von 227 KB bei, und die leichten erzeugt der Generator auf dem Gerät, wenn eine Stufe leer läuft. Das Tagesrätsel wird aus dem Datum abgeleitet, alle bekommen dasselbe Gitter ohne Server, und jedes Rätsel trägt einen kurzen Code, den man verschicken kann. Killer wird auf derselben Skala bewertet, weil der Bewerter die Käfigregeln und die gewöhnlichen Regeln gemeinsam durchgeht.",
+        "Im Manifest steht keine Internet-Berechtigung, das lässt sich im gebauten APK prüfen statt es zu glauben, und die GPL-3.0-Lizenz ist das, was den Quelltext überhaupt prüfbar macht. Gespeichert wird mit Room auf dem Telefon, ohne Konto und ohne Cloud. Jedes der vier Themes hat eine eigene Schrift, zugeschnitten auf die Zeichen, die die App zeichnen kann, damit acht Schriftdateien in 260 KB passen, und die App spricht 12 Sprachen, darunter Arabisch von rechts nach links.",
+      ],
+      achievements: [
+        "860 Tests: 681 auf der JVM und 179 auf dem Gerät, über Löser und Generator, wo ein stiller Fehler kaputte Rätsel ausliefert",
+        "32 menschliche Techniken umgesetzt, 8 Schwierigkeitsstufen und 45 Lektionen, die sie beibringen",
+        "3,1 MB installiert, mit R8 geschrumpft, minSdk 26, eine Activity und keine Fragmente",
+        "Gar keine Internet-Berechtigung, das Datenschutzversprechen ist also prüfbar statt nur behauptet",
+        "12 Sprachen, auch von rechts nach links, und jede Beschriftung bleibt bei 200 Prozent Schriftgröße vollständig",
+      ],
+      gallery: {
+        home: { alt: "Sendoku-Startseite mit laufender Partie", caption: "Startseite" },
+        hint: { alt: "Ein Sendoku-Hinweis erklärt ein X-Wing", caption: "Ein Hinweis, der lehrt" },
+        learn: { alt: "Die Sendoku-Kurskarte mit 45 Lektionen", caption: "45 Lektionen" },
+        killer: { alt: "Killer-Sudoku mit Käfigen", caption: "Killer, dieselbe Skala" },
+        you: { alt: "Die Sendoku-Rekordseite", caption: "Dein Rekord" },
+      },
+    },
+
     openhyprwhisper: {
       summary:
         "Systemweites Diktieren für Hyprland. Taste drücken, sprechen, und whisper.cpp tippt deine Worte in das Textfeld, das gerade den Fokus hat. Vollständig lokal und privat, mit Spracherkennung pro Äußerung für gemischte EN/RU/DE/KK-Sprache, festen Ersetzungen und einem optionalen LLM-Feinschliff.",
