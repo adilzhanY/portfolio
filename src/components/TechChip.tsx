@@ -20,7 +20,7 @@ import {
 } from "react-icons/si";
 
 /* Brand colors, darkened where the original is too light for a light chip. */
-const TECH: Record<string, { icon: IconType; color: string }> = {
+export const TECH: Record<string, { icon: IconType; color: string }> = {
   Rust: { icon: SiRust, color: "#CE422B" },
   TypeScript: { icon: SiTypescript, color: "#3178C6" },
   React: { icon: SiReact, color: "#087EA4" },

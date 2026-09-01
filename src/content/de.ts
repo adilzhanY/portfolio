@@ -278,6 +278,8 @@ export const content: Content = {
       home: "Start",
       projects: "Projekte",
       experience: "Erfahrung",
+      menu: "Menü",
+      close: "Menü schließen",
     },
     social: {
       github: "GitHub",
@@ -286,6 +288,7 @@ export const content: Content = {
       email: "E-Mail",
     },
     theme: { toggle: "Dunkles Design umschalten" },
+    dictation: { recording: "Aufnahme", transcribing: "Transkription", done: "Fertig" },
     language: { label: "Sprache" },
     home: {
       avatarTitle: "Ja, das bin ich",
@@ -347,6 +350,19 @@ export const content: Content = {
       title: "Seite nicht gefunden",
       body: "Diese Seite gibt es nicht, oder sie ist umgezogen.",
       action: "Zurück zur Startseite",
+      puzzleIntro:
+        "Stattdessen ein Vier mal Vier. Jede Zeile, Spalte und jeder Block enthält 1 bis 4 genau einmal.",
+      hint: "Hinweis",
+      doIt: "Setzen",
+      erase: "Löschen",
+      hintSingle:
+        "Hier passt nur die {{digit}}. Die anderen Ziffern stehen schon in dieser Zeile, Spalte oder diesem Block.",
+      hintWrong: "Eine der Ziffern ist falsch. Sie ist markiert.",
+      hintNone: "Nichts mehr zu setzen.",
+      solved: "Gelöst. Das war das leichte.",
+      solvedAction: "Jetzt zur Startseite",
+      boardLabel: "Sudoku vier mal vier",
+      cellLabel: "Zeile {{row}}, Spalte {{col}}",
     },
   },
 

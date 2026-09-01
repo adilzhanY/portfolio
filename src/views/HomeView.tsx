@@ -9,6 +9,8 @@ import TechChip from "@/components/TechChip";
 import ResumeButton from "@/components/ResumeButton";
 import GitHubActivity from "@/components/GitHubActivity";
 import CertificationList from "@/components/CertificationList";
+import DictatedTagline from "@/components/DictatedTagline";
+import SkillsLoop from "@/components/SkillsLoop";
 import StructuredData from "@/components/StructuredData";
 import { personSchema } from "@/i18n/schema";
 
@@ -33,14 +35,24 @@ export default function HomeView({ locale }: { locale: Locale }) {
           has to carry the space a name no longer sits in.
         */}
         <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
-          <img
-            src={PROFILE.avatar}
-            alt={name}
-            title={ui.home.avatarTitle}
-            width={480}
-            height={480}
-            className="h-36 w-36 shrink-0 rounded-full border border-faint object-cover sm:h-28 sm:w-28"
-          />
+          {/*
+            The photo prints in the accent colour and comes back in full colour
+            on hover, so the page keeps one palette. The nav watches this
+            element and shows its own small copy once it scrolls away.
+          */}
+          <span
+            id="hero-avatar"
+            className="avatar-duotone h-36 w-36 shrink-0 sm:h-28 sm:w-28"
+          >
+            <img
+              src={PROFILE.avatar}
+              alt={name}
+              title={ui.home.avatarTitle}
+              width={480}
+              height={480}
+              className="h-full w-full object-cover"
+            />
+          </span>
           <div className="min-w-0">
             {/*
               The badge is inline rather than a flex item, so it flows with the
@@ -87,9 +99,7 @@ export default function HomeView({ locale }: { locale: Locale }) {
             </div>
           </div>
         </div>
-        <h2 className="mt-8 text-3xl font-semibold tracking-tight md:text-4xl">
-          {tagline}
-        </h2>
+        <DictatedTagline text={tagline} labels={ui.dictation} />
 
         {/*
           On screen the contact details are icon links in the header and cards
@@ -110,6 +120,11 @@ export default function HomeView({ locale }: { locale: Locale }) {
 
       <div className="mt-6 print:hidden">
         <ResumeButton labels={ui.resume} file={RESUME_FILE[locale]} />
+      </div>
+
+      {/* Full-bleed on phones so the fade sits at the screen edge. */}
+      <div className="-mx-4 mt-8 sm:mx-0 print:hidden">
+        <SkillsLoop skills={skills} label={ui.home.sectionSkills} />
       </div>
 
       <h2 className={sectionHeading}>{ui.home.sectionProjects}</h2>
@@ -237,12 +252,14 @@ export default function HomeView({ locale }: { locale: Locale }) {
         </div>
       ))}
 
-      <h2 className={sectionHeading}>{ui.home.sectionSkills}</h2>
-
-      <div className="mt-3.5 flex flex-wrap gap-2">
-        {skills.map((skill) => (
-          <TechChip key={skill} name={skill} />
-        ))}
+      {/* On screen the skills scroll under the resume button; paper gets a list. */}
+      <div className="hidden print:block">
+        <h2 className={sectionHeading}>{ui.home.sectionSkills}</h2>
+        <div className="mt-3.5 flex flex-wrap gap-2">
+          {skills.map((skill) => (
+            <TechChip key={skill} name={skill} />
+          ))}
+        </div>
       </div>
 
       <div className="print:hidden">

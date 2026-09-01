@@ -278,6 +278,8 @@ export const content: Content = {
       home: "Главная",
       projects: "Проекты",
       experience: "Опыт",
+      menu: "Меню",
+      close: "Закрыть меню",
     },
     social: {
       github: "GitHub",
@@ -286,6 +288,7 @@ export const content: Content = {
       email: "Почта",
     },
     theme: { toggle: "Переключить тёмную тему" },
+    dictation: { recording: "Запись", transcribing: "Распознавание", done: "Готово" },
     language: { label: "Язык" },
     home: {
       avatarTitle: "Да, это я",
@@ -347,6 +350,19 @@ export const content: Content = {
       title: "Страница не найдена",
       body: "Такой страницы нет, или она переехала.",
       action: "На главную",
+      puzzleIntro:
+        "Вместо неё судоку четыре на четыре. В каждой строке, столбце и квадрате цифры от 1 до 4 ровно по одному разу.",
+      hint: "Подсказка",
+      doIt: "Поставить",
+      erase: "Стереть",
+      hintSingle:
+        "Сюда подходит только {{digit}}. Остальные цифры уже стоят в этой строке, столбце или квадрате.",
+      hintWrong: "Одна из цифр неверна. Она отмечена.",
+      hintNone: "Ставить больше нечего.",
+      solved: "Решено. Это была лёгкая.",
+      solvedAction: "Теперь на главную",
+      boardLabel: "Судоку четыре на четыре",
+      cellLabel: "Строка {{row}}, столбец {{col}}",
     },
   },
 

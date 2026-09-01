@@ -1,6 +1,7 @@
 import "@/app/globals.css";
-import Link from "next/link";
+import Sudoku404 from "@/components/Sudoku404";
 import { getContent } from "@/data/cv";
+import { PROJECTS } from "@/data/structure";
 import { DEFAULT_LOCALE } from "@/i18n/config";
 
 /**
@@ -10,6 +11,11 @@ import { DEFAULT_LOCALE } from "@/i18n/config";
  */
 export default function NotFound() {
   const { ui } = getContent(DEFAULT_LOCALE);
+  // The puzzle comes from Sendoku, so the page wears Sendoku's colour.
+  const accent = PROJECTS.find((p) => p.id === "sendoku")?.accent;
+  const tint = accent
+    ? `body{--accent-c:${accent.light}}html.dark body{--accent-c:${accent.dark}}`
+    : null;
 
   return (
     <html lang={DEFAULT_LOCALE} suppressHydrationWarning>
@@ -21,15 +27,32 @@ export default function NotFound() {
         />
       </head>
       <body className="flex min-h-dvh flex-col font-sans antialiased">
-        <main className="mx-auto flex max-w-5xl flex-1 flex-col items-center justify-center gap-4 px-4 py-24 text-center">
+        {tint && <style>{tint}</style>}
+        <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-4 py-16 sm:px-6">
           <p className="font-mono text-sm text-muted">404</p>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
             {ui.notFound.title}
           </h1>
-          <p className="text-body">{ui.notFound.body}</p>
-          <Link href="/" className="btn-primary mt-2">
-            {ui.notFound.action}
-          </Link>
+          <p className="mt-2 text-body">
+            {ui.notFound.body} {ui.notFound.puzzleIntro}
+          </p>
+          <div className="mt-8">
+            <Sudoku404
+              labels={{
+                hint: ui.notFound.hint,
+                doIt: ui.notFound.doIt,
+                erase: ui.notFound.erase,
+                hintSingle: ui.notFound.hintSingle,
+                hintWrong: ui.notFound.hintWrong,
+                hintNone: ui.notFound.hintNone,
+                solved: ui.notFound.solved,
+                solvedAction: ui.notFound.solvedAction,
+                action: ui.notFound.action,
+                boardLabel: ui.notFound.boardLabel,
+                cellLabel: ui.notFound.cellLabel,
+              }}
+            />
+          </div>
         </main>
       </body>
     </html>

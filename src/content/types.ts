@@ -48,6 +48,9 @@ export interface UiCopy {
     home: string;
     projects: string;
     experience: string;
+    /** The phone menu button and the drawer it opens. */
+    menu: string;
+    close: string;
   };
   social: {
     github: string;
@@ -57,6 +60,12 @@ export interface UiCopy {
   };
   theme: {
     toggle: string;
+  };
+  /** States of the recording pill that dictates the tagline on first visit. */
+  dictation: {
+    recording: string;
+    transcribing: string;
+    done: string;
   };
   language: {
     /** Accessible name for the language switcher itself. */
@@ -115,6 +124,20 @@ export interface UiCopy {
     title: string;
     body: string;
     action: string;
+    /** The four by four puzzle that stands in for a blank page. */
+    puzzleIntro: string;
+    hint: string;
+    doIt: string;
+    erase: string;
+    /** Uses the {{digit}} placeholder. */
+    hintSingle: string;
+    hintWrong: string;
+    hintNone: string;
+    solved: string;
+    solvedAction: string;
+    boardLabel: string;
+    /** Uses the {{row}} and {{col}} placeholders. */
+    cellLabel: string;
   };
 }
 

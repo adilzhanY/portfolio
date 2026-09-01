@@ -153,6 +153,47 @@ html.dark .theme-toggle .icon-moon {
   transform: scale(0.95);
 }
 
+/* Case study actions: the live site in the product's colour, the repo as a
+   quiet outline. Both share the primary button's shape, a size up, and go
+   full width on phones so the thumb cannot miss. */
+.btn-accent,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    opacity 150ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+.btn-accent {
+  background-color: var(--accent-c);
+  color: var(--surface);
+}
+.btn-accent:hover {
+  opacity: 0.88;
+}
+.btn-secondary {
+  border: 1px solid color-mix(in srgb, var(--muted-c) 50%, transparent);
+  color: var(--body-c);
+}
+.btn-secondary:hover {
+  border-color: var(--ink);
+  background-color: var(--chip-c);
+  color: var(--ink);
+}
+.btn-accent:active,
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+
 /* Brand wordmark cursor */
 @keyframes brand-blink {
   50% { opacity: 0; }
@@ -252,4 +293,862 @@ html {
    letting them set the width of the column. */
 :where(p, h1, h2, h3, h4, li, dd, dt, figcaption, td, th) {
   overflow-wrap: break-word;
+}
+
+/* ---------- duotone avatar ----------
+   The photo prints in the accent colour: a coloured box behind it and the
+   image blended in luminosity. Hover brings the real colours back. Touch
+   screens have no hover, so they get the photo as it is. */
+.avatar-duotone {
+  display: block;
+  overflow: hidden;
+  border-radius: 9999px;
+  border: 1px solid var(--faint-c);
+  background-color: var(--accent-c);
+}
+.avatar-duotone img {
+  display: block;
+  transition: filter 400ms ease;
+}
+@media (hover: hover) {
+  .avatar-duotone img {
+    mix-blend-mode: luminosity;
+    filter: contrast(1.08);
+  }
+  .avatar-duotone:hover img {
+    mix-blend-mode: normal;
+    filter: none;
+  }
+}
+
+/* The small copy beside the wordmark. It slides open from zero width so the
+   brand shifts right by exactly the avatar, instead of jumping. */
+.nav-avatar {
+  display: block;
+  height: 1.5rem;
+  width: 1.5rem;
+  max-width: 0;
+  margin-right: 0;
+  border-radius: 9999px;
+  object-fit: cover;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    max-width 320ms cubic-bezier(0.2, 0, 0, 1),
+    margin-right 320ms cubic-bezier(0.2, 0, 0, 1),
+    opacity 220ms ease,
+    transform 320ms cubic-bezier(0.2, 0, 0, 1);
+}
+.nav-avatar.is-shown {
+  max-width: 1.5rem;
+  margin-right: 0.55rem;
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-avatar,
+  .avatar-duotone img {
+    transition: none;
+  }
+}
+
+/* ---------- dictated tagline ----------
+   html.dictate is set before paint for the one visit per session that gets
+   the animation, and removed by the component when it has played. */
+.dictation-text {
+  /* clip-path needs a box to clip; an inline-block still wraps like text. */
+  display: inline-block;
+  max-width: 100%;
+}
+html.dictate .dictation-text {
+  clip-path: inset(0 100% 0 0);
+}
+html.dictate .dictation-text.is-typing {
+  animation: dictation-type 900ms steps(var(--dictation-steps, 30), end) forwards;
+}
+@keyframes dictation-type {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 -2% 0 0);
+  }
+}
+.dictation-pill {
+  position: absolute;
+  top: 0.32em;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--faint-c);
+  background-color: var(--chip-c);
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--body-c);
+  white-space: nowrap;
+  animation: dictation-pop 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+h2[data-phase="done"] .dictation-pill {
+  animation: dictation-fade 900ms ease forwards;
+}
+@keyframes dictation-pop {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+}
+@keyframes dictation-fade {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.dictation-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: #ef4444;
+  animation: dictation-pulse 1s ease-in-out infinite;
+}
+@keyframes dictation-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+.dictation-bars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 0.9rem;
+}
+.dictation-bars i {
+  display: block;
+  width: 2px;
+  height: 30%;
+  border-radius: 1px;
+  background-color: var(--ink);
+  animation: dictation-wave 0.9s ease-in-out infinite;
+}
+.dictation-bars i:nth-child(2n) {
+  animation-delay: 0.15s;
+}
+.dictation-bars i:nth-child(3n) {
+  animation-delay: 0.3s;
+}
+.dictation-bars i:nth-child(5n) {
+  animation-delay: 0.45s;
+}
+@keyframes dictation-wave {
+  50% {
+    height: 100%;
+  }
+}
+.dictation-spin {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 9999px;
+  border: 2px solid var(--faint-c);
+  border-top-color: var(--ink);
+  animation: dictation-spin 0.8s linear infinite;
+}
+@keyframes dictation-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.dictation-check {
+  color: #15803d;
+  font-weight: 700;
+}
+html.dark .dictation-check {
+  color: #4ade80;
+}
+
+/* ---------- case study colour wash ----------
+   A faint field of the product's colour at the top of the page. No ancestor
+   is positioned, so it anchors to the document itself and starts at the very
+   top, behind the floating nav, rather than where the content begins. It
+   paints above the page background and below everything else. */
+.project-wash {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: -1;
+  height: calc(14rem + var(--nav-top) * 2 + var(--nav-h));
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--accent-c) 12%, transparent),
+    transparent
+  );
+}
+
+/* ---------- 404 sudoku ---------- */
+.sudoku {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+@media (max-width: 520px) {
+  .sudoku {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+.sudoku-board {
+  --cell: 3.4rem;
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 5px;
+  padding: 3px;
+  border-radius: 0.75rem;
+  background-color: var(--faint-c);
+  border: 1px solid var(--faint-c);
+}
+.sudoku-box {
+  display: grid;
+  grid-template-columns: repeat(2, var(--cell));
+  grid-template-rows: repeat(2, var(--cell));
+  gap: 2px;
+}
+@media (max-width: 380px) {
+  .sudoku-board {
+    --cell: 3rem;
+  }
+}
+.sudoku-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0.3rem;
+  background-color: var(--surface);
+  color: var(--ink);
+  font-size: 1.5rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.sudoku-cell:focus-visible {
+  outline: 2px solid var(--accent-c);
+  outline-offset: -2px;
+}
+.sudoku-cell.is-given {
+  font-weight: 700;
+}
+.sudoku-cell.is-related {
+  background-color: var(--chip-c);
+}
+.sudoku-cell.is-reason {
+  background-color: color-mix(in srgb, var(--accent-c) 18%, var(--surface));
+}
+.sudoku-cell.is-selected,
+.sudoku-cell.is-target {
+  background-color: color-mix(in srgb, var(--accent-c) 16%, var(--surface));
+  box-shadow: inset 0 0 0 2px var(--accent-c);
+}
+.sudoku-cell.is-wrong {
+  color: #dc2626;
+}
+html.dark .sudoku-cell.is-wrong {
+  color: #f87171;
+}
+.sudoku-cell:disabled {
+  cursor: default;
+}
+.sudoku-side {
+  min-width: 0;
+}
+.sudoku-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.sudoku-key {
+  min-width: 2.6rem;
+  height: 2.6rem;
+  padding: 0 0.8rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--faint-c);
+  background-color: var(--chip-c);
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    transform 120ms ease;
+}
+.sudoku-key.is-erase {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--body-c);
+}
+.sudoku-key:hover:not(:disabled) {
+  border-color: var(--accent-c);
+}
+.sudoku-key:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.sudoku-key:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.sudoku-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.sudoku-hint {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--accent-c);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.sudoku-hint:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.sudoku-hint-text {
+  margin-top: 1rem;
+  font-size: 0.9375rem;
+  color: var(--body-c);
+}
+
+/* ---------- logo loop ----------
+   The reactbits LogoLoop marquee, horizontal only. The track is moved by JS;
+   these rules only lay the items out and fade the edges into the page. */
+.logoloop {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  --logoloop-gap: 32px;
+  --logoloop-logoHeight: 28px;
+}
+.logoloop--scale-hover {
+  padding-top: calc(var(--logoloop-logoHeight) * 0.1);
+  padding-bottom: calc(var(--logoloop-logoHeight) * 0.1);
+}
+.logoloop__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  user-select: none;
+}
+.logoloop__list {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.logoloop__item {
+  flex: 0 0 auto;
+  margin-right: var(--logoloop-gap);
+  font-size: var(--logoloop-logoHeight);
+  line-height: 1;
+}
+.logoloop__node {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.logoloop--scale-hover .logoloop__item:hover .logoloop__node {
+  transform: scale(1.2);
+}
+.logoloop__link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: opacity 200ms ease;
+}
+.logoloop__link:hover {
+  opacity: 0.8;
+}
+.logoloop__link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.logoloop--fade::before,
+.logoloop--fade::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: clamp(24px, 8%, 120px);
+  pointer-events: none;
+}
+.logoloop--fade::before {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    var(--logoloop-fadeColor, var(--surface)),
+    transparent
+  );
+}
+.logoloop--fade::after {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    var(--logoloop-fadeColor, var(--surface)),
+    transparent
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .logoloop__track {
+    transform: translate3d(0, 0, 0) !important;
+  }
+  .logoloop__node {
+    transition: none !important;
+  }
+}
+
+/* The skills strip: brand icon in brand colour, name in mono beside it. */
+.skills-loop__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+  color: var(--body-c);
+}
+.skills-loop__icon {
+  width: var(--logoloop-logoHeight);
+  height: var(--logoloop-logoHeight);
+  flex-shrink: 0;
+}
+.skills-loop__name {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ---------- floating liquid glass nav ----------
+   Layers, bottom to top: the page behind (refracted, blurred, saturated),
+   a tint that guarantees text contrast, a gradient rim that reads as the
+   polished edge, and a soft sheen at the top left where the light comes
+   from. Nothing inside the pill uses the material again. */
+:root {
+  --nav-top: 0.75rem;
+  --nav-h: 3.25rem;
+}
+@media (min-width: 640px) {
+  :root {
+    --nav-top: 1rem;
+    --nav-h: 3.5rem;
+  }
+}
+/* The pills float over the page, so the page starts below them. */
+body.has-floating-nav {
+  padding-top: calc(var(--nav-top) * 2 + var(--nav-h));
+}
+@media print {
+  body.has-floating-nav {
+    padding: 0;
+  }
+}
+
+.glass {
+  --glass-tint: rgb(255 255 255 / 0.62);
+  --glass-tint-strong: rgb(255 255 255 / 0.78);
+  --glass-rim: rgb(255 255 255 / 0.95);
+  --glass-rim-far: rgb(255 255 255 / 0.35);
+  --glass-edge: rgb(0 0 0 / 0.06);
+  --glass-sheen: rgb(255 255 255 / 0.45);
+  --glass-shadow: rgb(0 0 0 / 0.12);
+  position: relative;
+  isolation: isolate;
+  border-radius: 9999px;
+  background-color: var(--glass-tint);
+  -webkit-backdrop-filter: blur(16px) saturate(1.7);
+  backdrop-filter: blur(16px) saturate(1.7);
+  box-shadow:
+    0 0 0 0.5px var(--glass-edge),
+    0 1px 2px rgb(0 0 0 / 0.04),
+    0 12px 36px -10px var(--glass-shadow),
+    inset 0 1px 0 var(--glass-rim),
+    inset 0 -0.5px 0 rgb(255 255 255 / 0.3);
+  transition:
+    background-color 350ms ease,
+    box-shadow 350ms ease,
+    padding 350ms cubic-bezier(0.2, 0, 0, 1);
+}
+html.dark .glass {
+  --glass-tint: rgb(15 17 21 / 0.58);
+  --glass-tint-strong: rgb(15 17 21 / 0.76);
+  --glass-rim: rgb(255 255 255 / 0.22);
+  --glass-rim-far: rgb(255 255 255 / 0.06);
+  --glass-edge: rgb(255 255 255 / 0.08);
+  --glass-sheen: rgb(255 255 255 / 0.1);
+  --glass-shadow: rgb(0 0 0 / 0.6);
+}
+/* Refraction, only where the engine honours SVG filters in backdrop-filter. */
+html.glass-refract .glass {
+  -webkit-backdrop-filter: url(#liquid-glass) blur(12px) saturate(1.7);
+  backdrop-filter: url(#liquid-glass) blur(12px) saturate(1.7);
+}
+/* The polished rim: a 1px gradient ring, bright toward the light. */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    120deg,
+    var(--glass-rim) 0%,
+    var(--glass-rim-far) 30%,
+    var(--glass-rim-far) 70%,
+    var(--glass-rim) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+/* The sheen: light falling on the top left of the curved surface. */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      110% 90% at 18% -20%,
+      var(--glass-sheen),
+      transparent 60%
+    ),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.08), transparent 45%);
+  pointer-events: none;
+}
+
+.glass-nav {
+  min-height: var(--nav-h);
+  padding: 0.45rem 0.55rem 0.45rem 0.95rem;
+}
+header[data-scrolled] .glass-nav {
+  background-color: var(--glass-tint-strong);
+  box-shadow:
+    0 0 0 0.5px var(--glass-edge),
+    0 2px 4px rgb(0 0 0 / 0.05),
+    0 18px 44px -12px var(--glass-shadow),
+    inset 0 1px 0 var(--glass-rim),
+    inset 0 -0.5px 0 rgb(255 255 255 / 0.3);
+}
+.glass-brand {
+  color: var(--ink);
+  border-radius: 9999px;
+}
+.glass-links {
+  gap: 0.15rem;
+}
+.glass-link {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  height: 2.1rem;
+  padding: 0 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  color: var(--muted-c);
+  transition:
+    color 150ms ease,
+    transform 120ms ease;
+}
+.glass-link:hover {
+  color: var(--ink);
+}
+.glass-link:active {
+  transform: scale(0.96);
+}
+.glass-link.is-active {
+  color: var(--ink);
+  font-weight: 500;
+}
+/* A flat tint, not glass on glass. It slides between links. */
+.glass-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2.1rem;
+  border-radius: 9999px;
+  background-color: color-mix(in srgb, var(--ink) 9%, transparent);
+  box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.5);
+  transition:
+    transform 380ms cubic-bezier(0.2, 0, 0, 1),
+    width 380ms cubic-bezier(0.2, 0, 0, 1);
+}
+html.dark .glass-marker {
+  background-color: color-mix(in srgb, var(--ink) 12%, transparent);
+  box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.12);
+}
+
+/* ---- phone menu ---- */
+.glass-burger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-left: -0.35rem;
+  border: 0;
+  border-radius: 9999px;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+}
+.glass-burger span {
+  display: block;
+  width: 1rem;
+  height: 1.5px;
+  margin: 0 auto;
+  border-radius: 1px;
+  background-color: currentColor;
+  transition:
+    transform 320ms cubic-bezier(0.2, 0, 0, 1),
+    opacity 200ms ease;
+}
+/* Three lines become a cross. */
+.glass-burger.is-open span:nth-child(1) {
+  transform: translateY(5.5px) rotate(45deg);
+}
+.glass-burger.is-open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0.4);
+}
+.glass-burger.is-open span:nth-child(3) {
+  transform: translateY(-5.5px) rotate(-45deg);
+}
+
+.glass-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  background-color: rgb(0 0 0 / 0.28);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 320ms ease,
+    visibility 0s linear 320ms;
+}
+html.dark .glass-scrim {
+  background-color: rgb(0 0 0 / 0.5);
+}
+.glass-scrim.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 320ms ease;
+}
+
+/* The drawer is a floating card, not a wall: it keeps the page's inset on
+   every side, and its corners share the pill's radius family. */
+.glass-drawer {
+  position: fixed;
+  top: 0.75rem;
+  bottom: max(0.75rem, env(safe-area-inset-bottom));
+  left: 0.75rem;
+  z-index: 46;
+  display: flex;
+  flex-direction: column;
+  width: min(19rem, calc(100vw - 4.5rem));
+  padding: 0.85rem 0.85rem 1.1rem;
+  border-radius: 1.75rem;
+  background-color: var(--glass-tint-strong);
+  transform: translateX(calc(-100% - 1.5rem));
+  visibility: hidden;
+  transition:
+    transform 420ms cubic-bezier(0.2, 0, 0, 1),
+    visibility 0s linear 420ms;
+}
+.glass-drawer.is-open {
+  transform: none;
+  visibility: visible;
+  transition: transform 420ms cubic-bezier(0.2, 0, 0, 1);
+}
+.glass-drawer__head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.25rem 0.25rem 0.9rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+}
+.glass-drawer__avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+.glass-drawer__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.glass-drawer__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 9999px;
+  background: none;
+  color: var(--muted-c);
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.glass-drawer__close:hover {
+  color: var(--ink);
+  background-color: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+.glass-drawer__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-top: 0.9rem;
+}
+.glass-drawer__link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--body-c);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    opacity 300ms ease,
+    transform 380ms cubic-bezier(0.2, 0, 0, 1);
+}
+/* The rows follow the drawer in, one a beat after the other. */
+.glass-drawer.is-open .glass-drawer__link {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s, 0s, calc(90ms + var(--i) * 45ms), calc(90ms + var(--i) * 45ms);
+}
+.glass-drawer__link:hover {
+  color: var(--ink);
+  background-color: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+.glass-drawer__link:active {
+  transform: scale(0.98);
+}
+.glass-drawer__link.is-active {
+  color: var(--accent-c);
+  background-color: color-mix(in srgb, var(--accent-c) 12%, transparent);
+}
+.glass-drawer__link:focus-visible,
+.glass-drawer__close:focus-visible,
+.glass-burger:focus-visible {
+  outline: 2px solid var(--accent-c);
+  outline-offset: 2px;
+}
+
+/* Focus rings that follow the pill shape. */
+.glass-link:focus-visible,
+.glass-brand:focus-visible {
+  outline: 2px solid var(--accent-c);
+  outline-offset: 2px;
+}
+
+/* Someone who asked for less transparency or more contrast gets a solid bar. */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass,
+  html.glass-refract .glass,
+  header[data-scrolled] .glass-nav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: var(--surface);
+    box-shadow: 0 0 0 1px var(--faint-c);
+  }
+  .glass::after {
+    display: none;
+  }
+}
+/* Engines without backdrop-filter at all: the tint alone must carry it. */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass {
+    background-color: color-mix(in srgb, var(--surface) 94%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glass,
+  .glass-link,
+  .glass-marker,
+  .glass-burger span,
+  .glass-scrim,
+  .glass-drawer,
+  .glass-drawer__link {
+    transition: none;
+  }
+  .glass-drawer__link {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* These rules are unlayered, so they would beat Tailwind's `sm:hidden`
+   utility. Hide the phone menu parts on wide screens here instead. */
+@media (min-width: 640px) {
+  .glass-burger,
+  .glass-scrim,
+  .glass-drawer {
+    display: none;
+  }
+}
+
+/* ---------- page backdrop ----------
+   The shader canvas sits behind everything. Its strength is set here, not in
+   the shader, so the page controls how much it competes with the type: the
+   dark theme can take more of it than the light one. The colour wash on a
+   case study paints above it, and content above both. */
+.page-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.2;
+  transition: opacity 600ms ease;
+}
+html.dark .page-backdrop {
+  opacity: 0.34;
+}
+@media (prefers-reduced-transparency: reduce), print {
+  .page-backdrop {
+    display: none;
+  }
 }

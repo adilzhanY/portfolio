@@ -245,6 +245,8 @@ export const content: Content = {
       home: "Home",
       projects: "Projects",
       experience: "Experience",
+      menu: "Menu",
+      close: "Close menu",
     },
     social: {
       github: "GitHub",
@@ -253,6 +255,7 @@ export const content: Content = {
       email: "Email",
     },
     theme: { toggle: "Toggle dark mode" },
+    dictation: { recording: "Recording", transcribing: "Transcribing", done: "Done" },
     language: { label: "Language" },
     home: {
       avatarTitle: "Yes, that's me",
@@ -314,6 +317,19 @@ export const content: Content = {
       title: "Page not found",
       body: "That page does not exist, or it moved.",
       action: "Back to the home page",
+      puzzleIntro:
+        "Have a four by four instead. Every row, column, and box holds 1 to 4 exactly once.",
+      hint: "Hint",
+      doIt: "Do it",
+      erase: "Erase",
+      hintSingle:
+        "Only a {{digit}} fits here. The other digits are already in its row, column, or box.",
+      hintWrong: "One of the digits is wrong. It is marked.",
+      hintNone: "Nothing left to place.",
+      solved: "Solved. That was the easy one.",
+      solvedAction: "Now go home",
+      boardLabel: "Four by four sudoku",
+      cellLabel: "Row {{row}}, column {{col}}",
     },
   },
 

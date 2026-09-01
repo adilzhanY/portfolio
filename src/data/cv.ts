@@ -42,6 +42,8 @@ export interface Project {
   stack: string[];
   link: string;
   live?: string;
+  /** The product's own colour, one value per theme. */
+  accent?: { light: string; dark: string };
   image?: string;
   imageAlt?: string;
   imageW?: number;
@@ -107,6 +109,7 @@ export function getCV(locale: Locale): CV {
       stack: [...project.stack],
       link: project.link,
       live: project.live,
+      accent: project.accent,
       image: project.image,
       imageAlt: text.imageAlt,
       imageW: project.imageW,

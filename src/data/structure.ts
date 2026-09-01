@@ -25,6 +25,12 @@ export interface ProjectStructure {
   link: string;
   /** Live deployment, if one exists. */
   live?: string;
+  /**
+   * The product's own colour, as the case study's accent. One value per
+   * theme, each checked for 4.5:1 against that theme's surface, because the
+   * metric line is small text.
+   */
+  accent?: { light: string; dark: string };
   /** Small screenshot for the index. Omit for a text-only row. */
   image?: string;
   imageW?: number;
@@ -106,6 +112,7 @@ export type ExperienceId = (typeof EXPERIENCE_ORDER)[number];
 export const PROJECTS: ProjectStructure[] = [
   {
     id: "whale-abyss",
+    accent: { light: "#1f4fd1", dark: "#6b93ff" },
     title: "Whale Abyss",
     year: "2026",
     stack: [
@@ -131,6 +138,7 @@ export const PROJECTS: ProjectStructure[] = [
   },
   {
     id: "torq",
+    accent: { light: "#5a7f00", dark: "#c6f135" },
     title: "Torq",
     year: "2026",
     stack: ["React Native", "Expo", "TypeScript", "Supabase", "Vitest"],
@@ -149,6 +157,7 @@ export const PROJECTS: ProjectStructure[] = [
   },
   {
     id: "sendoku",
+    accent: { light: "#0f766e", dark: "#3ee8c8" },
     title: "Sendoku",
     year: "2026",
     stack: ["Kotlin", "Jetpack Compose", "Room", "Material 3", "Gradle"],
@@ -167,6 +176,7 @@ export const PROJECTS: ProjectStructure[] = [
   },
   {
     id: "openhyprwhisper",
+    accent: { light: "#4f5fe8", dark: "#b9c3ff" },
     title: "OpenHyprWhisper",
     year: "2026",
     stack: ["whisper.cpp", "CUDA", "Python", "Quickshell", "llama.cpp"],
@@ -187,6 +197,7 @@ export const PROJECTS: ProjectStructure[] = [
   },
   {
     id: "grit",
+    accent: { light: "#c2410c", dark: "#fb923c" },
     title: "Grit",
     year: "2026",
     stack: [
