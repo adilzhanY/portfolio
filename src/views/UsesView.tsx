@@ -4,7 +4,7 @@ import { USES } from "@/data/uses";
 import type { Locale } from "@/i18n/config";
 
 const groupHeading =
-  "mt-10 border-t border-faint pt-5 text-[0.8rem] font-semibold tracking-[0.09em] text-muted uppercase";
+  "mt-10 border-t border-faint pt-5 text-[0.8rem] font-semibold text-muted";
 
 export default function UsesView({ locale }: { locale: Locale }) {
   const { uses } = getContent(locale);

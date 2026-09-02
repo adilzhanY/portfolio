@@ -26,7 +26,7 @@ function ContactCard({
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[0.6875rem] font-semibold tracking-[0.09em] text-muted uppercase">
+        <span className="block text-[0.6875rem] font-semibold text-muted">
           {label}
         </span>
         <span className="block truncate font-medium">{value}</span>

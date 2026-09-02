@@ -15,7 +15,7 @@ import StructuredData from "@/components/StructuredData";
 import { personSchema } from "@/i18n/schema";
 
 const sectionHeading =
-  "mt-11 border-t border-faint pt-5 text-[0.8rem] font-semibold tracking-[0.09em] text-muted uppercase";
+  "mt-11 border-t border-faint pt-5 text-[0.8rem] font-semibold text-muted";
 
 export default function HomeView({ locale }: { locale: Locale }) {
   const { name, tagline, intro, contact, skills, languages, projects, experience } =

@@ -70,7 +70,6 @@ export const USES: UseGroup[] = [
     items: [
       { id: "brave", name: "Brave" },
       { id: "espanso", name: "espanso", url: "https://espanso.org" },
-      { id: "onepassword", name: "1Password" },
       {
         id: "font",
         name: "JetBrainsMono Nerd Font",

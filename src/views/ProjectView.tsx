@@ -8,7 +8,7 @@ import SequenceReplay from "@/components/SequenceReplay";
 import { projectSchema } from "@/i18n/schema";
 
 const subHeading =
-  "mt-8 text-[0.8rem] font-semibold tracking-[0.09em] text-muted uppercase";
+  "mt-8 text-[0.8rem] font-semibold text-muted";
 
 export default function ProjectView({
   locale,
