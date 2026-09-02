@@ -111,6 +111,26 @@ export type ExperienceId = (typeof EXPERIENCE_ORDER)[number];
 
 export const PROJECTS: ProjectStructure[] = [
   {
+    id: "berlin-walk",
+    accent: { light: "#8a6a1f", dark: "#e3c476" },
+    title: "Berlin Walk",
+    year: "2026",
+    stack: ["WebGL2", "GLSL", "JavaScript", "Web Audio", "OpenStreetMap", "Node.js"],
+    link: "https://github.com/adilzhanY/berlin-walk",
+    live: "https://adilzhany.github.io/berlin-walk/",
+    image: "/projects/berlin-walk-preview.webp",
+    imageW: 1200,
+    imageH: 646,
+    gallery: [
+      { id: "flight", src: "/projects/gallery/berlin-walk-flight.webp", w: 1280, h: 720 },
+      { id: "gate", src: "/projects/gallery/berlin-walk-gate.webp", w: 1280, h: 720 },
+      { id: "linden", src: "/projects/gallery/berlin-walk-linden.webp", w: 1280, h: 720 },
+      { id: "memorial", src: "/projects/gallery/berlin-walk-memorial.webp", w: 1280, h: 720 },
+      { id: "tower", src: "/projects/gallery/berlin-walk-tower.webp", w: 1280, h: 720 },
+      { id: "night", src: "/projects/gallery/berlin-walk-night.webp", w: 1280, h: 720 },
+    ],
+  },
+  {
     id: "whale-abyss",
     accent: { light: "#1f4fd1", dark: "#6b93ff" },
     title: "Whale Abyss",

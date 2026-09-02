@@ -23,6 +23,40 @@ export const content: Content = {
   },
 
   projects: {
+    "berlin-walk": {
+      summary:
+        "Eine begehbare und befliegbare 3D-Rekonstruktion der Berliner Mitte, die im Browser über einen einzigen Link läuft. Reines WebGL2, echte OpenStreetMap-Daten, keine Engine und keine Bibliothek. Ich habe einen Prompt geschrieben, und Claude Fable 5.1 hat alles in vier Stunden gebaut, während ich die Zahlen beobachtet habe.",
+      metric: "7.895 Zeilen, 4 h 08 min, 27,49 $ an Tokens, keine Zeile von Hand",
+      postmortem: [
+        "Der Boden flackerte: Straßen schimmerten in jeder Entfernung durch die Gehwege. Das Vertexformat speicherte Positionen mit 1/32 m, um Bytes zu sparen, und die sechs Bodenschichten, die nur 0 bis 6 cm auseinanderliegen, fielen auf zwei Höhen zusammen. Der Agent fand das, indem er das von ihm selbst entworfene Binärbündel las, nicht indem er auf das Bild starrte, und stellte 531 der 532 Kacheln auf ein Raster von 1/128 m um. Die eine Kachel mit dem 368 m hohen Fernsehturm bleibt grob, weil sie den Wertebereich braucht.",
+        "Der Fernsehturm war vom Brandenburger Tor aus unsichtbar, und genau diese Aufnahme hatte der Prompt verlangt. An der Geometrie lag es nicht: die Kachel war geladen, im Sichtkegel und gezeichnet. Ein Blick in die Pixel zeigte, dass sonnenbeschienener Beton in 2 km Entfernung exakt die Helligkeit des Horizonthimmels dahinter hatte. Die Lösung war die Beleuchtung, eine schwächere Sonne, ein hellerer Himmel und dunklerer Beton, und seitdem steht der Turm am Ende von Unter den Linden so, wie man ihn von Fotos kennt.",
+        "Was ich mitnehme: Wenn der Agent nicht prüfen konnte, baute er sich einen Weg zum Prüfen. Headless Chromium hat von einer Seite mit Renderschleife nie einen Screenshot geliefert, also schrieb er einen Client für das DevTools-Protokoll und machte dreißig. Das Debugging war mehr wert als der Code.",
+      ],
+      imageAlt: "Berlin Walk, das Brandenburger Tor vom Pariser Platz",
+      problem:
+        "Kann ein Coding-Agent eine echte 3D-Stadt von Grund auf bauen, ohne Engine, aus einem Prompt und ohne Rückfragen? Ich wollte eine gemessene Antwort, keine Demo: Kartenausschnitt, Regeln und Ergebnisse standen vorher fest, und jeder Token, jeder Dollar und jede Minute wurde gezählt.",
+      solution: [
+        "Die Datenpipeline lädt den Overpass-Auszug für 2,7 mal 1,9 km Mitte, parst das XML mit einem eigenen Tokenizer und extrahiert Gebäude mit Höhen und Dachformen, Straßen mit Breiten und Belägen, die Spree, Parks, Baumreihen, Gleise und Bahnhöfe. Jedes Polygon wird mit eigenem Ear Clipping samt Löchern trianguliert, extrudiert und in 532 Kacheln zu 100 m geschnitten, mit einem 16-Byte-Vertexformat, einer Kollisionsschicht und den Bäumen. Tor, Reichstag, Dom, Fernsehturm und die 2711 Stelen des Denkmals werden aus ihren kartierten Umrissen erzeugt.",
+        "Die Laufzeit ist reines WebGL2: Kachelstreaming mit Frustum Culling, zwei kaskadierte Schattenkarten, eine Sonne aus dem echten Datum und Breitengrad, ein prozeduraler Himmel und ein Materialshader, der Fassaden mit Fensterrastern und nachts beleuchteten Fenstern, Fahrbahnmarkierungen, Kopfsteinpflaster, Gras und Wasser mit Himmelsspiegelung zeichnet, alles aus einem Zufallswert pro Gebäude und ohne Texturen. Darüber liegen HDR, Bloom, Tone Mapping und FXAA, mit drei Qualitätsstufen nach gemessener Frametime.",
+        "Die Spielschicht hat einen Kapsel-Charaktercontroller, der 60 Mal pro Sekunde gegen die Gebäudewände geprüft wird, einen Flugmodus, eine Drohnenfahrt als Intro, Entdeckungskarten für elf Wahrzeichen, eine Minimap aus denselben Straßendaten, einen Fotomodus, teilbare Links und eine auf der Web Audio API synthetisierte Kulisse: Verkehr, Wasser, Vögel, U-Bahn-Grollen und Schritte, die sich mit dem Belag ändern.",
+      ],
+      achievements: [
+        "Live unter adilzhany.github.io/berlin-walk, 10,5 MB gesamt, 4,5 MB gzip, nur statische Dateien",
+        "308.100 Dreiecke aus echten OpenStreetMap-Daten, 5.323 Gebäude, 10.757 Bäume, 47.018 Kollisionskanten",
+        "2,3 ms GPU-Zeit pro Frame in 1080p auf einer RTX 5070, 60 fps mit Vsync",
+        "Ein Prompt, 137 API-Aufrufe, 34,6 Millionen Tokens, 27,49 $, 4 Stunden und 8 Minuten bis zur öffentlichen URL",
+        "Der Agent hat sich selbst geprüft: 30 Headless-Screenshots, geskriptete Kollisionstests, Unit-Tests für die Pipeline",
+      ],
+      gallery: {
+        flight: { alt: "Flug über Unter den Linden Richtung Fernsehturm", caption: "Flugmodus über Unter den Linden" },
+        gate: { alt: "Das Brandenburger Tor vom Pariser Platz aus", caption: "Startpunkt, Pariser Platz" },
+        linden: { alt: "Unter den Linden mit seinen Linden", caption: "Unter den Linden" },
+        memorial: { alt: "Zwischen den Stelen des Holocaust-Mahnmals", caption: "Im Mahnmal, 2711 Stelen" },
+        tower: { alt: "Der Fernsehturm von der Karl-Liebknecht-Straße", caption: "Der Fernsehturm" },
+        night: { alt: "Pariser Platz bei Nacht mit beleuchteten Fenstern", caption: "Nacht, jedes Fenster nach eigener Regel beleuchtet" },
+      },
+    },
+
     "whale-abyss": {
       summary:
         "E-Commerce-Plattform für Genshin-Impact-Boosting, allein gebaut und veröffentlicht. Bezahlte Bestellungen laufen direkt in einen Telegram-Bot, Zahlungen laufen vollständig durch, CI/CD deployt bei jedem Push.",

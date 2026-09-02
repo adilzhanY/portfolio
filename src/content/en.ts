@@ -23,6 +23,40 @@ export const content: Content = {
   },
 
   projects: {
+    "berlin-walk": {
+      summary:
+        "A walkable, flyable 3D reconstruction of central Berlin that runs in the browser from a single link. Raw WebGL2, real OpenStreetMap data, no engine and no library. I wrote one prompt and Claude Fable 5.1 built all of it in four hours while I watched the numbers.",
+      metric: "7,895 lines, 4 h 08 min, $27.49 of tokens, zero human code",
+      postmortem: [
+        "The ground z-fought: roads flickered through pavements at every distance. The vertex format stored positions at 1/32 m to save bytes, and the six ground layers, which sit between 0 and 6 cm apart, collapsed onto two heights. The agent found it by reading the binary bundle it had designed, not by staring at the picture, and moved 531 of the 532 tiles to a 1/128 m grid. The one tile that holds the 368 m TV Tower stays coarse because it needs the range.",
+        "The TV Tower was invisible from the Brandenburg Gate, which is the one shot the prompt asked for. Nothing was wrong with the geometry: the tile was loaded, inside the frustum, and drawn. Zooming into the pixels showed sunlit concrete at 2 km had exactly the brightness of the horizon sky behind it. The fix was lighting, a dimmer sun, a brighter sky and darker concrete, and then the tower reads at the end of Unter den Linden the way it does in photographs.",
+        "What I take from it: when the agent could not verify, it built a way to verify. Headless Chromium never took a screenshot of a page with a render loop, so it wrote a DevTools protocol client and took thirty of them. The debugging was worth more than the code.",
+      ],
+      imageAlt: "Berlin Walk, the Brandenburg Gate from Pariser Platz",
+      problem:
+        "Could a coding agent build a real 3D city from scratch, with no engine to lean on, from one prompt and no questions? I wanted a measured answer, not a demo: the bounding box, the constraints and the deliverables were fixed in advance, and every token, dollar and minute was counted.",
+      solution: [
+        "The data pipeline fetches the Overpass extract for 2.7 by 1.9 km of Mitte, parses the XML with its own tokenizer, and extracts buildings with heights and roof shapes, roads with widths and surfaces, the Spree, parks, tree rows, rails and stations. Every polygon is triangulated by its own ear clipping with holes, extruded, and cut into 532 tiles of 100 m with a 16 byte vertex format, a collision layer and the trees. The Gate, the Reichstag, the Cathedral, the TV Tower and the 2711 stelae of the memorial are generated from their mapped outlines.",
+        "The runtime is raw WebGL2: a tile streamer with frustum culling, two cascaded shadow maps, a sun computed from the real date and latitude, a procedural sky, and one material shader that draws facades with window grids and lit windows at night, lane markings, cobblestones, grass and water with sky reflections, all from a per building seed and no textures. HDR, bloom, tone mapping and FXAA sit on top, with three quality tiers picked from the measured frame time.",
+        "The game layer has a capsule character controller swept against the building walls at 60 Hz, a flying mode, an intro drone shot, discovery cards for eleven landmarks, a minimap drawn from the same road data, photo mode, shareable links, and an ambience synthesised on the Web Audio API: traffic, water, birds, U-Bahn rumble and footsteps that change with the surface.",
+      ],
+      achievements: [
+        "Live at adilzhany.github.io/berlin-walk, 10.5 MB total, 4.5 MB gzipped, static files only",
+        "308,100 triangles from real OpenStreetMap data, 5,323 buildings, 10,757 trees, 47,018 collision edges",
+        "2.3 ms of GPU time per frame at 1080p on an RTX 5070, 60 fps vsync capped",
+        "One prompt, 137 API calls, 34.6 million tokens, $27.49, 4 hours and 8 minutes to the public URL",
+        "The agent verified itself: 30 headless screenshots, scripted collision tests, unit tests for the pipeline",
+      ],
+      gallery: {
+        flight: { alt: "Flying over Unter den Linden toward the TV Tower", caption: "Flying mode over Unter den Linden" },
+        gate: { alt: "The Brandenburg Gate seen from Pariser Platz", caption: "Spawn point, Pariser Platz" },
+        linden: { alt: "Unter den Linden with its lindens", caption: "Unter den Linden" },
+        memorial: { alt: "Between the stelae of the Holocaust Memorial", caption: "Inside the memorial, 2711 stelae" },
+        tower: { alt: "The Fernsehturm from Karl-Liebknecht-Strasse", caption: "The TV Tower" },
+        night: { alt: "Pariser Platz at night with lit windows", caption: "Night, windows lit per window" },
+      },
+    },
+
     "whale-abyss": {
       summary:
         "E-commerce platform for Genshin Impact boosting, built and launched alone. Paid orders flow straight into a Telegram bot, payments clear end to end, CI/CD deploys on every push.",
