@@ -1,0 +1,5 @@
+Contact: mailto:adilzhan1112@gmail.com
+Expires: 2027-09-04T00:00:00.000Z
+Preferred-Languages: en, ru, de
+Canonical: https://qantrr.com/.well-known/security.txt
+Policy: https://qantrr.com/

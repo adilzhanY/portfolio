@@ -74,7 +74,10 @@ export interface CV {
     email: string;
     github: string;
     linkedin: string;
+    xing: string;
     telegram: string;
+    reddit: string;
+    x: string;
     location: string;
   };
   skills: string[];

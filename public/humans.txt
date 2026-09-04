@@ -1,0 +1,14 @@
+/* TEAM */
+Developer: Adilzhan Yerzhan
+Site: https://qantrr.com
+Contact: adilzhan1112@gmail.com
+GitHub: https://github.com/adilzhanY
+Location: Potsdam, Germany
+
+/* SITE */
+Last update: 2026-09-04
+Languages: English, Russian, German
+Standards: HTML5, CSS3, TypeScript
+Components: Next.js, React, Tailwind CSS, react-pdf
+Hosting: Cloudflare Workers, static export
+Fonts: system stack

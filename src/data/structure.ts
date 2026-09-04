@@ -66,15 +66,28 @@ export const PROFILE = {
     email: "adilzhan1112@gmail.com",
     github: "https://github.com/adilzhanY",
     linkedin: "https://linkedin.com/in/adilzhanyerzhan",
+    xing: "https://www.xing.com/profile/Adilzhan_Yerzhan",
     telegram: "https://t.me/kowiqx",
+    reddit: "https://www.reddit.com/user/Fast_Pizza_1046/",
+    x: "https://x.com/woopleer",
     booking: "https://cal.com/adilzhan/15min",
   },
   /** Shown verbatim on the contact cards. */
   handles: {
     linkedin: "linkedin.com/in/adilzhanyerzhan",
+    xing: "xing.com/profile/Adilzhan_Yerzhan",
     telegram: "t.me/kowiqx",
     booking: "cal.com/adilzhan/15min",
   },
+} as const;
+
+/** A contact card a recruiter can save in one tap. */
+export const VCARD_FILE = "/adilzhan-yerzhan.vcf";
+
+/** The Now page: the products I am working on at the moment, by id. */
+export const NOW = {
+  updated: "2026-09-04",
+  projects: ["sendoku", "torq"],
 } as const;
 
 /** The resume PDF served for each language. */

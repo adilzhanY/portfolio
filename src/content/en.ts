@@ -285,7 +285,10 @@ export const content: Content = {
     social: {
       github: "GitHub",
       linkedin: "LinkedIn",
+      xing: "XING",
       telegram: "Telegram",
+      reddit: "Reddit",
+      x: "X",
       email: "Email",
     },
     theme: { toggle: "Toggle dark mode" },
@@ -302,6 +305,7 @@ export const content: Content = {
       sectionSkills: "Skills",
       sectionActivity: "GitHub Activity",
       sectionCertifications: "Certifications",
+      saveContact: "Save contact",
     },
     projects: {
       heading: "Projects",
@@ -395,6 +399,12 @@ export const content: Content = {
     },
   },
 
+  now: {
+    heading: "Now",
+    intro: "What I am working on at the moment, and where to find me. This page changes as the work does.",
+    updated: "Updated {{date}}",
+    building: "Building",
+  },
   meta: {
     siteTitle: "Adilzhan Yerzhan - Software Engineer",
     titleTemplate: "%s - Adilzhan Yerzhan",
@@ -412,5 +422,8 @@ export const content: Content = {
     usesTitle: "Uses",
     usesDescription:
       "The machine, desktop, editor and tools I work on every day: Arch Linux, Hyprland, Neovim, and two desktop tools I wrote myself.",
+    nowTitle: "Now",
+    nowDescription:
+      "What Adilzhan Yerzhan is working on right now: Sendoku and Torq, and open to work.",
   },
 };

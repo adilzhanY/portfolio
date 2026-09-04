@@ -318,7 +318,10 @@ export const content: Content = {
     social: {
       github: "GitHub",
       linkedin: "LinkedIn",
+      xing: "XING",
       telegram: "Telegram",
+      reddit: "Reddit",
+      x: "X",
       email: "Почта",
     },
     theme: { toggle: "Переключить тёмную тему" },
@@ -335,6 +338,7 @@ export const content: Content = {
       sectionSkills: "Навыки",
       sectionActivity: "Активность на GitHub",
       sectionCertifications: "Сертификаты",
+      saveContact: "Сохранить контакт",
     },
     projects: {
       heading: "Проекты",
@@ -428,6 +432,12 @@ export const content: Content = {
     },
   },
 
+  now: {
+    heading: "Сейчас",
+    intro: "Над чем я работаю прямо сейчас и где меня найти. Эта страница меняется вместе с работой.",
+    updated: "Обновлено {{date}}",
+    building: "В работе",
+  },
   meta: {
     siteTitle: "Адильжан Ержан - инженер-программист",
     titleTemplate: "%s - Адильжан Ержан",
@@ -445,5 +455,8 @@ export const content: Content = {
     usesTitle: "Инструменты",
     usesDescription:
       "Компьютер, рабочий стол, редактор и инструменты, с которыми я работаю каждый день: Arch Linux, Hyprland, Neovim и две десктопные программы, написанные мной.",
+    nowTitle: "Сейчас",
+    nowDescription:
+      "Над чем сейчас работает Адильжан Ержан: Sendoku и Torq, открыт к предложениям.",
   },
 };

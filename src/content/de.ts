@@ -318,7 +318,10 @@ export const content: Content = {
     social: {
       github: "GitHub",
       linkedin: "LinkedIn",
+      xing: "XING",
       telegram: "Telegram",
+      reddit: "Reddit",
+      x: "X",
       email: "E-Mail",
     },
     theme: { toggle: "Dunkles Design umschalten" },
@@ -335,6 +338,7 @@ export const content: Content = {
       sectionSkills: "Fähigkeiten",
       sectionActivity: "GitHub-Aktivität",
       sectionCertifications: "Zertifikate",
+      saveContact: "Kontakt speichern",
     },
     projects: {
       heading: "Projekte",
@@ -428,6 +432,12 @@ export const content: Content = {
     },
   },
 
+  now: {
+    heading: "Jetzt",
+    intro: "Woran ich gerade arbeite und wo man mich findet. Diese Seite ändert sich mit der Arbeit.",
+    updated: "Aktualisiert am {{date}}",
+    building: "In Arbeit",
+  },
   meta: {
     siteTitle: "Adilzhan Yerzhan - Software Engineer",
     titleTemplate: "%s - Adilzhan Yerzhan",
@@ -445,5 +455,8 @@ export const content: Content = {
     usesTitle: "Werkzeuge",
     usesDescription:
       "Rechner, Desktop, Editor und Werkzeuge, mit denen ich täglich arbeite: Arch Linux, Hyprland, Neovim und zwei selbst geschriebene Desktop-Werkzeuge.",
+    nowTitle: "Jetzt",
+    nowDescription:
+      "Woran Adilzhan Yerzhan gerade arbeitet: Sendoku und Torq, offen für neue Aufgaben.",
   },
 };

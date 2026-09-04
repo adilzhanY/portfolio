@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { FaGithub, FaLinkedin, FaEnvelope, FaTelegram } from "react-icons/fa6";
-import { FiArrowRight } from "react-icons/fi";
+import { FaGithub, FaLinkedin, FaXing, FaEnvelope, FaTelegram, FaReddit, FaXTwitter } from "react-icons/fa6";
+import { FiArrowRight, FiUserPlus } from "react-icons/fi";
 import { MdVerified } from "react-icons/md";
 import { getCV, getContent } from "@/data/cv";
-import { PROFILE, RESUME_FILE } from "@/data/structure";
+import { PROFILE, RESUME_FILE, VCARD_FILE } from "@/data/structure";
 import { localePath, type Locale } from "@/i18n/config";
 import TechChip from "@/components/TechChip";
 import ResumeButton from "@/components/ResumeButton";
@@ -83,11 +83,32 @@ export default function HomeView({ locale }: { locale: Locale }) {
                 <FaLinkedin aria-hidden="true" className="h-5 w-5" />
               </a>
               <a
+                href={contact.xing}
+                aria-label={ui.social.xing}
+                className="text-muted transition-colors hover:text-ink"
+              >
+                <FaXing aria-hidden="true" className="h-5 w-5" />
+              </a>
+              <a
                 href={contact.telegram}
                 aria-label={ui.social.telegram}
                 className="text-muted transition-colors hover:text-ink"
               >
                 <FaTelegram aria-hidden="true" className="h-5 w-5" />
+              </a>
+              <a
+                href={contact.reddit}
+                aria-label={ui.social.reddit}
+                className="text-muted transition-colors hover:text-ink"
+              >
+                <FaReddit aria-hidden="true" className="h-5 w-5" />
+              </a>
+              <a
+                href={contact.x}
+                aria-label={ui.social.x}
+                className="text-muted transition-colors hover:text-ink"
+              >
+                <FaXTwitter aria-hidden="true" className="h-5 w-5" />
               </a>
               <a
                 href={`mailto:${contact.email}`}
@@ -118,8 +139,17 @@ export default function HomeView({ locale }: { locale: Locale }) {
 
       <p className="mt-5">{intro}</p>
 
-      <div className="mt-6 print:hidden">
+      <div className="mt-6 flex flex-wrap items-center gap-3 print:hidden">
         <ResumeButton labels={ui.resume} file={RESUME_FILE[locale]} />
+        {/* A vCard: one tap and the contact details land in the address book. */}
+        <a
+          href={VCARD_FILE}
+          download
+          className="inline-flex items-center gap-1.5 rounded-full border border-faint px-4 py-2 text-sm font-medium text-body transition-colors hover:border-ink hover:text-ink"
+        >
+          <FiUserPlus aria-hidden="true" className="h-4 w-4" />
+          {ui.home.saveContact}
+        </a>
       </div>
 
       {/* Full-bleed on phones so the fade sits at the screen edge. */}

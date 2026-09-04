@@ -55,7 +55,10 @@ export interface UiCopy {
   social: {
     github: string;
     linkedin: string;
+    xing: string;
     telegram: string;
+    reddit: string;
+    x: string;
     email: string;
   };
   theme: {
@@ -82,6 +85,7 @@ export interface UiCopy {
     sectionSkills: string;
     sectionActivity: string;
     sectionCertifications: string;
+    saveContact: string;
   };
   projects: {
     heading: string;
@@ -150,6 +154,15 @@ export interface UsesCopy {
   notes: Record<string, string>;
 }
 
+export interface NowCopy {
+  heading: string;
+  intro: string;
+  /** "Updated {{date}}", with the date already in this locale's format. */
+  updated: string;
+  /** Heading over the list of products being worked on. */
+  building: string;
+}
+
 export interface MetaCopy {
   /** Site-wide default title and the "%s" template for child pages. */
   siteTitle: string;
@@ -163,6 +176,8 @@ export interface MetaCopy {
   experienceDescription: string;
   usesTitle: string;
   usesDescription: string;
+  nowTitle: string;
+  nowDescription: string;
 }
 
 export interface Content {
@@ -189,5 +204,6 @@ export interface Content {
   experience: Record<ExperienceId, ExperienceCopy>;
   ui: UiCopy;
   uses: UsesCopy;
+  now: NowCopy;
   meta: MetaCopy;
 }

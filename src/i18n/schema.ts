@@ -37,7 +37,7 @@ export function personSchema(locale: Locale) {
       recognizedBy: { "@type": "Organization", name: cert.issuer },
       url: cert.url,
     })),
-    sameAs: [PROFILE.contact.github, PROFILE.contact.linkedin],
+    sameAs: [PROFILE.contact.github, PROFILE.contact.linkedin, PROFILE.contact.reddit, PROFILE.contact.x],
   };
 }
 

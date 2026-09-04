@@ -28,7 +28,7 @@ const SETTINGS = {
   rippleIntensity: 1,
   rippleThickness: 0.1,
   rippleSpeed: 0.3,
-  edgeFade: 0.5,
+  edgeFade: 0.12, // small, so the field reaches the sides; the CSS mask shapes it
   speed: 0.5,
   fps: 30,
   dpr: 1.5,

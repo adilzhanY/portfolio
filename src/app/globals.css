@@ -1143,9 +1143,42 @@ html.dark .glass-scrim {
   pointer-events: none;
   opacity: 0.2;
   transition: opacity 600ms ease;
+  /* The content column is 64rem wide and centred. The pixels are masked to a
+     quarter strength under it and full strength either side, so the field
+     frames the page instead of sitting behind the type. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(50% - 38rem),
+    rgba(0, 0, 0, 0.25) calc(50% - 31rem),
+    rgba(0, 0, 0, 0.25) calc(50% + 31rem),
+    #000 calc(50% + 38rem),
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(50% - 38rem),
+    rgba(0, 0, 0, 0.25) calc(50% - 31rem),
+    rgba(0, 0, 0, 0.25) calc(50% + 31rem),
+    #000 calc(50% + 38rem),
+    #000 100%
+  );
 }
 html.dark .page-backdrop {
   opacity: 0.34;
+}
+/* No sides to speak of below the column width: show the whole field, toned
+   down so the type on top keeps its contrast. */
+@media (max-width: 76rem) {
+  .page-backdrop {
+    -webkit-mask-image: none;
+    mask-image: none;
+    opacity: 0.12;
+  }
+  html.dark .page-backdrop {
+    opacity: 0.2;
+  }
 }
 @media (prefers-reduced-transparency: reduce), print {
   .page-backdrop {

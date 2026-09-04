@@ -1,4 +1,4 @@
-import { FaEnvelope, FaGithub, FaLinkedin, FaTelegram } from "react-icons/fa6";
+import { FaEnvelope, FaGithub, FaLinkedin, FaReddit, FaTelegram, FaXing, FaXTwitter } from "react-icons/fa6";
 import Link from "next/link";
 import { FiCalendar, FiChevronRight } from "react-icons/fi";
 import { getContent } from "@/data/cv";
@@ -41,7 +41,7 @@ function ContactCard({
 
 export default function SiteFooter({ locale }: { locale: Locale }) {
   const { contact, handles } = PROFILE;
-  const { name, footer, location, ui, uses } = getContent(locale);
+  const { name, footer, location, ui, uses, now } = getContent(locale);
   const year = new Date().getFullYear();
 
   return (
@@ -103,6 +103,13 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
               >
                 {uses.heading}
               </Link>
+              <span className="mx-2">/</span>
+              <Link
+                href={localePath(locale, "/now")}
+                className="hover:text-ink hover:underline hover:underline-offset-3"
+              >
+                {now.heading}
+              </Link>
             </p>
           </div>
           <div className="flex items-center gap-3.5">
@@ -122,11 +129,32 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
               <FaLinkedin aria-hidden="true" className="h-5 w-5" />
             </a>
             <a
+              href={contact.xing}
+              aria-label={ui.social.xing}
+              className="text-muted transition-colors hover:text-ink"
+            >
+              <FaXing aria-hidden="true" className="h-5 w-5" />
+            </a>
+            <a
               href={contact.telegram}
               aria-label={ui.social.telegram}
               className="text-muted transition-colors hover:text-ink"
             >
               <FaTelegram aria-hidden="true" className="h-5 w-5" />
+            </a>
+            <a
+              href={contact.reddit}
+              aria-label={ui.social.reddit}
+              className="text-muted transition-colors hover:text-ink"
+            >
+              <FaReddit aria-hidden="true" className="h-5 w-5" />
+            </a>
+            <a
+              href={contact.x}
+              aria-label={ui.social.x}
+              className="text-muted transition-colors hover:text-ink"
+            >
+              <FaXTwitter aria-hidden="true" className="h-5 w-5" />
             </a>
             <a
               href={`mailto:${contact.email}`}
