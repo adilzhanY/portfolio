@@ -23,6 +23,41 @@ export const content: Content = {
   },
 
   projects: {
+    bauwerk: {
+      summary:
+        "Ein 3D-Gebäudeeditor für deutsche Energieberater, im Browser. Man zeichnet ein Haus und sieht dabei zu, wie sich die U-Werte, die Wärmeverluste, die Energieausweis-Klasse, die Heizlast jedes Raums und die Amortisation jedes Sanierungsschritts bewegen. Danach druckt es den deutschen Bericht.",
+      metric: "237 kWh/(m²a) heute, 63 nach der vollen Hülle, 367 Tests",
+      postmortem: [
+        "Aufgefordert, seine eigene Physik zu prüfen, fand der Agent fünf eigene Fehler, alle unter grünen Tests, weil die Tests seine eigenen Zahlen festgehalten hatten statt die der Norm. Die Gradstunden lagen bei 84 kKh statt bei den 66 des deutschen Referenzklimas, die internen Gewinne fehlten ganz, die EnEV-Korrekturfaktoren für die Bodenplatte und das unbeheizte Treppenhaus wurden nie angewendet, die Berliner Auslegungstemperatur war -12 C statt -14 C, und zwei voreingestellte U-Werte widersprachen ihren eigenen Schichtaufbauten.",
+        "Die Korrektur verschob das Beispielhaus um rund 70 kWh pro Quadratmeter und Jahr, in den Bereich, den die IWU-Typologie einem unsanierten Bau vor 1918 gibt. Ein Test, der die Zahl festhält, die der Code ohnehin liefert, ist ein Regressionstest, kein Korrektheitstest. Jede Formel beginnt jetzt mit einem von Hand aus der Norm gerechneten Fall, und der Code muss ihn treffen.",
+        "Die kleineren Fehler kamen aus der Arbeit von Hand: Das Rasterfangen ließ an Außenwänden eine Lücke von 8,5 bis 20 cm, die Szene reagierte nach einem Geschosswechsel nicht mehr, weil undefined in den Raycaster geriet, und der Wechsel der Oberfläche auf Deutsch ließ die Dokumentdaten auf Englisch. Jeder bekam einen Test. Jede Stelle, an der ich den Agenten überstimmt habe, steht in DECISIONS.md, 45 Einträge, und das Protokoll gehört zum Projekt.",
+      ],
+      imageAlt:
+        "Bauwerk, das Kreuzberger Demohaus von 1905 auf seinem echten Grundstück, mit Geschossliste und Eigenschaftenpanel",
+      problem:
+        "Deutschland hat 19 Millionen Wohnhäuser zu sanieren und einen Berufsstand, der zwischen ihnen und dem Gesetz steht. Energieberater zeichnen ein Gebäude in einem Werkzeug und rechnen den Heizwärmebedarf in einem anderen, dazwischen tippen sie Zahlen ab, sodass ein Hausbesitzer, der fragt, ob sich das Dach vor der Wärmepumpe rechnet, tagelang auf die Antwort wartet. Bauwerk hält Zeichnung und Physik in einem Modell.",
+      solution: [
+        "Grundriss, Geschosse, Wände. Ein Klick mit dem Öffnungswerkzeug auf eine Außenwand gibt ein Fenster, auf eine Innenwand eine Tür, Shift tauscht sie. Zieht man eine Innenwand über ein Geschoss, entstehen die Räume von selbst mit ihren Flächen; löscht man sie, wachsen sie unter ihren alten Namen wieder zusammen. Das ganze Haus lässt sich greifen und die Straße entlangschieben: Es steht auf seinem echten OpenStreetMap-Grundstück, die Koordinaten laufen beim Ziehen mit, und dreht man es, werden aus Südfenstern Westfenster und die solaren Gewinne folgen. Die Geschosse, die man gerade nicht bearbeitet, zeichnen sich als Umriss. Jedes Ziehen, jeder gescrubbte und jeder getippte Wert ist genau ein Undo-Schritt.",
+        "Die Bilanz folgt dem Heizperiodenverfahren der DIN V 4108-6: Transmissions- und Lüftungsverluste, die EnEV-Korrekturfaktoren, Wärmebrücken als psi mal Länge, solare Gewinne nach Orientierung und interne Gewinne, gegen 66 kKh des deutschen Referenzklimas. U-Werte werden nach ISO 6946 aus dem Schichtaufbau berechnet und nie getippt, sodass sich der Klassenbuchstabe schon beim Ziehen der Dämmstärke bewegt. Jedes Bauteil wird gegen seinen Grenzwert aus GEG Anlage 7 geprüft, und die Heizlast je Raum folgt der DIN EN 12831 bei minus 14 C für Berlin, mit markierten unterdimensionierten Heizkörpern und der Wärmepumpe, die dabei herauskommt: 62 kW vor der Dämmung.",
+        "Szenarien sind Überschreibungen und keine Kopien, also zieht eine Änderung an der Grundlage alle Varianten mit. Beim Demohaus kostet die Fassade 75.418 EUR und bringt es in 16,4 Jahren von Klasse G nach E, die volle Hülle kostet 219.414 EUR und ergibt Klasse B. Nach Amortisation geordnet und drei Jahre auseinandergelegt, ergibt das genau den individuellen Sanierungsfahrplan, den ein Hausbesitzer für den höheren Fördersatz braucht. Ein Klick macht aus dem Modell ein schlichtes deutsches Gebäudedokument, mit einer Methodenseite, die jede Annahme nennt, damit ein zweiter Berater die Zahlen prüfen kann, und der Server liefert dieselbe Seite als PDF.",
+      ],
+      achievements: [
+        "Live unter adilzhany.github.io/bauwerk: nur Browser, ohne Installation, ohne Konto",
+        "Das Kreuzberger Demohaus von 1905: 237 kWh/(m²a), Klasse G, 96.422 kWh Wärme im Jahr",
+        "Volle Hülle für 219.414 EUR: Klasse B, 63 kWh/(m²a), 25,9 Jahre Amortisation",
+        "367 Client-Tests und 8 Server-Tests gegen ein echtes Postgres, striktes TypeScript",
+        "IFC4-Export von Hand geschrieben und mit IfcOpenShell geprüft, IFC- und GeoJSON-Import",
+        "Ein 18-geschossiger Turm mit 719 Öffnungen auf der Bench-Route, mit Frametime-Graph",
+      ],
+      gallery: {
+        scene: { alt: "Das Demohaus in 3D auf seinem Kreuzberger Grundstück", caption: "Das Haus auf seinem echten Grundstück" },
+        openings: { alt: "Das erste Obergeschoss in Bearbeitung, das Erdgeschoss als Umriss darunter", caption: "Nicht bearbeitete Geschosse werden zum Umriss" },
+        energy: { alt: "Das Energiepanel mit Klassenskala, Verlusten, Gewinnen und Flächen", caption: "Jeder Verlust und Gewinn, live gerechnet" },
+        scenarios: { alt: "Sanierungsszenarien mit Investition und Amortisation und der Fahrplan", caption: "Schnellste Amortisation zuerst, Schritt auf Schritt" },
+        report: { alt: "Die erste Seite des deutschen Gebäudeberichts", caption: "Der deutsche Bericht, druckfertig" },
+      },
+    },
+
     "berlin-walk": {
       summary:
         "Eine begehbare und befliegbare 3D-Rekonstruktion der Berliner Mitte, die im Browser über einen einzigen Link läuft. Reines WebGL2, echte OpenStreetMap-Daten, keine Engine und keine Bibliothek. Ich habe einen Prompt geschrieben, und Claude Fable 5.1 hat alles in vier Stunden gebaut, während ich die Zahlen beobachtet habe.",
@@ -312,6 +347,7 @@ export const content: Content = {
       home: "Start",
       projects: "Projekte",
       experience: "Erfahrung",
+      blog: "Blog",
       menu: "Menü",
       close: "Menü schließen",
     },
@@ -325,7 +361,6 @@ export const content: Content = {
       email: "E-Mail",
     },
     theme: { toggle: "Dunkles Design umschalten" },
-    dictation: { recording: "Aufnahme", transcribing: "Transkription", done: "Fertig" },
     language: { label: "Sprache" },
     home: {
       avatarTitle: "Ja, das bin ich",
@@ -438,6 +473,14 @@ export const content: Content = {
     updated: "Aktualisiert am {{date}}",
     building: "In Arbeit",
   },
+  blog: {
+    heading: "Blog",
+    intro: "Notes on building and running my own products. Written in English, newest first.",
+    read: "Read the post",
+    back: "All posts",
+    feed: "RSS feed",
+    empty: "Noch nichts veröffentlicht. Der erste Beitrag entsteht gerade.",
+  },
   meta: {
     siteTitle: "Adilzhan Yerzhan - Software Engineer",
     titleTemplate: "%s - Adilzhan Yerzhan",
@@ -458,5 +501,8 @@ export const content: Content = {
     nowTitle: "Jetzt",
     nowDescription:
       "Woran Adilzhan Yerzhan gerade arbeitet: Sendoku und Torq, offen für neue Aufgaben.",
+    blogTitle: "Blog",
+    blogDescription:
+      "Notizen von Adilzhan Yerzhan über das Bauen und Betreiben eigener Produkte, auf Englisch.",
   },
 };

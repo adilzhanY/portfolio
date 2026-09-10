@@ -48,6 +48,7 @@ export interface UiCopy {
     home: string;
     projects: string;
     experience: string;
+    blog: string;
     /** The phone menu button and the drawer it opens. */
     menu: string;
     close: string;
@@ -63,12 +64,6 @@ export interface UiCopy {
   };
   theme: {
     toggle: string;
-  };
-  /** States of the recording pill that dictates the tagline on first visit. */
-  dictation: {
-    recording: string;
-    transcribing: string;
-    done: string;
   };
   language: {
     /** Accessible name for the language switcher itself. */
@@ -163,6 +158,16 @@ export interface NowCopy {
   building: string;
 }
 
+export interface BlogCopy {
+  heading: string;
+  intro: string;
+  read: string;
+  back: string;
+  feed: string;
+  /** Shown on the list page while there is nothing published yet. */
+  empty: string;
+}
+
 export interface MetaCopy {
   /** Site-wide default title and the "%s" template for child pages. */
   siteTitle: string;
@@ -178,6 +183,8 @@ export interface MetaCopy {
   usesDescription: string;
   nowTitle: string;
   nowDescription: string;
+  blogTitle: string;
+  blogDescription: string;
 }
 
 export interface Content {
@@ -205,5 +212,6 @@ export interface Content {
   ui: UiCopy;
   uses: UsesCopy;
   now: NowCopy;
+  blog: BlogCopy;
   meta: MetaCopy;
 }

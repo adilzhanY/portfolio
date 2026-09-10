@@ -124,6 +124,25 @@ export type ExperienceId = (typeof EXPERIENCE_ORDER)[number];
 
 export const PROJECTS: ProjectStructure[] = [
   {
+    id: "bauwerk",
+    accent: { light: "#234d8f", dark: "#7fa6e8" },
+    title: "Bauwerk",
+    year: "2026",
+    stack: ["React", "TypeScript", "Three.js", "Zustand", "NestJS", "PostgreSQL", "IFC4"],
+    link: "https://github.com/adilzhanY/bauwerk",
+    live: "https://adilzhany.github.io/bauwerk/",
+    image: "/projects/bauwerk-preview.webp",
+    imageW: 1200,
+    imageH: 646,
+    gallery: [
+      { id: "scene", src: "/projects/gallery/bauwerk-scene.webp", w: 1280, h: 827 },
+      { id: "openings", src: "/projects/gallery/bauwerk-openings.webp", w: 1280, h: 827 },
+      { id: "energy", src: "/projects/gallery/bauwerk-energy.webp", w: 1280, h: 827 },
+      { id: "scenarios", src: "/projects/gallery/bauwerk-scenarios.webp", w: 1280, h: 827 },
+      { id: "report", src: "/projects/gallery/bauwerk-report.webp", w: 1280, h: 827 },
+    ],
+  },
+  {
     id: "berlin-walk",
     accent: { light: "#8a6a1f", dark: "#e3c476" },
     title: "Berlin Walk",

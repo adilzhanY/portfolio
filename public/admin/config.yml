@@ -1,0 +1,72 @@
+# Sveltia CMS, the blog editor behind /admin.
+#
+# Saving commits straight to main, which is what the site builds from, so a
+# save is a publish. Sign in with "Sign In with Token" and a GitHub personal
+# access token: no OAuth app and no server anywhere. On localhost the same
+# page offers "Work with Local Repository" and needs no token at all.
+
+backend:
+  name: github
+  repo: adilzhanY/portfolio
+  branch: main
+
+# Uploads land in public/blog/ and are served from /blog/.
+media_folder: public/blog
+public_folder: /blog
+
+# Every save is one commit, worded like the ones written by hand.
+site_url: https://qantrr.com
+display_url: https://qantrr.com/blog
+
+collections:
+  - name: blog
+    label: Blog
+    label_singular: Post
+    description: >-
+      One Markdown file per post in src/content/blog. The file name is the URL,
+      so keep it short and in English.
+    folder: src/content/blog
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    extension: md
+    format: yaml-frontmatter
+    preview_path: blog/{{slug}}
+    summary: "{{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - name: title
+        label: Title
+        widget: string
+        hint: Shown as the heading and in the browser tab.
+
+      - name: date
+        label: Date
+        widget: datetime
+        date_format: YYYY-MM-DD
+        time_format: false
+        picker_utc: true
+        format: YYYY-MM-DD
+        hint: Posts are listed newest first.
+
+      - name: summary
+        label: Summary
+        widget: text
+        hint: One or two sentences. This is what the list page and the feed show.
+
+      - name: tags
+        label: Tags
+        widget: list
+        required: false
+        default: []
+        hint: Lowercase, one word where possible. For example nextjs, cloudflare.
+
+      - name: thumbnail
+        label: Thumbnail
+        widget: image
+        required: false
+        hint: Optional. Shown beside the post on the list page and when the link is shared.
+
+      - name: body
+        label: Body
+        widget: markdown

@@ -23,6 +23,41 @@ export const content: Content = {
   },
 
   projects: {
+    bauwerk: {
+      summary:
+        "A 3D building editor for German energy consultants, in the browser. Draw a house and watch the U-values, the heat loss, the Energieausweis class, the heat load of every room and the payback of every renovation step move while you draw. Then print the German report.",
+      metric: "237 kWh/(m2a) today, 63 after the full envelope, 367 tests",
+      postmortem: [
+        "Asked to audit its own physics, the agent found five errors of its own, all sitting under green tests, because the tests had pinned its own numbers instead of the standard's. Degree hours were 84 kKh instead of the 66 of the German reference climate, internal gains were missing entirely, the EnEV correction factors for the floor slab and the unheated stairwell were never applied, Berlin's design temperature was -12 C instead of -14 C, and two preset U-values contradicted their own layer stacks.",
+        "The fix moved the example house by about 70 kWh per square metre and year, into the range the IWU typology gives an unrenovated building from before 1918. A test that pins the number the code already produces is a regression test, not a correctness test. Every formula now starts from a case computed by hand out of the standard, and the code has to meet it.",
+        "Smaller ones came out of using it by hand: grid snapping left a gap of 8.5 to 20 cm at exterior walls, the scene stopped responding after a storey switch because undefined reached the raycaster, and switching the interface to German left the document data in English. Each got a test. Every place I overruled the agent is in DECISIONS.md, 45 entries, and the log ships with the project.",
+      ],
+      imageAlt:
+        "Bauwerk, the 1905 Kreuzberg demo house drawn on its real plot, with the storey list and the properties panel",
+      problem:
+        "Germany has 19 million homes to renovate and one profession standing between them and the law. Energy consultants draw a building in one tool and calculate its heating demand in another, then type numbers between the two, so a homeowner asking whether the roof pays back before the heat pump waits days for the answer. Bauwerk keeps the drawing and the physics in one model.",
+      solution: [
+        "Footprint, storeys, walls. Click an exterior wall with the opening tool and you get a window, click an interior wall and you get a door, Shift swaps them. Drag an interior wall across a floor and rooms appear on their own with their areas; delete it and they merge back under their old names. Grab the whole house and slide it along the street: it stands on its real OpenStreetMap plot, so the coordinates update while you drag, and when you turn it the south windows become west windows and the solar gains follow. The floors you are not editing draw as outlines. Every drag, scrub and typed value is exactly one undo step.",
+        "The balance is the heating period method of DIN V 4108-6: transmission and ventilation losses, the EnEV correction factors, thermal bridges as psi times length, solar gains by orientation and internal gains, against 66 kKh of the German reference climate. U-values are computed from the layer stack after ISO 6946 and never typed, so scrubbing the insulation thickness moves the class letter while you drag. Every element is checked against its GEG Annex 7 limit, and the heat load per room follows DIN EN 12831 at minus 14 C for Berlin, with undersized radiators flagged and the heat pump that falls out of it, 62 kW before insulation.",
+        "Scenarios are overrides rather than copies, so changing the baseline moves every variant. For the demo house the facade costs 75,418 EUR and takes it from class G to E in 16.4 years, and the full envelope is 219,414 EUR for class B. Ordered by payback and stacked three years apart, that is the shape of the Sanierungsfahrplan a homeowner needs for the higher funding rate. One click turns the model into a plain German building document, with a method page that states every assumption so a second consultant can check the numbers, and the server returns the same page as a PDF.",
+      ],
+      achievements: [
+        "Live at adilzhany.github.io/bauwerk: browser only, no install, no account",
+        "The 1905 Kreuzberg demo house: 237 kWh/(m2a), class G, 96,422 kWh of heat a year",
+        "Full envelope for 219,414 EUR: class B, 63 kWh/(m2a), 25.9 years payback",
+        "367 client tests and 8 server tests against a real Postgres, strict TypeScript",
+        "IFC4 export written by hand and validated with IfcOpenShell, IFC and GeoJSON import",
+        "An 18-storey tower with 719 openings on the bench route, with a frame time graph",
+      ],
+      gallery: {
+        scene: { alt: "The demo house in 3D on its Kreuzberg plot", caption: "The house on its real plot" },
+        openings: { alt: "The first floor being edited, the ground floor drawn as an outline below", caption: "The floors you are not editing become outlines" },
+        energy: { alt: "The energy panel with the class scale, losses, gains and areas", caption: "Every loss and gain, recomputed live" },
+        scenarios: { alt: "Renovation scenarios with investment and payback, and the roadmap", caption: "Cheapest payback first, each step on the last" },
+        report: { alt: "The first page of the German building report", caption: "The German report, ready to print" },
+      },
+    },
+
     "berlin-walk": {
       summary:
         "A walkable, flyable 3D reconstruction of central Berlin that runs in the browser from a single link. Raw WebGL2, real OpenStreetMap data, no engine and no library. I wrote one prompt and Claude Fable 5.1 built all of it in four hours while I watched the numbers.",
@@ -279,6 +314,7 @@ export const content: Content = {
       home: "Home",
       projects: "Projects",
       experience: "Experience",
+      blog: "Blog",
       menu: "Menu",
       close: "Close menu",
     },
@@ -292,7 +328,6 @@ export const content: Content = {
       email: "Email",
     },
     theme: { toggle: "Toggle dark mode" },
-    dictation: { recording: "Recording", transcribing: "Transcribing", done: "Done" },
     language: { label: "Language" },
     home: {
       avatarTitle: "Yes, that's me",
@@ -405,6 +440,14 @@ export const content: Content = {
     updated: "Updated {{date}}",
     building: "Building",
   },
+  blog: {
+    heading: "Blog",
+    intro: "Notes on building and running my own products. Written in English, newest first.",
+    read: "Read the post",
+    back: "All posts",
+    feed: "RSS feed",
+    empty: "Nothing published yet. The first post is being written.",
+  },
   meta: {
     siteTitle: "Adilzhan Yerzhan - Software Engineer",
     titleTemplate: "%s - Adilzhan Yerzhan",
@@ -425,5 +468,8 @@ export const content: Content = {
     nowTitle: "Now",
     nowDescription:
       "What Adilzhan Yerzhan is working on right now: Sendoku and Torq, and open to work.",
+    blogTitle: "Blog",
+    blogDescription:
+      "Notes by Adilzhan Yerzhan on building and running products: Next.js, mobile, offline-first, and what went wrong.",
   },
 };

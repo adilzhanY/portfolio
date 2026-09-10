@@ -68,6 +68,7 @@ export function GET() {
     `- Telegram: ${cv.contact.telegram}`,
     `- Contact card (vCard): ${SITE_URL}/adilzhan-yerzhan.vcf`,
     `- Now page: ${SITE_URL}/now`,
+    `- Blog: ${SITE_URL}/blog (RSS: ${SITE_URL}/blog/feed.xml)`,
     `- Reddit: ${cv.contact.reddit}`,
     `- X: ${cv.contact.x}`,
     "",

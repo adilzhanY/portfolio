@@ -9,7 +9,6 @@ import TechChip from "@/components/TechChip";
 import ResumeButton from "@/components/ResumeButton";
 import GitHubActivity from "@/components/GitHubActivity";
 import CertificationList from "@/components/CertificationList";
-import DictatedTagline from "@/components/DictatedTagline";
 import SkillsLoop from "@/components/SkillsLoop";
 import StructuredData from "@/components/StructuredData";
 import { personSchema } from "@/i18n/schema";
@@ -120,7 +119,9 @@ export default function HomeView({ locale }: { locale: Locale }) {
             </div>
           </div>
         </div>
-        <DictatedTagline text={tagline} labels={ui.dictation} />
+        <h2 className="relative mt-8 text-3xl font-semibold tracking-tight md:text-4xl">
+          {tagline}
+        </h2>
 
         {/*
           On screen the contact details are icon links in the header and cards

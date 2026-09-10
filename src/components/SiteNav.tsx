@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { FiBriefcase, FiGrid, FiHome, FiX } from "react-icons/fi";
+import { FiBriefcase, FiFeather, FiGrid, FiHome, FiX } from "react-icons/fi";
 import ThemeToggle from "@/components/ThemeToggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import LiquidGlassFilter from "@/components/LiquidGlassFilter";
@@ -29,6 +29,7 @@ const ICONS = {
   "/": FiHome,
   "/projects": FiGrid,
   "/experience": FiBriefcase,
+  "/blog": FiFeather,
 } as const;
 
 export default function SiteNav({
@@ -50,6 +51,8 @@ export default function SiteNav({
     { href: "/", label: ui.nav.home },
     { href: "/projects", label: ui.nav.projects },
     { href: "/experience", label: ui.nav.experience },
+    // The blog is written in English only, so it lives at the root for every locale.
+    { href: "/blog", label: ui.nav.blog, root: true },
   ] as const;
 
   const isActive = (href: string) =>
@@ -177,7 +180,7 @@ export default function SiteNav({
 
           <Link
             href={localePath(locale, "/")}
-            className="glass-brand flex items-center font-bold tracking-tight"
+            className="glass-brand flex items-center font-bold"
           >
             <img
               src={PROFILE.avatar}
@@ -210,7 +213,7 @@ export default function SiteNav({
               return (
                 <Link
                   key={link.href}
-                  href={localePath(locale, link.href)}
+                  href={"root" in link ? link.href : localePath(locale, link.href)}
                   aria-current={active ? "page" : undefined}
                   className={active ? "glass-link is-active" : "glass-link"}
                 >
@@ -267,7 +270,7 @@ export default function SiteNav({
             return (
               <Link
                 key={link.href}
-                href={localePath(locale, link.href)}
+                href={"root" in link ? link.href : localePath(locale, link.href)}
                 aria-current={active ? "page" : undefined}
                 className={active ? "glass-drawer__link is-active" : "glass-drawer__link"}
                 style={{ "--i": i } as React.CSSProperties}

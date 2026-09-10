@@ -1,4 +1,5 @@
 import "@/app/globals.css";
+import { JetBrains_Mono } from "next/font/google";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import Analytics from "@/components/Analytics";
@@ -7,6 +8,18 @@ import PixelBlastBackdrop from "@/components/PixelBlastBackdrop";
 import LanguageHint from "@/components/LanguageHint";
 import { getContent } from "@/data/cv";
 import type { Locale } from "@/i18n/config";
+
+/*
+ * The only web font on the site, and it dresses one word: the wordmark in the
+ * nav. Bold only, latin only, self-hosted by next/font at build time, exposed
+ * as a variable so nothing else picks it up by accident.
+ */
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["700"],
+  display: "swap",
+  variable: "--font-wordmark",
+});
 
 /**
  * The animated background behind every page. Two are ported from reactbits;
@@ -28,22 +41,12 @@ export default function RootShell({
   const { name, ui } = getContent(locale);
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} className={jetbrainsMono.variable} suppressHydrationWarning>
       <head>
         {/* Runs before paint so the saved theme never flashes. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`,
-          }}
-        />
-        {/*
-          The tagline dictates itself once per session. Deciding that here,
-          before paint, means the text is hidden from the first frame instead
-          of flashing and then disappearing when the component mounts.
-        */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{if(!sessionStorage.getItem("dictated")&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("dictate")}catch(e){}})()`,
           }}
         />
         {/* GoatCounter: no_onload so the SPA-aware Analytics component owns counting */}

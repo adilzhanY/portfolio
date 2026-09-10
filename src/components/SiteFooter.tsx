@@ -41,7 +41,7 @@ function ContactCard({
 
 export default function SiteFooter({ locale }: { locale: Locale }) {
   const { contact, handles } = PROFILE;
-  const { name, footer, location, ui, uses, now } = getContent(locale);
+  const { name, footer, location, ui, uses, now, blog } = getContent(locale);
   const year = new Date().getFullYear();
 
   return (
@@ -109,6 +109,13 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
                 className="hover:text-ink hover:underline hover:underline-offset-3"
               >
                 {now.heading}
+              </Link>
+              <span className="mx-2">/</span>
+              <Link
+                href="/blog"
+                className="hover:text-ink hover:underline hover:underline-offset-3"
+              >
+                {blog.heading}
               </Link>
             </p>
           </div>

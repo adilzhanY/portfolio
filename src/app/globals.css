@@ -352,122 +352,6 @@ html {
   }
 }
 
-/* ---------- dictated tagline ----------
-   html.dictate is set before paint for the one visit per session that gets
-   the animation, and removed by the component when it has played. */
-.dictation-text {
-  /* clip-path needs a box to clip; an inline-block still wraps like text. */
-  display: inline-block;
-  max-width: 100%;
-}
-html.dictate .dictation-text {
-  clip-path: inset(0 100% 0 0);
-}
-html.dictate .dictation-text.is-typing {
-  animation: dictation-type 900ms steps(var(--dictation-steps, 30), end) forwards;
-}
-@keyframes dictation-type {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 -2% 0 0);
-  }
-}
-.dictation-pill {
-  position: absolute;
-  top: 0.32em;
-  left: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border-radius: 9999px;
-  border: 1px solid var(--faint-c);
-  background-color: var(--chip-c);
-  padding: 0.3rem 0.8rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  color: var(--body-c);
-  white-space: nowrap;
-  animation: dictation-pop 220ms cubic-bezier(0.2, 0, 0, 1);
-}
-h2[data-phase="done"] .dictation-pill {
-  animation: dictation-fade 900ms ease forwards;
-}
-@keyframes dictation-pop {
-  from {
-    opacity: 0;
-    transform: translateY(4px) scale(0.96);
-  }
-}
-@keyframes dictation-fade {
-  to {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-}
-.dictation-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 9999px;
-  background-color: #ef4444;
-  animation: dictation-pulse 1s ease-in-out infinite;
-}
-@keyframes dictation-pulse {
-  50% {
-    opacity: 0.35;
-  }
-}
-.dictation-bars {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  height: 0.9rem;
-}
-.dictation-bars i {
-  display: block;
-  width: 2px;
-  height: 30%;
-  border-radius: 1px;
-  background-color: var(--ink);
-  animation: dictation-wave 0.9s ease-in-out infinite;
-}
-.dictation-bars i:nth-child(2n) {
-  animation-delay: 0.15s;
-}
-.dictation-bars i:nth-child(3n) {
-  animation-delay: 0.3s;
-}
-.dictation-bars i:nth-child(5n) {
-  animation-delay: 0.45s;
-}
-@keyframes dictation-wave {
-  50% {
-    height: 100%;
-  }
-}
-.dictation-spin {
-  width: 0.7rem;
-  height: 0.7rem;
-  border-radius: 9999px;
-  border: 2px solid var(--faint-c);
-  border-top-color: var(--ink);
-  animation: dictation-spin 0.8s linear infinite;
-}
-@keyframes dictation-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.dictation-check {
-  color: #15803d;
-  font-weight: 700;
-}
-html.dark .dictation-check {
-  color: #4ade80;
-}
-
 /* ---------- case study colour wash ----------
    A faint field of the product's colour at the top of the page. No ancestor
    is positioned, so it anchors to the document itself and starts at the very
@@ -859,6 +743,11 @@ header[data-scrolled] .glass-nav {
 .glass-brand {
   color: var(--ink);
   border-radius: 9999px;
+  /* JetBrains Mono Bold, the one web font on the site. The tighter tracking
+     pulls the mono advance widths back to something wordmark-sized. */
+  font-family: var(--font-wordmark), var(--font-mono);
+  font-weight: 700;
+  letter-spacing: -0.055em;
 }
 .glass-links {
   gap: 0.15rem;
@@ -1128,6 +1017,25 @@ html.dark .glass-scrim {
     display: none;
   }
 }
+
+/* ---------- blog post body ----------
+   Markdown rendered at build time, so the elements are plain HTML tags and
+   the styling lives here rather than in classes. */
+.post-body { font-size: 1rem; color: var(--body-c); }
+.post-body > * + * { margin-top: 1em; }
+.post-body h2 { margin-top: 2em; font-size: 1.125rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+.post-body h3 { margin-top: 1.6em; font-size: 1rem; font-weight: 600; color: var(--ink); }
+.post-body a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.post-body a:hover { color: var(--accent-c); }
+.post-body strong { color: var(--ink); font-weight: 600; }
+.post-body ul, .post-body ol { padding-left: 1.4em; }
+.post-body li + li { margin-top: 0.35em; }
+.post-body blockquote { border-left: 2px solid var(--faint-c); padding-left: 1em; color: var(--muted-c); }
+.post-body code { font-family: var(--font-mono); font-size: 0.875em; background: var(--chip-c); border: 1px solid var(--faint-c); border-radius: 0.3rem; padding: 0.1em 0.35em; }
+.post-body pre { overflow-x: auto; background: var(--chip-c); border: 1px solid var(--faint-c); border-radius: 0.6rem; padding: 0.9rem 1rem; font-size: 0.875rem; line-height: 1.55; }
+.post-body pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+.post-body img { display: block; max-width: 100%; height: auto; border-radius: 0.5rem; border: 1px solid var(--faint-c); }
+.post-body hr { border: 0; border-top: 1px solid var(--faint-c); }
 
 /* ---------- page backdrop ----------
    The shader canvas sits behind everything. Its strength is set here, not in
