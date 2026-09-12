@@ -27,7 +27,7 @@ export default function NowView({ locale }: { locale: Locale }) {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8">
+    <div className="pt-10 pb-16 leading-relaxed">
       <h1 className="text-2xl font-semibold tracking-tight">{now.heading}</h1>
       <p className="mt-2 max-w-[65ch] text-body">{now.intro}</p>
       <p className="mt-1 font-mono text-xs text-muted">
@@ -71,7 +71,7 @@ export default function NowView({ locale }: { locale: Locale }) {
                 height={project.imageH}
                 loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
-                className="block w-full rounded-lg border border-faint"
+                className="block w-full rounded-sharp border border-faint"
               />
             </Link>
           )}

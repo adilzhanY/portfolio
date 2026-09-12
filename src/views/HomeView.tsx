@@ -1,291 +1,188 @@
 import Link from "next/link";
-import { FaGithub, FaLinkedin, FaXing, FaEnvelope, FaTelegram, FaReddit, FaXTwitter } from "react-icons/fa6";
-import { FiArrowRight, FiUserPlus } from "react-icons/fi";
-import { MdVerified } from "react-icons/md";
 import { getCV, getContent } from "@/data/cv";
-import { PROFILE, RESUME_FILE, VCARD_FILE } from "@/data/structure";
+import { NOW, PROFILE, RESUME_FILE } from "@/data/structure";
 import { localePath, type Locale } from "@/i18n/config";
-import TechChip from "@/components/TechChip";
+import ProjectCard, { toCardData } from "@/components/ProjectCard";
 import ResumeButton from "@/components/ResumeButton";
+import RotatingText from "@/components/RotatingText";
 import GitHubActivity from "@/components/GitHubActivity";
 import CertificationList from "@/components/CertificationList";
 import SkillsLoop from "@/components/SkillsLoop";
+import TechChip from "@/components/TechChip";
 import StructuredData from "@/components/StructuredData";
 import { personSchema } from "@/i18n/schema";
 
-const sectionHeading =
+/* Paper wants a plain CV, so the section headings only exist when printing. */
+const printHeading =
   "mt-11 border-t border-faint pt-5 text-[0.8rem] font-semibold text-muted";
 
 export default function HomeView({ locale }: { locale: Locale }) {
-  const { name, tagline, intro, contact, skills, languages, projects, experience } =
-    getCV(locale);
+  const { name, contact, skills, languages, projects, experience } = getCV(locale);
   const { about, ui } = getContent(locale);
   const href = (path: string) => localePath(locale, path);
+  const home = ui.home;
+
+  const selected = projects.slice(0, 3);
+  const tinkering = NOW.projects
+    .map((id) => projects.find((project) => project.id === id))
+    .filter((project) => project !== undefined);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8">
+    <>
       <StructuredData data={personSchema(locale)} />
-      <header>
-        {/*
-          Below `sm` the avatar sits above the name, which gives the name the
-          full column width. Side by side it left roughly 220px for the name,
-          and a name that long pushed the verified badge onto its own line.
-          Stacked, the avatar is the larger of the two sizes: on its own row it
-          has to carry the space a name no longer sits in.
-        */}
-        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
+
+      <section className="hero">
+        <div>
+          <p className="eyebrow">
+            <span className="status-dot" aria-hidden="true" />
+            {home.eyebrow}
+          </p>
+          <h1>
+            {home.greeting}
+            <br />
+            {home.making}
+            <br />
+            {/*
+              The rotating phrase sits on its own line, so the two lines above
+              it never reflow as the words change length.
+            */}
+            <span className="rotating-line">
+              <RotatingText texts={home.rotating} />
+            </span>
+          </h1>
+          <p className="intro">{home.heroIntro}</p>
+          <div className="actions print:hidden">
+            <Link className="button primary" href={href("/projects")}>
+              {home.exploreProjects} <span aria-hidden="true">↗</span>
+            </Link>
+            <ResumeButton labels={ui.resume} file={RESUME_FILE[locale]} className="button" />
+          </div>
+          <p className="availability">
+            <span className="status-dot green" aria-hidden="true" />
+            {home.availability}
+          </p>
           {/*
-            The photo prints in the accent colour and comes back in full colour
-            on hover, so the page keeps one palette. The nav watches this
-            element and shows its own small copy once it scrolls away.
+            On screen the contact details are links in the header and on the
+            contact page. Neither survives paper, so print gets them as text.
           */}
-          <span
-            id="hero-avatar"
-            className="avatar-duotone h-36 w-36 shrink-0 sm:h-28 sm:w-28"
-          >
+          <p className="hidden text-sm print:mt-3 print:block">
+            {contact.email}
+            {" / "}
+            {contact.github.replace("https://", "")}
+            {" / "}
+            {contact.linkedin.replace("https://", "")}
+            {" / "}
+            {contact.location}
+          </p>
+        </div>
+
+        <aside className="profile-card print:hidden">
+          <div className="photo-frame">
+            <span className="hello-note">
+              {home.helloNote} <span>{home.helloNoteSub}</span>
+            </span>
             <img
               src={PROFILE.avatar}
               alt={name}
-              title={ui.home.avatarTitle}
+              title={home.avatarTitle}
               width={480}
               height={480}
-              className="h-full w-full object-cover"
+              fetchPriority="high"
             />
-          </span>
-          <div className="min-w-0">
-            {/*
-              The badge is inline rather than a flex item, so it flows with the
-              last word of the name instead of becoming its own row when the
-              text wraps. It scales with the heading rather than a fixed size.
-            */}
-            <h1 className="text-2xl font-semibold tracking-tight">
-              {name}
-              <MdVerified
-                aria-label={ui.home.verified}
-                className="ml-1.5 inline h-[0.85em] w-[0.85em] align-[-0.12em]"
-                style={{ color: "#1D9BF0" }}
-              />
-            </h1>
-            <div className="mt-2 flex items-center gap-3.5">
-              <a
-                href={contact.github}
-                aria-label={ui.social.github}
-                className="text-muted transition-colors hover:text-ink"
-              >
-                <FaGithub aria-hidden="true" className="h-5 w-5" />
+            <span className="photo-corner" aria-hidden="true">
+              :)
+            </span>
+          </div>
+          <div className="profile-caption">
+            <span>{name}</span>
+            <span className="mono muted">{home.helloCaption}</span>
+          </div>
+          <div className="profile-note">
+            <span className="eyebrow">{home.awayHeading}</span>
+            <p>{home.awayText}</p>
+            <div className="socials">
+              <a href={contact.github} target="_blank" rel="noopener">
+                {ui.social.github} ↗
               </a>
-              <a
-                href={contact.linkedin}
-                aria-label={ui.social.linkedin}
-                className="text-muted transition-colors hover:text-ink"
-              >
-                <FaLinkedin aria-hidden="true" className="h-5 w-5" />
-              </a>
-              <a
-                href={contact.xing}
-                aria-label={ui.social.xing}
-                className="text-muted transition-colors hover:text-ink"
-              >
-                <FaXing aria-hidden="true" className="h-5 w-5" />
-              </a>
-              <a
-                href={contact.telegram}
-                aria-label={ui.social.telegram}
-                className="text-muted transition-colors hover:text-ink"
-              >
-                <FaTelegram aria-hidden="true" className="h-5 w-5" />
-              </a>
-              <a
-                href={contact.reddit}
-                aria-label={ui.social.reddit}
-                className="text-muted transition-colors hover:text-ink"
-              >
-                <FaReddit aria-hidden="true" className="h-5 w-5" />
-              </a>
-              <a
-                href={contact.x}
-                aria-label={ui.social.x}
-                className="text-muted transition-colors hover:text-ink"
-              >
-                <FaXTwitter aria-hidden="true" className="h-5 w-5" />
-              </a>
-              <a
-                href={`mailto:${contact.email}`}
-                aria-label={ui.social.email}
-                className="text-muted transition-colors hover:text-ink"
-              >
-                <FaEnvelope aria-hidden="true" className="h-5 w-5" />
+              <a href={contact.linkedin} target="_blank" rel="noopener">
+                {ui.social.linkedin} ↗
               </a>
             </div>
           </div>
-        </div>
-        <h2 className="relative mt-8 text-3xl font-semibold tracking-tight md:text-4xl">
-          {tagline}
-        </h2>
+        </aside>
+      </section>
 
-        {/*
-          On screen the contact details are icon links in the header and cards
-          in the footer. Neither survives paper, so print gets them as text.
-        */}
-        <p className="hidden text-sm print:mt-3 print:block">
-          {contact.email}
-          {" / "}
-          {contact.github.replace("https://", "")}
-          {" / "}
-          {contact.linkedin.replace("https://", "")}
-          {" / "}
-          {contact.location}
-        </p>
-      </header>
-
-      <p className="mt-5">{intro}</p>
-
-      <div className="mt-6 flex flex-wrap items-center gap-3 print:hidden">
-        <ResumeButton labels={ui.resume} file={RESUME_FILE[locale]} />
-        {/* A vCard: one tap and the contact details land in the address book. */}
-        <a
-          href={VCARD_FILE}
-          download
-          className="inline-flex items-center gap-1.5 rounded-full border border-faint px-4 py-2 text-sm font-medium text-body transition-colors hover:border-ink hover:text-ink"
-        >
-          <FiUserPlus aria-hidden="true" className="h-4 w-4" />
-          {ui.home.saveContact}
-        </a>
-      </div>
-
-      {/* Full-bleed on phones so the fade sits at the screen edge. */}
-      <div className="-mx-4 mt-8 sm:mx-0 print:hidden">
-        <SkillsLoop skills={skills} label={ui.home.sectionSkills} />
-      </div>
-
-      <h2 className={sectionHeading}>{ui.home.sectionProjects}</h2>
-
-      {projects.slice(0, 2).map((project, i) => (
-        <div
-          key={project.id}
-          className={[
-            "grid gap-6 py-7 md:gap-10",
-            project.image && !project.wide
-              ? project.phone
-                ? "md:grid-cols-[minmax(0,1fr)_200px]"
-                : "md:grid-cols-[minmax(0,1fr)_400px]"
-              : "",
-            i < 1 ? "border-b border-faint" : "",
-          ].join(" ")}
-        >
+      <section className="section print:hidden">
+        <div className="section-heading">
           <div>
-            <div className="flex flex-wrap items-baseline gap-2.5">
-              <h3 className="text-lg font-semibold">
-                <Link
-                  href={href(`/projects/${project.id}`)}
-                  className="hover:underline hover:underline-offset-3"
-                >
-                  {project.title}
-                </Link>
-              </h3>
-              <span className="font-mono text-xs text-muted">
-                {project.year}
-              </span>
-              <Link
-                href={href(`/projects/${project.id}`)}
-                className="text-[0.8125rem] text-muted hover:text-ink hover:underline hover:underline-offset-3"
-              >
-                {ui.home.details}
-              </Link>
-            </div>
-            <p className="mt-2 text-[0.9375rem] text-body">{project.summary}</p>
-            <p className="mt-2 text-[0.84375rem] font-medium text-accent">
-              {project.metric}
+            <p className="eyebrow">{home.selectedEyebrow}</p>
+            <h2>{home.selectedHeading}</h2>
+          </div>
+          <Link className="text-link" href={href("/projects")}>
+            {home.openShelf} <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
+        <div className="project-grid">
+          {selected.map((project, i) => (
+            <ProjectCard
+              key={project.id}
+              project={toCardData(project, locale)}
+              featured={i === 0}
+              eager={i === 0}
+              readLabel={ui.projects.readCaseStudy}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="about-section">
+        <div>
+          <p className="eyebrow">{home.aboutEyebrow}</p>
+          <h2>{home.aboutHeading}</h2>
+        </div>
+        <div className="about-copy">
+          {about.map((paragraph) => (
+            <p key={paragraph}>
+              {paragraph.replace("{{languages}}", languages.join(", "))}
             </p>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {project.stack.map((item) => (
-                <TechChip key={item} name={item} />
-              ))}
-            </div>
-            {project.image && project.wide && (
-              <Link href={href(`/projects/${project.id}`)} className="block">
-                <img
-                  src={project.image}
-                  alt={project.imageAlt}
-                  width={project.imageW}
-                  height={project.imageH}
-                  loading="lazy"
-                  decoding="async"
-                  className="mt-4 block w-full max-w-[480px] rounded-lg border border-faint transition-opacity hover:opacity-90"
-                />
-              </Link>
-            )}
+          ))}
+          <Link className="text-link" href={href("/experience")}>
+            {home.moreExperience} <span aria-hidden="true">↗</span>
+          </Link>
+          <div className="stack-line">
+            {skills.slice(0, 4).map((skill) => (
+              <span key={skill}>{skill}</span>
+            ))}
           </div>
-          {project.image && !project.wide && (
-            <div className="self-center">
-              <Link href={href(`/projects/${project.id}`)} className="block">
-                <img
-                  src={project.image}
-                  alt={project.imageAlt}
-                  width={project.imageW}
-                  height={project.imageH}
-                  loading={i === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                  className={
-                    project.phone
-                      ? "block w-full max-w-[240px] rounded-lg border border-faint transition-opacity hover:opacity-90 md:ml-auto md:max-w-[200px]"
-                      : "block w-full rounded-lg border border-faint transition-opacity hover:opacity-90"
-                  }
-                />
-              </Link>
-            </div>
-          )}
         </div>
-      ))}
+      </section>
 
-      <div className="mt-2 flex justify-center border-t border-faint pt-6 print:hidden">
-        <Link
-          href={href("/projects")}
-          className="inline-flex items-center gap-1.5 rounded-full border border-muted/50 px-5 py-2 text-sm font-semibold text-body transition-colors hover:border-ink hover:bg-chip"
-        >
-          {ui.home.seeAllProjects}
-          <FiArrowRight aria-hidden="true" className="h-4 w-4" />
-        </Link>
-      </div>
-
-      <h2 className={sectionHeading}>{ui.home.sectionAbout}</h2>
-
-      <div className="mt-4 space-y-3 text-body">
-        {about.map((paragraph) => (
-          <p key={paragraph}>
-            {paragraph.replace("{{languages}}", languages.join(", "))}
-          </p>
+      <aside className="tinkering-strip print:hidden">
+        <span className="eyebrow">
+          <span className="status-dot" aria-hidden="true" />
+          {home.tinkering}
+        </span>
+        {tinkering.map((project) => (
+          <Link key={project.id} href={href(`/projects/${project.id}`)}>
+            {project.title} <span className="muted">/ {project.category}</span> ↗
+          </Link>
         ))}
-      </div>
+      </aside>
 
-      <h2 className={sectionHeading}>{ui.home.sectionExperience}</h2>
-
-      {experience.map((entry, i) => (
-        <div
-          key={entry.id}
-          className={[
-            "grid gap-1 py-4 sm:grid-cols-[110px_minmax(0,1fr)] sm:gap-4",
-            i < experience.length - 1 ? "border-b border-faint" : "",
-          ].join(" ")}
-        >
-          <div className="pt-[3px] font-mono text-[0.78125rem] text-muted">
-            {entry.date}
-          </div>
-          <div>
+      {/* Paper gets the experience and skills as plain lists. */}
+      <div className="hidden print:block">
+        <h2 className={printHeading}>{home.sectionExperience}</h2>
+        {experience.map((entry) => (
+          <div key={entry.id} className="py-3">
             <h3 className="font-semibold">
               {entry.company}{" "}
-              <span className="text-sm font-normal text-muted">
-                · {entry.role}
-              </span>
+              <span className="text-sm font-normal text-muted">· {entry.role}</span>
             </h3>
+            <p className="font-mono text-[0.78125rem] text-muted">{entry.date}</p>
             <p className="mt-1.5 text-[0.90625rem] text-body">{entry.detail}</p>
           </div>
-        </div>
-      ))}
-
-      {/* On screen the skills scroll under the resume button; paper gets a list. */}
-      <div className="hidden print:block">
-        <h2 className={sectionHeading}>{ui.home.sectionSkills}</h2>
+        ))}
+        <h2 className={printHeading}>{home.sectionSkills}</h2>
         <div className="mt-3.5 flex flex-wrap gap-2">
           {skills.map((skill) => (
             <TechChip key={skill} name={skill} />
@@ -293,17 +190,32 @@ export default function HomeView({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      <div className="print:hidden">
-        <h2 className={sectionHeading}>{ui.home.sectionActivity}</h2>
+      <section className="section print:hidden">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">{home.sectionSkills}</p>
+          </div>
+        </div>
+        <SkillsLoop skills={skills} label={home.sectionSkills} />
+      </section>
 
+      <section className="section print:hidden">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">{home.sectionActivity}</p>
+          </div>
+        </div>
         <GitHubActivity labels={ui.calendar} />
-      </div>
+      </section>
 
-      <h2 id="certifications" className={`${sectionHeading} scroll-mt-20`}>
-        {ui.home.sectionCertifications}
-      </h2>
-
-      <CertificationList label={ui.certifications.showCredential} />
-    </div>
+      <section id="certifications" className="section scroll-mt-20 print:hidden">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">{home.sectionCertifications}</p>
+          </div>
+        </div>
+        <CertificationList label={ui.certifications.showCredential} />
+      </section>
+    </>
   );
 }

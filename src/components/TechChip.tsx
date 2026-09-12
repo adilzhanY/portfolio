@@ -47,7 +47,7 @@ export default function TechChip({ name }: { name: string }) {
   const Icon = tech?.icon;
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-faint bg-chip py-1 pr-3 pl-2.5 font-mono text-[0.78125rem] text-body">
+    <span className="inline-flex items-center gap-1.5 rounded-sharp-sm border border-faint bg-chip py-1 pr-3 pl-2.5 font-mono text-[0.78125rem] text-body">
       {Icon && (
         <Icon
           aria-hidden="true"

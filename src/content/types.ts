@@ -6,6 +6,8 @@ export interface GalleryCopy {
 }
 
 export interface ProjectCopy {
+  /** Short label above the title on a card, for example "3D building editor". */
+  category: string;
   /** One or two plain sentences shown on the index. */
   summary: string;
   /** The single fact worth remembering. */
@@ -27,6 +29,10 @@ export interface ExperienceCopy {
   company: string;
   role: string;
   date: string;
+  /** Small tag beside the date, for example "Remote" or "Course project". */
+  label: string;
+  /** Entry heading when the company name is not the interesting part. */
+  headline?: string;
   /** One-line version, shown on the Home page. */
   detail: string;
   /** Full story, shown on the /experience timeline. */
@@ -49,6 +55,9 @@ export interface UiCopy {
     projects: string;
     experience: string;
     blog: string;
+    contact: string;
+    /** The call to action in the header, beside the tools. */
+    getInTouch: string;
     /** The phone menu button and the drawer it opens. */
     menu: string;
     close: string;
@@ -81,11 +90,47 @@ export interface UiCopy {
     sectionActivity: string;
     sectionCertifications: string;
     saveContact: string;
+    /** The line above the name: role and where. */
+    eyebrow: string;
+    /** The heading, split so the rotating phrase can sit on its own line. */
+    greeting: string;
+    making: string;
+    /** Phrases the heading cycles through. */
+    rotating: string[];
+    /** The short, personal introduction under the heading. */
+    heroIntro: string;
+    exploreProjects: string;
+    availability: string;
+    /** The note taped to the photo, and its small second line. */
+    helloNote: string;
+    helloNoteSub: string;
+    helloCaption: string;
+    awayHeading: string;
+    awayText: string;
+    selectedEyebrow: string;
+    selectedHeading: string;
+    openShelf: string;
+    aboutEyebrow: string;
+    aboutHeading: string;
+    moreExperience: string;
+    tinkering: string;
   };
   projects: {
     heading: string;
     intro: string;
     readCaseStudy: string;
+    eyebrow: string;
+    /** The h1 on the index, which is longer than the nav label. */
+    pageHeading: string;
+    pageIntro: string;
+    surprise: string;
+    filterAll: string;
+    filterWeb: string;
+    filterMobile: string;
+    filterDesktop: string;
+    /** Supports the {{count}} placeholder. */
+    count: string;
+    endNote: string;
   };
   project: {
     back: string;
@@ -101,6 +146,16 @@ export interface UiCopy {
   experience: {
     heading: string;
     intro: string;
+    eyebrow: string;
+    pageHeading: string;
+    pageIntro: string;
+    resumeVersion: string;
+    glance: string;
+    glanceHeading: string;
+    glanceText: string;
+    mainTools: string;
+    languagesLabel: string;
+    talk: string;
   };
   certifications: {
     showCredential: string;
@@ -149,6 +204,21 @@ export interface UsesCopy {
   notes: Record<string, string>;
 }
 
+export interface ContactCopy {
+  heading: string;
+  eyebrow: string;
+  intro: string;
+  /** Row headings on the details card. */
+  basedIn: string;
+  speaks: string;
+  saveContact: string;
+  emailLabel: string;
+  githubLabel: string;
+  xLabel: string;
+  redditLabel: string;
+  xingLabel: string;
+}
+
 export interface NowCopy {
   heading: string;
   intro: string;
@@ -181,6 +251,8 @@ export interface MetaCopy {
   experienceDescription: string;
   usesTitle: string;
   usesDescription: string;
+  contactTitle: string;
+  contactDescription: string;
   nowTitle: string;
   nowDescription: string;
   blogTitle: string;
@@ -206,11 +278,17 @@ export interface Content {
     telegramLabel: string;
     bookingLabel: string;
     credit: string;
+    /** The closing block: a status line, a question, and the answer to it. */
+    openTo: string;
+    prompt: string;
+    promptSub: string;
+    cta: string;
   };
   projects: Record<string, ProjectCopy>;
   experience: Record<ExperienceId, ExperienceCopy>;
   ui: UiCopy;
   uses: UsesCopy;
+  contact: ContactCopy;
   now: NowCopy;
   blog: BlogCopy;
   meta: MetaCopy;

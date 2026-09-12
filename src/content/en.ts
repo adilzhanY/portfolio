@@ -20,10 +20,15 @@ export const content: Content = {
     telegramLabel: "Telegram",
     bookingLabel: "Book a 15 minute call",
     credit: "Designed, built, and operated end to end.",
+    openTo: "Open to opportunities",
+    prompt: "Have something in mind?",
+    promptSub: "I'd like to hear about it.",
+    cta: "Let's talk",
   },
 
   projects: {
     bauwerk: {
+      category: "3D building editor",
       summary:
         "A 3D building editor for German energy consultants, in the browser. Draw a house and watch the U-values, the heat loss, the Energieausweis class, the heat load of every room and the payback of every renovation step move while you draw. Then print the German report.",
       metric: "237 kWh/(m2a) today, 63 after the full envelope, 367 tests",
@@ -59,6 +64,7 @@ export const content: Content = {
     },
 
     "berlin-walk": {
+      category: "Browser experiment",
       summary:
         "A walkable, flyable 3D reconstruction of central Berlin that runs in the browser from a single link. Raw WebGL2, real OpenStreetMap data, no engine and no library. I wrote one prompt and Claude Fable 5.1 built all of it in four hours while I watched the numbers.",
       metric: "7,895 lines, 4 h 08 min, $27.49 of tokens, zero human code",
@@ -93,6 +99,7 @@ export const content: Content = {
     },
 
     "whale-abyss": {
+      category: "E-commerce platform",
       summary:
         "E-commerce platform for Genshin Impact boosting, built and launched alone. Paid orders flow straight into a Telegram bot, payments clear end to end, CI/CD deploys on every push.",
       metric: "150+ paying customers in the first 10 days",
@@ -125,6 +132,7 @@ export const content: Content = {
     },
 
     torq: {
+      category: "Strength training app",
       summary:
         "A gym app that tells you how strong you actually are. Every set is scored with the DOTS formula, normalised for bodyweight and sex, and turned into a rank across nine tiers, with percentiles from 400k+ OpenPowerlifting lifters.",
       metric: "Nine rank tiers, 243 tests, local-first with free sync",
@@ -157,6 +165,7 @@ export const content: Content = {
     },
 
     sendoku: {
+      category: "Android puzzle app",
       summary:
         "An Android sudoku app that can tell you why a puzzle is hard. Every puzzle is solved by a technique solver before you see it, so the level is the hardest human rule it actually needs, and the same solver writes the hints and the 45 lesson course.",
       metric: "4,200 rated puzzles, 860 tests, 3.1 MB, no internet permission",
@@ -190,6 +199,7 @@ export const content: Content = {
     },
 
     openhyprwhisper: {
+      category: "Linux desktop tool",
       summary:
         "System-wide voice dictation for Hyprland. Press a key, speak, and whisper.cpp types your words into whatever text field is focused. Fully local and private, with per-utterance language detection for mixed EN/RU/DE/KK speech, deterministic replacements, and an optional LLM polish pass.",
       metric: "~0.2 s per sentence with the warm daemon, fully offline",
@@ -225,6 +235,7 @@ export const content: Content = {
     },
 
     grit: {
+      category: "Habits and focus",
       summary:
         "A life tracker that stops asking you to open five different apps. Habits, food, steps, weight, and focus in one XP economy, with web, mobile, and a Hyprland desktop panel sharing one domain core, offline-first with delta sync.",
       metric: "One XP economy across web, mobile, and desktop",
@@ -260,6 +271,8 @@ export const content: Content = {
   experience: {
     independent: {
       company: "Independent products",
+      label: "Independent",
+      headline: "Building and running my own products",
       role: "Solo developer and operator",
       date: "2024 to present",
       detail:
@@ -273,6 +286,7 @@ export const content: Content = {
     },
     intuivo: {
       company: "intuivo",
+      label: "Remote",
       role: "Software Engineering Intern, remote",
       date: "04.2025 to 08.2025",
       detail:
@@ -285,6 +299,7 @@ export const content: Content = {
     },
     climanova: {
       company: "ClimaNova",
+      label: "Course project",
       role: "Team Lead, course project",
       date: "Spring 2024",
       detail:
@@ -297,6 +312,7 @@ export const content: Content = {
     },
     degree: {
       company: "B.Sc Software Engineering",
+      label: "Education",
       role: "University of Europe for Applied Sciences",
       date: "09.2022 to 02.2026",
       detail:
@@ -315,6 +331,8 @@ export const content: Content = {
       projects: "Projects",
       experience: "Experience",
       blog: "Blog",
+      contact: "Contact",
+      getInTouch: "Get in touch",
       menu: "Menu",
       close: "Close menu",
     },
@@ -330,6 +348,25 @@ export const content: Content = {
     theme: { toggle: "Toggle dark mode" },
     language: { label: "Language" },
     home: {
+      eyebrow: "Software engineer · Potsdam, Germany",
+      greeting: "Hi, I'm Adilzhan.",
+      making: "I like making",
+      rotating: ["useful things", "gym apps", "Linux tools", "3D cities", "puzzle games"],
+      heroIntro: "I build apps and use them in my own life. Sometimes that means a workout log. Sometimes it means teaching my Linux desktop to take dictation.",
+      exploreProjects: "Explore my projects",
+      availability: "Open to full-time, contract, and freelance work",
+      helloNote: "Sälem!",
+      helloNoteSub: "That's hello in Kazakh.",
+      helloCaption: "Hello / Sälem",
+      awayHeading: "Away from this page",
+      awayText: "Usually somewhere between a gym app and a Linux desktop project.",
+      selectedEyebrow: "01 / From my project folder",
+      selectedHeading: "A few things I've built.",
+      openShelf: "Open the whole shelf",
+      aboutEyebrow: "02 / A bit more about me",
+      aboutHeading: "A lot of this starts with “I could use that.”",
+      moreExperience: "More about my experience",
+      tinkering: "Currently tinkering",
       avatarTitle: "Yes, that's me",
       verified: "Verified",
       sectionProjects: "Projects",
@@ -343,6 +380,16 @@ export const content: Content = {
       saveContact: "Save contact",
     },
     projects: {
+      eyebrow: "Projects / Built, used, and still tinkered with",
+      pageHeading: "My project shelf",
+      pageIntro: "Things I wanted to use, problems I wanted to understand, and an occasional experiment that got out of hand.",
+      surprise: "Pick a project for me",
+      filterAll: "All projects",
+      filterWeb: "Web",
+      filterMobile: "Mobile",
+      filterDesktop: "Desktop and more",
+      count: "{{count}} projects",
+      endNote: "More experiments and source code on",
       heading: "Projects",
       intro:
         "Each of these is a real product, not a tutorial build. Click one for the full case study.",
@@ -360,6 +407,16 @@ export const content: Content = {
       inDetail: "In detail",
     },
     experience: {
+      eyebrow: "Experience / The story so far",
+      pageHeading: "How I got here",
+      pageIntro: "I learned a lot during my degree. Running software with real users gave me a different kind of homework.",
+      resumeVersion: "The resume version",
+      glance: "At a glance",
+      glanceHeading: "Across the stack. Close to the product.",
+      glanceText: "Based in Potsdam, Germany. Open to remote roles and work with a team.",
+      mainTools: "Main tools",
+      languagesLabel: "Languages",
+      talk: "Let's talk",
       heading: "Experience",
       intro: "What I actually did in each role, newest first.",
     },
@@ -434,6 +491,20 @@ export const content: Content = {
     },
   },
 
+  contact: {
+    heading: "Let's talk",
+    eyebrow: "Contact / Every way to reach me",
+    intro: "Email is the fastest way. I read everything and answer properly.",
+    basedIn: "Based in",
+    speaks: "Speaks",
+    saveContact: "Save contact",
+    emailLabel: "Email",
+    githubLabel: "GitHub",
+    xLabel: "X",
+    redditLabel: "Reddit",
+    xingLabel: "Xing",
+  },
+
   now: {
     heading: "Now",
     intro: "What I am working on at the moment, and where to find me. This page changes as the work does.",
@@ -465,6 +536,9 @@ export const content: Content = {
     usesTitle: "Uses",
     usesDescription:
       "The machine, desktop, editor and tools I work on every day: Arch Linux, Hyprland, Neovim, and two desktop tools I wrote myself.",
+    contactTitle: "Contact",
+    contactDescription:
+      "Every way to reach Adilzhan Yerzhan: email, LinkedIn, GitHub, Telegram, X, Reddit, Xing, or a 15 minute call.",
     nowTitle: "Now",
     nowDescription:
       "What Adilzhan Yerzhan is working on right now: Sendoku and Torq, and open to work.",

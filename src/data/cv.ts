@@ -15,6 +15,10 @@ export interface Experience {
   company: string;
   role: string;
   date: string;
+  /** Small tag beside the date, for example "Remote". */
+  label: string;
+  /** Entry heading when the company name is not the interesting part. */
+  headline?: string;
   /** One-line version, shown on the Home page. */
   detail: string;
   /** Full story, shown on the /experience timeline. */
@@ -37,6 +41,14 @@ export interface Project {
   id: string;
   title: string;
   year: string;
+  /** Short label above the title on a card. */
+  category: string;
+  /** Which filter the project falls under on the index. */
+  group: "web" | "mobile" | "desktop";
+  /** How the card image is staged. */
+  visual: "desktop" | "phones" | "scene" | "overlay";
+  /** The shots used on the card, in order. */
+  card: string[];
   summary: string;
   metric: string;
   stack: string[];
@@ -107,6 +119,10 @@ export function getCV(locale: Locale): CV {
       id: project.id,
       title: project.title,
       year: project.year,
+      category: text.category,
+      group: project.group,
+      visual: project.visual,
+      card: [...project.card],
       summary: text.summary,
       metric: text.metric,
       stack: [...project.stack],

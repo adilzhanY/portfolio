@@ -10,7 +10,7 @@ export default function UsesView({ locale }: { locale: Locale }) {
   const { uses } = getContent(locale);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8">
+    <div className="pt-10 pb-16 leading-relaxed">
       <h1 className="text-2xl font-semibold tracking-tight">{uses.heading}</h1>
       <p className="mt-2 max-w-[65ch] text-body">{uses.intro}</p>
 

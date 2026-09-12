@@ -13,7 +13,7 @@ function IssuerIcon({ issuer }: { issuer: CertificationStructure["issuer"] }) {
   return (
     <span
       aria-hidden="true"
-      className="text-[0.8125rem] font-extrabold tracking-tight"
+      className="text-[0.8125rem] font-semibold tracking-tight"
       style={{ color: "#0F62FE" }}
     >
       IBM
@@ -34,7 +34,7 @@ export default function CertificationList({ label }: { label: string }) {
             i < certifications.length - 1 ? "border-b border-faint" : "",
           ].join(" ")}
         >
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-faint bg-chip">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sharp border border-faint bg-chip">
             <IssuerIcon issuer={cert.issuer} />
           </span>
           <div className="min-w-0 flex-1">
@@ -47,7 +47,7 @@ export default function CertificationList({ label }: { label: string }) {
             href={cert.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-full border border-muted/50 px-4 py-1.5 text-sm font-semibold text-body transition-colors hover:border-ink hover:bg-chip"
+            className="inline-flex items-center gap-1.5 rounded-sharp-sm border border-muted/50 px-4 py-1.5 text-sm font-semibold text-body transition-colors hover:border-ink hover:bg-chip"
           >
             {label}
             <FiExternalLink aria-hidden="true" className="h-3.5 w-3.5" />

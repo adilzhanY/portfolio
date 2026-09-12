@@ -41,7 +41,7 @@ export default function SequenceReplay({ shots }: { shots: GalleryImage[] }) {
       onMouseLeave={() => (hovering.current = false)}
     >
       {/* All frames are stacked so the box never reflows between steps. */}
-      <div className="relative overflow-hidden rounded-lg border border-faint">
+      <div className="relative overflow-hidden rounded-sharp border border-faint">
         {shots.map((shot, i) => (
           <img
             key={shot.src}
@@ -87,7 +87,7 @@ export default function SequenceReplay({ shots }: { shots: GalleryImage[] }) {
               aria-label={shot.caption ?? shot.alt}
               aria-current={i === index ? "true" : undefined}
               className={[
-                "h-1.5 cursor-pointer rounded-full transition-all",
+                "h-1.5 cursor-pointer rounded-sharp transition-all",
                 i === index ? "w-6 bg-accent" : "w-2.5 bg-faint hover:bg-muted",
               ].join(" ")}
             />

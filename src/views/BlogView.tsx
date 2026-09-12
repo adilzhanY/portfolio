@@ -12,7 +12,7 @@ export default function BlogView() {
   const posts = getPosts();
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8">
+    <div className="pt-10 pb-16 leading-relaxed">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">
           {blog.heading}
@@ -59,7 +59,7 @@ export default function BlogView() {
               {post.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full border border-faint bg-chip px-2.5 py-0.5 font-mono text-[0.78125rem] text-body"
+                  className="rounded-sharp-sm border border-faint bg-chip px-2.5 py-0.5 font-mono text-[0.78125rem] text-body"
                 >
                   {tag}
                 </span>
@@ -80,7 +80,7 @@ export default function BlogView() {
                 alt=""
                 loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
-                className="block w-full rounded-lg border border-faint"
+                className="block w-full rounded-sharp border border-faint"
               />
             </Link>
           )}

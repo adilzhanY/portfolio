@@ -9,7 +9,7 @@ export default function BlogPostView({ post }: { post: Post }) {
   const { blog } = getContent(DEFAULT_LOCALE);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8">
+    <div className="pt-10 pb-16 leading-relaxed">
       <Link
         href="/blog"
         className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink hover:underline hover:underline-offset-3"
@@ -30,7 +30,7 @@ export default function BlogPostView({ post }: { post: Post }) {
               {post.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full border border-faint bg-chip px-2.5 py-0.5 font-mono text-[0.78125rem] text-body"
+                  className="rounded-sharp-sm border border-faint bg-chip px-2.5 py-0.5 font-mono text-[0.78125rem] text-body"
                 >
                   {tag}
                 </span>

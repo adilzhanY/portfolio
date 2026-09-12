@@ -19,7 +19,7 @@ export default function GitHubActivity({ labels }: { labels: CalendarLabels }) {
   }, []);
 
   return (
-    <div className="mt-5 overflow-x-auto rounded-lg border border-faint p-5">
+    <div className="mt-5 overflow-x-auto rounded-sharp border border-faint p-5">
       <div className="mx-auto w-fit">
         <GitHubCalendar
           username={PROFILE.githubUsername}

@@ -57,7 +57,7 @@ export default function ResumeModal({
   }, []);
 
   const toolBtn =
-    "flex h-9 w-9 items-center justify-center rounded-full text-lg leading-none text-white/90 transition-colors hover:bg-white/15 disabled:opacity-35 disabled:hover:bg-transparent";
+    "flex h-9 w-9 items-center justify-center rounded-sharp text-lg leading-none text-white/90 transition-colors hover:bg-white/15 disabled:opacity-35 disabled:hover:bg-transparent";
 
   return (
     <div
@@ -97,7 +97,7 @@ export default function ResumeModal({
         <a
           href={CV_FILE}
           download
-          className="flex h-9 items-center gap-2 rounded-full px-3.5 text-[0.84375rem] font-medium text-white/90 transition-colors hover:bg-white/15"
+          className="flex h-9 items-center gap-2 rounded-sharp px-3.5 text-[0.84375rem] font-medium text-white/90 transition-colors hover:bg-white/15"
         >
           <FiDownload aria-hidden="true" className="h-4 w-4" />
           {labels.download}
@@ -141,7 +141,7 @@ export default function ResumeModal({
                 key={i}
                 pageNumber={i + 1}
                 width={pageWidth * zoom}
-                className="mb-4 overflow-hidden rounded-md shadow-2xl"
+                className="mb-4 overflow-hidden rounded-sharp shadow-2xl"
               />
             ))}
           </Document>

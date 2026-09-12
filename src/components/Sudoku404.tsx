@@ -235,7 +235,7 @@ export default function Sudoku404({ labels }: { labels: SudokuLabels }) {
       {solved ? (
         <div className="sudoku-side">
           <p className="text-body">{labels.solved}</p>
-          <Link href="/" className="btn-primary mt-3">
+          <Link href="/" className="button primary mt-3">
             {labels.solvedAction}
           </Link>
         </div>
@@ -264,7 +264,7 @@ export default function Sudoku404({ labels }: { labels: SudokuLabels }) {
           </div>
 
           <div className="sudoku-actions">
-            <Link href="/" className="btn-primary">
+            <Link href="/" className="button primary">
               {labels.action}
             </Link>
             <button type="button" className="sudoku-hint" onClick={askHint}>

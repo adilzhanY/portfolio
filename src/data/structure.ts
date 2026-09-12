@@ -37,6 +37,16 @@ export interface ProjectStructure {
   imageH?: number;
   /** Phone screenshots render narrower than desktop ones. */
   phone?: boolean;
+  /** Which filter the project falls under on the index. */
+  group: "web" | "mobile" | "desktop";
+  /**
+   * How the card image is staged. `desktop` is one wide screenshot on a tinted
+   * board, `phones` a pair of upright screens, `scene` a full-bleed photo, and
+   * `overlay` a wide shot with room around it.
+   */
+  visual: "desktop" | "phones" | "scene" | "overlay";
+  /** The gallery shots used on the card, in order. */
+  card: string[];
   /** Wide, short screenshots render under the text instead of beside it. */
   wide?: boolean;
   gallery: GalleryShot[];
@@ -125,6 +135,9 @@ export type ExperienceId = (typeof EXPERIENCE_ORDER)[number];
 export const PROJECTS: ProjectStructure[] = [
   {
     id: "bauwerk",
+    group: "web",
+    visual: "desktop",
+    card: ["/projects/gallery/bauwerk-scene.webp"],
     accent: { light: "#234d8f", dark: "#7fa6e8" },
     title: "Bauwerk",
     year: "2026",
@@ -143,27 +156,10 @@ export const PROJECTS: ProjectStructure[] = [
     ],
   },
   {
-    id: "berlin-walk",
-    accent: { light: "#8a6a1f", dark: "#e3c476" },
-    title: "Berlin Walk",
-    year: "2026",
-    stack: ["WebGL2", "GLSL", "JavaScript", "Web Audio", "OpenStreetMap", "Node.js"],
-    link: "https://github.com/adilzhanY/berlin-walk",
-    live: "https://adilzhany.github.io/berlin-walk/",
-    image: "/projects/berlin-walk-preview.webp",
-    imageW: 1200,
-    imageH: 646,
-    gallery: [
-      { id: "flight", src: "/projects/gallery/berlin-walk-flight.webp", w: 1280, h: 720 },
-      { id: "gate", src: "/projects/gallery/berlin-walk-gate.webp", w: 1280, h: 720 },
-      { id: "linden", src: "/projects/gallery/berlin-walk-linden.webp", w: 1280, h: 720 },
-      { id: "memorial", src: "/projects/gallery/berlin-walk-memorial.webp", w: 1280, h: 720 },
-      { id: "tower", src: "/projects/gallery/berlin-walk-tower.webp", w: 1280, h: 720 },
-      { id: "night", src: "/projects/gallery/berlin-walk-night.webp", w: 1280, h: 720 },
-    ],
-  },
-  {
     id: "whale-abyss",
+    group: "web",
+    visual: "desktop",
+    card: ["/projects/gallery/whaleabyss-services.webp"],
     accent: { light: "#1f4fd1", dark: "#6b93ff" },
     title: "Whale Abyss",
     year: "2026",
@@ -190,6 +186,9 @@ export const PROJECTS: ProjectStructure[] = [
   },
   {
     id: "torq",
+    group: "mobile",
+    visual: "phones",
+    card: ["/projects/gallery/torq-home.webp", "/projects/gallery/torq-ranks.webp"],
     accent: { light: "#5a7f00", dark: "#c6f135" },
     title: "Torq",
     year: "2026",
@@ -209,6 +208,9 @@ export const PROJECTS: ProjectStructure[] = [
   },
   {
     id: "sendoku",
+    group: "mobile",
+    visual: "phones",
+    card: ["/projects/gallery/sendoku-killer.webp", "/projects/gallery/sendoku-hint.webp"],
     accent: { light: "#0f766e", dark: "#3ee8c8" },
     title: "Sendoku",
     year: "2026",
@@ -227,7 +229,33 @@ export const PROJECTS: ProjectStructure[] = [
     galleryPhones: true,
   },
   {
+    id: "berlin-walk",
+    group: "web",
+    visual: "scene",
+    card: ["/projects/gallery/berlin-walk-gate.webp"],
+    accent: { light: "#8a6a1f", dark: "#e3c476" },
+    title: "Berlin Walk",
+    year: "2026",
+    stack: ["WebGL2", "GLSL", "JavaScript", "Web Audio", "OpenStreetMap", "Node.js"],
+    link: "https://github.com/adilzhanY/berlin-walk",
+    live: "https://adilzhany.github.io/berlin-walk/",
+    image: "/projects/berlin-walk-preview.webp",
+    imageW: 1200,
+    imageH: 646,
+    gallery: [
+      { id: "flight", src: "/projects/gallery/berlin-walk-flight.webp", w: 1280, h: 720 },
+      { id: "gate", src: "/projects/gallery/berlin-walk-gate.webp", w: 1280, h: 720 },
+      { id: "linden", src: "/projects/gallery/berlin-walk-linden.webp", w: 1280, h: 720 },
+      { id: "memorial", src: "/projects/gallery/berlin-walk-memorial.webp", w: 1280, h: 720 },
+      { id: "tower", src: "/projects/gallery/berlin-walk-tower.webp", w: 1280, h: 720 },
+      { id: "night", src: "/projects/gallery/berlin-walk-night.webp", w: 1280, h: 720 },
+    ],
+  },
+  {
     id: "openhyprwhisper",
+    group: "desktop",
+    visual: "overlay",
+    card: ["/projects/gallery/ohw-recording.webp"],
     accent: { light: "#4f5fe8", dark: "#b9c3ff" },
     title: "OpenHyprWhisper",
     year: "2026",
@@ -249,6 +277,9 @@ export const PROJECTS: ProjectStructure[] = [
   },
   {
     id: "grit",
+    group: "desktop",
+    visual: "phones",
+    card: ["/projects/gallery/grit-myday.webp", "/projects/gallery/grit-focus.webp"],
     accent: { light: "#c2410c", dark: "#fb923c" },
     title: "Grit",
     year: "2026",

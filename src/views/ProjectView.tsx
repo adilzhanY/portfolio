@@ -37,7 +37,7 @@ export default function ProjectView({
   return (
     <div
       data-project={project.id}
-      className="mx-auto max-w-5xl px-4 pt-8 pb-12 leading-relaxed sm:px-6 md:pt-10 lg:px-8"
+      className="pt-10 pb-16 leading-relaxed"
     >
       {tint && <style>{tint}</style>}
       {project.accent && (
@@ -71,16 +71,16 @@ export default function ProjectView({
           <p className="mt-3 max-w-3xl text-lg font-medium leading-snug text-accent sm:text-xl md:text-2xl">
             {project.metric}
           </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap print:hidden">
+          <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap print:hidden">
             {project.live && (
-              <a href={project.live} className="btn-accent">
+              <a href={project.live} className="button primary">
                 {ui.project.live}
                 <FiExternalLink aria-hidden="true" className="h-4 w-4" />
               </a>
             )}
-            <a href={project.link} className="btn-secondary">
-              <FiGithub aria-hidden="true" className="h-4 w-4" />
+            <a href={project.link} className="button">
               {ui.project.github}
+              <FiGithub aria-hidden="true" className="h-4 w-4" />
             </a>
           </div>
         </header>
@@ -94,7 +94,7 @@ export default function ProjectView({
           height={project.imageH}
           loading="eager"
           decoding="async"
-          className="mt-8 block w-full rounded-xl border border-faint sm:mt-10"
+          className="mt-8 block w-full rounded-sharp border border-faint sm:mt-10"
         />
       )}
 
@@ -159,7 +159,7 @@ export default function ProjectView({
                   height={shot.h}
                   loading="lazy"
                   decoding="async"
-                  className="block w-full rounded-lg border border-faint"
+                  className="block w-full rounded-sharp border border-faint"
                 />
                 {shot.caption && (
                   <figcaption className="mt-1.5 text-[0.78125rem] text-muted">

@@ -24,7 +24,7 @@ export default function VisitorCount({ template }: { template: string }) {
   if (!count) return null;
 
   return (
-    <span className="rounded-full border border-faint px-3.5 py-1.5 text-xs text-muted">
+    <span className="rounded-sharp-sm border border-faint px-3.5 py-1.5 text-xs text-muted">
       {template.replace("{{count}}", count)}
     </span>
   );

@@ -85,7 +85,7 @@ export default function LanguageSwitcher({
         aria-label={label}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex cursor-pointer items-center gap-1.5 rounded-full border border-faint px-2.5 py-1 text-[0.6875rem] font-semibold text-body transition-colors hover:border-ink/30 hover:bg-chip"
+        className="flex h-[2.2rem] cursor-pointer items-center gap-1.5 rounded-sharp border border-faint px-2.5 text-[0.6875rem] font-semibold text-body transition-colors hover:border-accent hover:bg-chip"
       >
         <Current
           aria-hidden="true"
@@ -110,7 +110,7 @@ export default function LanguageSwitcher({
         aria-label={label}
         inert={!open}
         className={[
-          "absolute right-0 z-50 mt-2 w-44 origin-top-right overflow-hidden rounded-xl border border-faint bg-surface p-1 shadow-lg shadow-black/5",
+          "absolute right-0 z-50 mt-2 w-44 origin-top-right overflow-hidden rounded-sharp border border-faint bg-surface p-1 shadow-[4px_4px_0_var(--color-chip)]",
           "transition duration-150 ease-out motion-reduce:transition-none",
           open
             ? "visible translate-y-0 scale-100 opacity-100"
@@ -138,7 +138,7 @@ export default function LanguageSwitcher({
                 setOpen(false);
               }}
               className={[
-                "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors",
+                "flex items-center gap-2.5 rounded-sharp-sm px-2.5 py-2 text-sm transition-colors",
                 active
                   ? "bg-chip font-semibold text-ink"
                   : "text-body hover:bg-chip hover:text-ink",

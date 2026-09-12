@@ -11,9 +11,11 @@ const ResumeModal = dynamic(() => import("./ResumeModal"), { ssr: false });
 export default function ResumeButton({
   labels,
   file,
+  className = "button primary",
 }: {
   labels: UiCopy["resume"];
   file: string;
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -22,7 +24,7 @@ export default function ResumeButton({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="btn-primary"
+        className={className}
       >
         {labels.open}
         <FiChevronRight aria-hidden="true" className="h-4 w-4" />
