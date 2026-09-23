@@ -1,20 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import OhwPill, { type PillState } from "./OhwPill";
 import { useStageActive } from "./StageFrame";
 
-type Step = "recording" | "transcribing" | "polishing" | "done";
+type Step = PillState;
 
 /*
- * One pass of OpenHyprWhisper: the pill records, transcribes and polishes,
+ * One pass of OpenHyprWhisper: the real pill records, transcribes and polishes,
  * then the sentence types itself into the field. At rest the field already
  * holds the finished sentence, so the stage reads before anything moves.
  */
 export default function Dictation({
-  pills,
   labels,
 }: {
-  pills: Record<Step, string>;
   labels: { chatName: string; chatSeen: string; chatIn: string; chatOut: string; keys: string };
 }) {
   const active = useStageActive();
@@ -32,13 +31,13 @@ export default function Dictation({
     (async () => {
       setTyped(0);
       setStep("recording");
-      await wait(1700);
+      await wait(3200);
       if (cancelled) return;
       setStep("transcribing");
-      await wait(700);
+      await wait(900);
       if (cancelled) return;
       setStep("polishing");
-      await wait(600);
+      await wait(800);
       if (cancelled) return;
       setStep("done");
       for (let i = 1; i <= labels.chatOut.length; i++) {
@@ -68,11 +67,7 @@ export default function Dictation({
           <span className="caret" />
         </div>
       </div>
-      <div className="pills">
-        {(Object.keys(pills) as Step[]).map((key) => (
-          <img key={key} className={key === step ? "on" : undefined} src={pills[key]} alt="" />
-        ))}
-      </div>
+      <OhwPill state={step} />
       <div className="keys" aria-hidden="true">
         <kbd>Super</kbd>+<kbd>D</kbd> {labels.keys}
       </div>

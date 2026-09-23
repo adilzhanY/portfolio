@@ -6,6 +6,7 @@ import Analytics from "@/components/Analytics";
 import CRTBackdrop from "@/components/CRTBackdrop";
 import PixelBlastBackdrop from "@/components/PixelBlastBackdrop";
 import LanguageHint from "@/components/LanguageHint";
+import PageReveal from "@/components/PageReveal";
 import { getContent } from "@/data/cv";
 import type { Locale } from "@/i18n/config";
 
@@ -94,6 +95,13 @@ export default function RootShell({
             __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`,
           }}
         />
+        {/* Hides the content until PageReveal animates it in. Gives up after
+            three seconds so a failed script never leaves a blank page. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var d=document.documentElement;d.classList.add("reveal-pending");setTimeout(function(){d.classList.remove("reveal-pending")},3000)}catch(e){}})()`,
+          }}
+        />
         {/* GoatCounter: no_onload so the SPA-aware Analytics component owns counting */}
         <script
           dangerouslySetInnerHTML={{
@@ -110,6 +118,7 @@ export default function RootShell({
         {BACKDROP === "pixel" && <PixelBlastBackdrop />}
         {BACKDROP === "crt" && <CRTBackdrop />}
         <Analytics />
+        <PageReveal />
         <LanguageHint locale={locale} />
         <SiteNav locale={locale} ui={ui} />
         <main id="main" className="wrap flex-1">

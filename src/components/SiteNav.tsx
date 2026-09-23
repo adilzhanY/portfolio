@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { FiMenu, FiX } from "react-icons/fi";
+import { useEffect, useRef, useState } from "react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeToggle from "@/components/ThemeToggle";
 import type { UiCopy } from "@/content/types";
@@ -23,12 +22,30 @@ export default function SiteNav({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const pill = useRef<HTMLDivElement>(null);
   // Compare against the path without its locale prefix, so /ru/projects still
   // marks the Projects tab as current.
   const current = splitLocale(pathname).path;
 
   // A new page closes the drawer.
   useEffect(() => setOpen(false), [pathname]);
+
+  // So do Escape and a tap anywhere outside the pill.
+  useEffect(() => {
+    if (!open) return;
+    const key = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    const outside = (event: PointerEvent) => {
+      if (!pill.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("keydown", key);
+    document.addEventListener("pointerdown", outside);
+    return () => {
+      document.removeEventListener("keydown", key);
+      document.removeEventListener("pointerdown", outside);
+    };
+  }, [open]);
 
   const links = [
     { href: "/", label: ui.nav.home },
@@ -46,7 +63,7 @@ export default function SiteNav({
 
   return (
     <header className="site-header print:hidden">
-      <div className="nav-pill">
+      <div className="nav-pill" ref={pill}>
         <Link href={localePath(locale, "/")} className="wordmark">
           qantrr<i>.</i>
         </Link>
@@ -77,26 +94,40 @@ export default function SiteNav({
             aria-label={open ? ui.nav.close : ui.nav.menu}
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}
+            <span className="burger" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
           </button>
         </div>
 
-        {open && (
-          <nav id="nav-drawer" className="nav-drawer" aria-label={ui.nav.aria}>
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={target(link)}
-                aria-current={isActive(link.href) ? "page" : undefined}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Link className="nav-cta" href={localePath(locale, "/contact")}>
-              {ui.nav.getInTouch}
+        {/* Always mounted so it can animate closed as well as open; `inert`
+            keeps the hidden links out of the tab order. */}
+        <nav
+          id="nav-drawer"
+          className={open ? "nav-drawer is-open" : "nav-drawer"}
+          aria-label={ui.nav.aria}
+          inert={!open}
+        >
+          {links.map((link, i) => (
+            <Link
+              key={link.href}
+              href={target(link)}
+              aria-current={isActive(link.href) ? "page" : undefined}
+              style={{ "--i": i } as React.CSSProperties}
+            >
+              {link.label}
             </Link>
-          </nav>
-        )}
+          ))}
+          <Link
+            className="nav-cta"
+            href={localePath(locale, "/contact")}
+            style={{ "--i": links.length } as React.CSSProperties}
+          >
+            {ui.nav.getInTouch}
+          </Link>
+        </nav>
       </div>
     </header>
   );

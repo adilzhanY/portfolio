@@ -139,7 +139,7 @@ function Visual({
     case "dictation":
       return (
         <>
-          <Dictation pills={stage.pills} labels={labels} />
+          <Dictation labels={labels} />
           <span className="stage-hint">{labels.hintDictation}</span>
         </>
       );

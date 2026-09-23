@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCV, getContent } from "@/data/cv";
 import { PROFILE, RESUME_FILE } from "@/data/structure";
 import { localePath, type Locale } from "@/i18n/config";
+import ArrowCircle from "@/components/ArrowCircle";
 
 /*
  * The summary in a card that stays put, and one card per role beside it. The
@@ -34,7 +35,7 @@ export default function ExperienceView({ locale }: { locale: Locale }) {
         <div className="actions print:hidden">
           <a className="button" href={RESUME_FILE[locale]} target="_blank" rel="noopener">
             {copy.resumeVersion}
-            <span className="circ" aria-hidden="true">↗</span>
+            <ArrowCircle />
           </a>
         </div>
       </header>

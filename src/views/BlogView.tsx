@@ -3,6 +3,7 @@ import { formatPostDate, getPosts } from "@/data/blog";
 import { getContent } from "@/data/cv";
 import { DEFAULT_LOCALE } from "@/i18n/config";
 import ViewCount from "@/components/ViewCount";
+import ArrowCircle from "@/components/ArrowCircle";
 
 /* The blog is written in English only, so the view always reads the
    English copy whatever the rest of the site is showing. */
@@ -21,7 +22,7 @@ export default function BlogView() {
         <div className="actions">
           <a className="button" href="/blog/feed.xml">
             {blog.feed}
-            <span className="circ" aria-hidden="true">↗</span>
+            <ArrowCircle />
           </a>
         </div>
       </header>

@@ -4,6 +4,7 @@ import { PROFILE } from "@/data/structure";
 import { localePath, type Locale } from "@/i18n/config";
 import CopyEmail from "@/components/CopyEmail";
 import VisitorCount from "@/components/VisitorCount";
+import ArrowCircle from "@/components/ArrowCircle";
 
 /**
  * The closing block: one dark card with the question, the way to answer it,
@@ -29,7 +30,7 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
           <CopyEmail email={PROFILE.contact.email} labels={{ copy: footer.copy, copied: footer.copied }} />
           <Link className="button primary" href={href("/contact")}>
             {footer.cta}
-            <span className="circ" aria-hidden="true">↗</span>
+            <ArrowCircle />
           </Link>
         </div>
       </div>

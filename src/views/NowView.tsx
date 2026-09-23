@@ -2,6 +2,7 @@ import { getCV, getContent } from "@/data/cv";
 import { NOW } from "@/data/structure";
 import { localePath, type Locale } from "@/i18n/config";
 import ProjectStage from "@/components/stage/ProjectStage";
+import ArrowCircle from "@/components/ArrowCircle";
 
 /*
  * The Now page: what is on the bench this month. The products come from the
@@ -59,7 +60,7 @@ export default function NowView({ locale }: { locale: Locale }) {
           <div className="actions">
             <a className="button primary" href={`mailto:${contact.email}`}>
               {contact.email}
-              <span className="circ" aria-hidden="true">↗</span>
+              <ArrowCircle />
             </a>
           </div>
         </div>

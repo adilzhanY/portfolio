@@ -12,6 +12,7 @@ import StructuredData from "@/components/StructuredData";
 import ProjectStage from "@/components/stage/ProjectStage";
 import { stageSpans } from "@/components/stage/layout";
 import { personSchema } from "@/i18n/schema";
+import ArrowCircle from "@/components/ArrowCircle";
 
 /* Paper wants a plain CV, so the section headings only exist when printing. */
 const printHeading =
@@ -61,7 +62,7 @@ export default function HomeView({ locale }: { locale: Locale }) {
           <div className="actions print:hidden">
             <Link className="button primary" href={href("/projects")}>
               {home.exploreProjects}
-              <span className="circ" aria-hidden="true">↗</span>
+              <ArrowCircle />
             </Link>
             <ResumeButton labels={ui.resume} file={RESUME_FILE[locale]} className="button" />
           </div>

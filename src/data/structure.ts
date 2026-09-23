@@ -67,7 +67,7 @@ export type ProjectStage =
       /** The energy class the stage slides between, before and after. */
       scale: { from: EnergyStep; to: EnergyStep; unit: string };
     }
-  | { kind: "dictation"; pills: Record<"recording" | "transcribing" | "polishing" | "done", string> }
+  | { kind: "dictation" }
   | { kind: "stops"; shots: string[] };
 
 export interface EnergyStep {
@@ -284,15 +284,7 @@ export const PROJECTS: ProjectStructure[] = [
   {
     id: "openhyprwhisper",
     group: "desktop",
-    stage: {
-      kind: "dictation",
-      pills: {
-        recording: "/projects/stage/ohw-pill-recording.webp",
-        transcribing: "/projects/stage/ohw-pill-transcribing.webp",
-        polishing: "/projects/stage/ohw-pill-polishing.webp",
-        done: "/projects/stage/ohw-pill-done.webp",
-      },
-    },
+    stage: { kind: "dictation" },
     accent: { light: "#4f5fe8", dark: "#b9c3ff" },
     title: "OpenHyprWhisper",
     year: "2026",
