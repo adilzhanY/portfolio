@@ -85,7 +85,7 @@ export default function LanguageSwitcher({
         aria-label={label}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex h-[2.2rem] cursor-pointer items-center gap-1.5 rounded-sharp border border-faint px-2.5 text-[0.6875rem] font-semibold text-body transition-colors hover:border-accent hover:bg-chip"
+        className="flex h-[2.2rem] cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-[0.8rem] font-medium text-body transition-colors hover:bg-surface"
       >
         <Current
           aria-hidden="true"
@@ -110,7 +110,7 @@ export default function LanguageSwitcher({
         aria-label={label}
         inert={!open}
         className={[
-          "absolute right-0 z-50 mt-2 w-44 origin-top-right overflow-hidden rounded-sharp border border-faint bg-surface p-1 shadow-[4px_4px_0_var(--color-chip)]",
+          "absolute right-0 z-50 mt-3 w-48 origin-top-right overflow-hidden rounded-[1.1rem] border border-faint bg-card p-1.5 shadow-[var(--shadow-lg)]",
           "transition duration-150 ease-out motion-reduce:transition-none",
           open
             ? "visible translate-y-0 scale-100 opacity-100"
@@ -138,10 +138,10 @@ export default function LanguageSwitcher({
                 setOpen(false);
               }}
               className={[
-                "flex items-center gap-2.5 rounded-sharp-sm px-2.5 py-2 text-sm transition-colors",
+                "flex items-center gap-2.5 rounded-[0.8rem] px-2.5 py-2 text-sm transition-colors",
                 active
-                  ? "bg-chip font-semibold text-ink"
-                  : "text-body hover:bg-chip hover:text-ink",
+                  ? "bg-surface font-semibold text-ink"
+                  : "text-body hover:bg-surface hover:text-ink",
               ].join(" ")}
             >
               <Flag

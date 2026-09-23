@@ -2,11 +2,12 @@ import Link from "next/link";
 import { getContent } from "@/data/cv";
 import { PROFILE } from "@/data/structure";
 import { localePath, type Locale } from "@/i18n/config";
+import CopyEmail from "@/components/CopyEmail";
 import VisitorCount from "@/components/VisitorCount";
 
 /**
- * The closing block: one question, one button, and the quiet row of links
- * under it. Everything else moved to the contact page.
+ * The closing block: one dark card with the question, the way to answer it,
+ * and the address to copy. The quiet row of links sits under it.
  */
 export default function SiteFooter({ locale }: { locale: Locale }) {
   const { name, footer, ui, uses, now, blog } = getContent(locale);
@@ -15,7 +16,7 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
 
   return (
     <footer className="site-footer wrap print:hidden">
-      <div className="footer-main">
+      <div className="footer-card">
         <div>
           <p className="eyebrow">
             <span className="status-dot green" aria-hidden="true" />
@@ -24,9 +25,13 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
           <h2>{footer.prompt}</h2>
           <p>{footer.promptSub}</p>
         </div>
-        <Link className="button primary" href={href("/contact")}>
-          {footer.cta} <span aria-hidden="true">↗</span>
-        </Link>
+        <div className="footer-actions">
+          <CopyEmail email={PROFILE.contact.email} labels={{ copy: footer.copy, copied: footer.copied }} />
+          <Link className="button primary" href={href("/contact")}>
+            {footer.cta}
+            <span className="circ" aria-hidden="true">↗</span>
+          </Link>
+        </div>
       </div>
 
       <div className="footer-bottom">

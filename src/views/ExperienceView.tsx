@@ -4,8 +4,9 @@ import { PROFILE, RESUME_FILE } from "@/data/structure";
 import { localePath, type Locale } from "@/i18n/config";
 
 /*
- * One readable column of roles, with the summary beside it. The degree is the
- * last entry and gets its own card, since it is education rather than work.
+ * The summary in a card that stays put, and one card per role beside it. The
+ * degree is the last entry and is set dark, since it is education rather
+ * than work.
  */
 export default function ExperienceView({ locale }: { locale: Locale }) {
   const { experience, projects, skills, languages } = getCV(locale);
@@ -29,54 +30,54 @@ export default function ExperienceView({ locale }: { locale: Locale }) {
           {copy.pageHeading}
           <span className="accent">.</span>
         </h1>
-        <p className="intro">{copy.pageIntro}</p>
-        <a
-          className="button print:hidden"
-          href={RESUME_FILE[locale]}
-          target="_blank"
-          rel="noopener"
-        >
-          {copy.resumeVersion} <span aria-hidden="true">↗</span>
-        </a>
+        <p className="lead">{copy.pageIntro}</p>
+        <div className="actions print:hidden">
+          <a className="button" href={RESUME_FILE[locale]} target="_blank" rel="noopener">
+            {copy.resumeVersion}
+            <span className="circ" aria-hidden="true">↗</span>
+          </a>
+        </div>
       </header>
 
-      <div className="experience-layout">
-        <aside className="experience-aside">
+      <div className="exp-layout">
+        <aside className="exp-aside card">
           <p className="eyebrow">{copy.glance}</p>
           <h2>{copy.glanceHeading}</h2>
           <p>{copy.glanceText}</p>
-          <div className="aside-group">
-            <span className="eyebrow">{copy.mainTools}</span>
-            <p>{skills.slice(0, 8).join(", ")}</p>
-          </div>
-          <div className="aside-group">
-            <span className="eyebrow">{copy.languagesLabel}</span>
-            <p>{languages.join(", ")}</p>
-          </div>
+          <dl>
+            <div>
+              <dt>{copy.mainTools}</dt>
+              <dd>{skills.slice(0, 8).join(", ")}</dd>
+            </div>
+            <div>
+              <dt>{copy.languagesLabel}</dt>
+              <dd>{languages.join(", ")}</dd>
+            </div>
+          </dl>
           <a className="text-link" href={`mailto:${PROFILE.contact.email}`}>
             {copy.talk} <span aria-hidden="true">↗</span>
           </a>
         </aside>
 
-        <div>
+        <div className="exp-list">
           {work.map((entry) => (
-            <article key={entry.id} className="experience-entry">
-              <div className="entry-meta">
+            <article key={entry.id} className="exp-entry card">
+              <div className="exp-meta">
                 <span>{entry.date}</span>
-                <span className="label">{entry.label}</span>
+                <span className="chip">{entry.label}</span>
               </div>
               <h2>{entry.headline ?? entry.company}</h2>
-              <p className="role">{entry.role}</p>
+              <p className="exp-role">{entry.role}</p>
               <p>{entry.detail}</p>
-              <ul className="work-list">
+              <ul className="case-list">
                 {entry.bullets.map((bullet) => (
                   <li key={bullet}>{bullet}</li>
                 ))}
               </ul>
               {entry.id === "independent" && (
-                <div className="entry-projects">
+                <div className="chips">
                   {featuredProjects.map((project) => (
-                    <Link key={project.id} href={href(`/projects/${project.id}`)}>
+                    <Link key={project.id} className="chip" href={href(`/projects/${project.id}`)}>
                       {project.title} ↗
                     </Link>
                   ))}
@@ -86,12 +87,13 @@ export default function ExperienceView({ locale }: { locale: Locale }) {
           ))}
 
           {degree && (
-            <article className="experience-entry education">
-              <p className="eyebrow">
-                {degree.label} / {degree.date}
-              </p>
+            <article className="exp-entry card education">
+              <div className="exp-meta">
+                <span>{degree.date}</span>
+                <span>{degree.label}</span>
+              </div>
               <h2>{degree.company}</h2>
-              <p className="role">{degree.role}</p>
+              <p className="exp-role">{degree.role}</p>
               <p>{degree.detail}</p>
             </article>
           )}

@@ -81,7 +81,7 @@ export default function ContactView({ locale }: { locale: Locale }) {
           {copy.heading}
           <span className="accent">.</span>
         </h1>
-        <p className="intro">{copy.intro}</p>
+        <p className="lead">{copy.intro}</p>
       </header>
 
       <div className="contact-layout">

@@ -31,24 +31,15 @@ export interface ProjectStructure {
    * metric line is small text.
    */
   accent?: { light: string; dark: string };
-  /** Small screenshot for the index. Omit for a text-only row. */
-  image?: string;
-  imageW?: number;
-  imageH?: number;
-  /** Phone screenshots render narrower than desktop ones. */
-  phone?: boolean;
   /** Which filter the project falls under on the index. */
   group: "web" | "mobile" | "desktop";
   /**
-   * How the card image is staged. `desktop` is one wide screenshot on a tinted
-   * board, `phones` a pair of upright screens, `scene` a full-bleed photo, and
-   * `overlay` a wide shot with room around it.
+   * How the project is shown on its stage, the big tinted card on the home
+   * page, the index and the top of the case study. Each kind moves on hover.
    */
-  visual: "desktop" | "phones" | "scene" | "overlay";
-  /** The gallery shots used on the card, in order. */
-  card: string[];
-  /** Wide, short screenshots render under the text instead of beside it. */
-  wide?: boolean;
+  stage: ProjectStage;
+  /** Wide stages take the full row; the others pair up two to a row. */
+  stageWide?: boolean;
   gallery: GalleryShot[];
   /** Phone galleries render as a row of tall shots. */
   galleryPhones?: boolean;
@@ -57,6 +48,31 @@ export interface ProjectStructure {
    * separate views, they play as an animation instead of sitting in a grid.
    */
   replayCount?: number;
+}
+
+/**
+ * `fan`: one phone in front, two more screens fan out behind it.
+ * `journey`: the storefront window, a phone, a paid order and its bot message.
+ * `explode`: the editor, with two of its panels lifting off it.
+ * `dictation`: a chat field that the dictation pill types into.
+ * `stops`: a row of places; the pointer position picks which one shows.
+ */
+export type ProjectStage =
+  | { kind: "fan"; main: string; left: string; right: string }
+  | { kind: "journey"; desktop: string; mobile: string }
+  | {
+      kind: "explode";
+      base: string;
+      panels: [string, string];
+      /** The energy class the stage slides between, before and after. */
+      scale: { from: EnergyStep; to: EnergyStep; unit: string };
+    }
+  | { kind: "dictation"; pills: Record<"recording" | "transcribing" | "polishing" | "done", string> }
+  | { kind: "stops"; shots: string[] };
+
+export interface EnergyStep {
+  grade: "A+" | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
+  value: string;
 }
 
 export interface CertificationStructure {
@@ -136,30 +152,91 @@ export const PROJECTS: ProjectStructure[] = [
   {
     id: "bauwerk",
     group: "web",
-    visual: "desktop",
-    card: ["/projects/gallery/bauwerk-scene.webp"],
+    stage: {
+      kind: "explode",
+      base: "/projects/stage/bauwerk-editor.webp",
+      panels: ["/projects/stage/bauwerk-energy-panel.webp", "/projects/stage/bauwerk-scenarios-panel.webp"],
+      scale: { from: { grade: "G", value: "237" }, to: { grade: "B", value: "63" }, unit: "kWh/(m²a)" },
+    },
+    stageWide: true,
     accent: { light: "#234d8f", dark: "#7fa6e8" },
     title: "Bauwerk",
     year: "2026",
     stack: ["React", "TypeScript", "Three.js", "Zustand", "NestJS", "PostgreSQL", "IFC4"],
     link: "https://github.com/adilzhanY/bauwerk",
     live: "https://adilzhany.github.io/bauwerk/",
-    image: "/projects/bauwerk-preview.webp",
-    imageW: 1200,
-    imageH: 646,
     gallery: [
-      { id: "scene", src: "/projects/gallery/bauwerk-scene.webp", w: 1280, h: 827 },
-      { id: "openings", src: "/projects/gallery/bauwerk-openings.webp", w: 1280, h: 827 },
-      { id: "energy", src: "/projects/gallery/bauwerk-energy.webp", w: 1280, h: 827 },
-      { id: "scenarios", src: "/projects/gallery/bauwerk-scenarios.webp", w: 1280, h: 827 },
-      { id: "report", src: "/projects/gallery/bauwerk-report.webp", w: 1280, h: 827 },
+      { id: "building", src: "/projects/gallery/bauwerk-building.webp", w: 1600, h: 1000 },
+      { id: "scene", src: "/projects/gallery/bauwerk-scene.webp", w: 1600, h: 1000 },
+      { id: "openings", src: "/projects/gallery/bauwerk-openings.webp", w: 1600, h: 1000 },
+      { id: "energy", src: "/projects/gallery/bauwerk-energy.webp", w: 1600, h: 1000 },
+      { id: "scenarios", src: "/projects/gallery/bauwerk-scenarios.webp", w: 1600, h: 1000 },
+      { id: "report", src: "/projects/gallery/bauwerk-report.webp", w: 1600, h: 1000 },
     ],
+  },
+  {
+    id: "torq",
+    group: "mobile",
+    stage: {
+      kind: "fan",
+      main: "/projects/gallery/torq-home.webp",
+      left: "/projects/gallery/torq-ranks.webp",
+      right: "/projects/gallery/torq-live.webp",
+    },
+    accent: { light: "#5a7f00", dark: "#c6f135" },
+    title: "Torq",
+    year: "2026",
+    stack: ["React Native", "Expo", "TypeScript", "Supabase", "Vitest"],
+    link: "https://github.com/adilzhanY/torq",
+    gallery: [
+      { id: "home", src: "/projects/gallery/torq-home.webp", w: 600, h: 1333 },
+      { id: "live", src: "/projects/gallery/torq-live.webp", w: 600, h: 1333 },
+      { id: "ranks", src: "/projects/gallery/torq-ranks.webp", w: 600, h: 1333 },
+      { id: "stats", src: "/projects/gallery/torq-stats.webp", w: 600, h: 1333 },
+      { id: "history", src: "/projects/gallery/torq-history.webp", w: 600, h: 1333 },
+    ],
+    galleryPhones: true,
+  },
+  {
+    id: "grit",
+    group: "desktop",
+    stage: {
+      kind: "fan",
+      main: "/projects/gallery/grit-myday.webp",
+      left: "/projects/gallery/grit-bad.webp",
+      right: "/projects/gallery/grit-focus.webp",
+    },
+    accent: { light: "#c2410c", dark: "#fb923c" },
+    title: "Grit",
+    year: "2026",
+    stack: [
+      "Next.js",
+      "React 19",
+      "Expo",
+      "React Native",
+      "Quickshell",
+      "Supabase",
+      "Dexie",
+    ],
+    link: "https://github.com/adilzhanY/grit",
+    gallery: [
+      { id: "myday", src: "/projects/gallery/grit-myday.webp", w: 600, h: 1333 },
+      { id: "focus", src: "/projects/gallery/grit-focus.webp", w: 600, h: 1333 },
+      { id: "bad", src: "/projects/gallery/grit-bad.webp", w: 600, h: 1333 },
+      { id: "food", src: "/projects/gallery/grit-food.webp", w: 600, h: 1333 },
+      { id: "stats", src: "/projects/gallery/grit-stats.webp", w: 600, h: 1333 },
+    ],
+    galleryPhones: true,
   },
   {
     id: "whale-abyss",
     group: "web",
-    visual: "desktop",
-    card: ["/projects/gallery/whaleabyss-services.webp"],
+    stage: {
+      kind: "journey",
+      desktop: "/projects/gallery/whaleabyss-hero.webp",
+      mobile: "/projects/stage/whaleabyss-mobile.webp",
+    },
+    stageWide: true,
     accent: { light: "#1f4fd1", dark: "#6b93ff" },
     title: "Whale Abyss",
     year: "2026",
@@ -174,96 +251,53 @@ export const PROJECTS: ProjectStructure[] = [
     ],
     link: "https://github.com/adilzhanY/whaleabyss",
     live: "https://whaleabyss.com",
-    image: "/projects/whaleabyss-preview.webp",
-    imageW: 1200,
-    imageH: 646,
     gallery: [
-      { id: "hero", src: "/projects/gallery/whaleabyss-hero.webp", w: 1600, h: 862 },
+      { id: "hero", src: "/projects/gallery/whaleabyss-hero.webp", w: 1600, h: 1000 },
       { id: "services", src: "/projects/gallery/whaleabyss-services.webp", w: 1600, h: 1000 },
-      { id: "cart", src: "/projects/gallery/whaleabyss-cart.webp", w: 1600, h: 1000 },
+      { id: "service", src: "/projects/gallery/whaleabyss-service.webp", w: 1600, h: 1000 },
       { id: "reviews", src: "/projects/gallery/whaleabyss-reviews.webp", w: 1600, h: 1000 },
     ],
   },
   {
-    id: "torq",
-    group: "mobile",
-    visual: "phones",
-    card: ["/projects/gallery/torq-home.webp", "/projects/gallery/torq-ranks.webp"],
-    accent: { light: "#5a7f00", dark: "#c6f135" },
-    title: "Torq",
-    year: "2026",
-    stack: ["React Native", "Expo", "TypeScript", "Supabase", "Vitest"],
-    link: "https://github.com/adilzhanY/torq",
-    image: "/projects/torq-preview.webp",
-    imageW: 1200,
-    imageH: 646,
-    gallery: [
-      { id: "home", src: "/projects/gallery/torq-home.webp", w: 738, h: 1400 },
-      { id: "live", src: "/projects/gallery/torq-live.webp", w: 738, h: 1400 },
-      { id: "ranks", src: "/projects/gallery/torq-ranks.webp", w: 738, h: 1400 },
-      { id: "stats", src: "/projects/gallery/torq-stats.webp", w: 738, h: 1400 },
-      { id: "history", src: "/projects/gallery/torq-history.webp", w: 738, h: 1400 },
-    ],
-    galleryPhones: true,
-  },
-  {
     id: "sendoku",
     group: "mobile",
-    visual: "phones",
-    card: ["/projects/gallery/sendoku-killer.webp", "/projects/gallery/sendoku-hint.webp"],
+    stage: {
+      kind: "fan",
+      main: "/projects/gallery/sendoku-home.webp",
+      left: "/projects/gallery/sendoku-hint.webp",
+      right: "/projects/gallery/sendoku-you.webp",
+    },
     accent: { light: "#0f766e", dark: "#3ee8c8" },
     title: "Sendoku",
     year: "2026",
     stack: ["Kotlin", "Jetpack Compose", "Room", "Material 3", "Gradle"],
     link: "https://github.com/adilzhanY/sendoku",
-    image: "/projects/sendoku-preview.webp",
-    imageW: 1200,
-    imageH: 646,
     gallery: [
-      { id: "home", src: "/projects/gallery/sendoku-home.webp", w: 746, h: 1504 },
-      { id: "hint", src: "/projects/gallery/sendoku-hint.webp", w: 746, h: 1504 },
-      { id: "learn", src: "/projects/gallery/sendoku-learn.webp", w: 746, h: 1504 },
-      { id: "killer", src: "/projects/gallery/sendoku-killer.webp", w: 746, h: 1504 },
-      { id: "you", src: "/projects/gallery/sendoku-you.webp", w: 746, h: 1504 },
+      { id: "home", src: "/projects/gallery/sendoku-home.webp", w: 600, h: 1333 },
+      { id: "hint", src: "/projects/gallery/sendoku-hint.webp", w: 600, h: 1333 },
+      { id: "learn", src: "/projects/gallery/sendoku-learn.webp", w: 600, h: 1333 },
+      { id: "killer", src: "/projects/gallery/sendoku-killer.webp", w: 600, h: 1333 },
+      { id: "you", src: "/projects/gallery/sendoku-you.webp", w: 600, h: 1333 },
     ],
     galleryPhones: true,
   },
   {
-    id: "berlin-walk",
-    group: "web",
-    visual: "scene",
-    card: ["/projects/gallery/berlin-walk-gate.webp"],
-    accent: { light: "#8a6a1f", dark: "#e3c476" },
-    title: "Berlin Walk",
-    year: "2026",
-    stack: ["WebGL2", "GLSL", "JavaScript", "Web Audio", "OpenStreetMap", "Node.js"],
-    link: "https://github.com/adilzhanY/berlin-walk",
-    live: "https://adilzhany.github.io/berlin-walk/",
-    image: "/projects/berlin-walk-preview.webp",
-    imageW: 1200,
-    imageH: 646,
-    gallery: [
-      { id: "flight", src: "/projects/gallery/berlin-walk-flight.webp", w: 1280, h: 720 },
-      { id: "gate", src: "/projects/gallery/berlin-walk-gate.webp", w: 1280, h: 720 },
-      { id: "linden", src: "/projects/gallery/berlin-walk-linden.webp", w: 1280, h: 720 },
-      { id: "memorial", src: "/projects/gallery/berlin-walk-memorial.webp", w: 1280, h: 720 },
-      { id: "tower", src: "/projects/gallery/berlin-walk-tower.webp", w: 1280, h: 720 },
-      { id: "night", src: "/projects/gallery/berlin-walk-night.webp", w: 1280, h: 720 },
-    ],
-  },
-  {
     id: "openhyprwhisper",
     group: "desktop",
-    visual: "overlay",
-    card: ["/projects/gallery/ohw-recording.webp"],
+    stage: {
+      kind: "dictation",
+      pills: {
+        recording: "/projects/stage/ohw-pill-recording.webp",
+        transcribing: "/projects/stage/ohw-pill-transcribing.webp",
+        polishing: "/projects/stage/ohw-pill-polishing.webp",
+        done: "/projects/stage/ohw-pill-done.webp",
+      },
+    },
     accent: { light: "#4f5fe8", dark: "#b9c3ff" },
     title: "OpenHyprWhisper",
     year: "2026",
     stack: ["whisper.cpp", "CUDA", "Python", "Quickshell", "llama.cpp"],
     link: "https://github.com/adilzhanY/OpenHyprWhisper",
-    image: "/projects/ohw-preview.webp",
-    imageW: 1200,
-    imageH: 630,
     // recording -> transcribing -> polishing -> done is one pass of dictation.
     // The fifth shot is the light theme, which is a variant, not a step.
     replayCount: 4,
@@ -276,34 +310,34 @@ export const PROJECTS: ProjectStructure[] = [
     ],
   },
   {
-    id: "grit",
-    group: "desktop",
-    visual: "phones",
-    card: ["/projects/gallery/grit-myday.webp", "/projects/gallery/grit-focus.webp"],
-    accent: { light: "#c2410c", dark: "#fb923c" },
-    title: "Grit",
+    id: "berlin-walk",
+    group: "web",
+    stage: {
+      kind: "stops",
+      shots: [
+        "/projects/gallery/berlin-walk-gate.webp",
+        "/projects/gallery/berlin-walk-linden.webp",
+        "/projects/gallery/berlin-walk-memorial.webp",
+        "/projects/gallery/berlin-walk-tower.webp",
+        "/projects/gallery/berlin-walk-flight.webp",
+        "/projects/gallery/berlin-walk-night.webp",
+      ],
+    },
+    stageWide: true,
+    accent: { light: "#8a6a1f", dark: "#e3c476" },
+    title: "Berlin Walk",
     year: "2026",
-    stack: [
-      "Next.js",
-      "React 19",
-      "Expo",
-      "React Native",
-      "Quickshell",
-      "Supabase",
-      "Dexie",
-    ],
-    link: "https://github.com/adilzhanY/grit",
-    image: "/projects/grit-preview.webp",
-    imageW: 1200,
-    imageH: 630,
+    stack: ["WebGL2", "GLSL", "JavaScript", "Web Audio", "OpenStreetMap", "Node.js"],
+    link: "https://github.com/adilzhanY/berlin-walk",
+    live: "https://adilzhany.github.io/berlin-walk/",
     gallery: [
-      { id: "myday", src: "/projects/gallery/grit-myday.webp", w: 500, h: 870 },
-      { id: "focus", src: "/projects/gallery/grit-focus.webp", w: 500, h: 870 },
-      { id: "bad", src: "/projects/gallery/grit-bad.webp", w: 500, h: 870 },
-      { id: "food", src: "/projects/gallery/grit-food.webp", w: 500, h: 870 },
-      { id: "stats", src: "/projects/gallery/grit-stats.webp", w: 500, h: 870 },
+      { id: "flight", src: "/projects/gallery/berlin-walk-flight.webp", w: 1280, h: 720 },
+      { id: "gate", src: "/projects/gallery/berlin-walk-gate.webp", w: 1280, h: 720 },
+      { id: "linden", src: "/projects/gallery/berlin-walk-linden.webp", w: 1280, h: 720 },
+      { id: "memorial", src: "/projects/gallery/berlin-walk-memorial.webp", w: 1280, h: 720 },
+      { id: "tower", src: "/projects/gallery/berlin-walk-tower.webp", w: 1280, h: 720 },
+      { id: "night", src: "/projects/gallery/berlin-walk-night.webp", w: 1280, h: 720 },
     ],
-    galleryPhones: true,
   },
 ];
 

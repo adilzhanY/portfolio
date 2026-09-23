@@ -54,7 +54,7 @@ export function projectSchema(locale: Locale, project: Project) {
     programmingLanguage: project.stack,
     dateCreated: project.year,
     inLanguage: locale,
-    ...(project.image ? { image: `${SITE_URL}${project.image}` } : {}),
+    ...(project.gallery[0] ? { image: `${SITE_URL}${project.gallery[0].src}` } : {}),
     author: {
       "@type": "Person",
       name: cv.name,

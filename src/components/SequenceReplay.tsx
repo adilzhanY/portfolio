@@ -36,12 +36,11 @@ export default function SequenceReplay({ shots }: { shots: GalleryImage[] }) {
 
   return (
     <div
-      className="mt-3"
       onMouseEnter={() => (hovering.current = true)}
       onMouseLeave={() => (hovering.current = false)}
     >
       {/* All frames are stacked so the box never reflows between steps. */}
-      <div className="relative overflow-hidden rounded-sharp border border-faint">
+      <div className="relative overflow-hidden rounded-sharp border border-faint bg-[#0b0c10]">
         {shots.map((shot, i) => (
           <img
             key={shot.src}

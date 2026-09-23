@@ -9,6 +9,7 @@ import {
   PROFILE,
   PROJECTS,
   SKILLS,
+  type ProjectStage,
 } from "@/data/structure";
 
 export interface Experience {
@@ -45,23 +46,19 @@ export interface Project {
   category: string;
   /** Which filter the project falls under on the index. */
   group: "web" | "mobile" | "desktop";
-  /** How the card image is staged. */
-  visual: "desktop" | "phones" | "scene" | "overlay";
-  /** The shots used on the card, in order. */
-  card: string[];
+  /** How the project is shown on its stage card. */
+  stage: ProjectStage;
+  stageWide: boolean;
   summary: string;
   metric: string;
+  /** Two or three short facts shown as chips under the stage. */
+  chips: string[];
   stack: string[];
   link: string;
   live?: string;
   /** The product's own colour, one value per theme. */
   accent?: { light: string; dark: string };
-  image?: string;
-  imageAlt?: string;
-  imageW?: number;
-  imageH?: number;
-  phone?: boolean;
-  wide?: boolean;
+  imageAlt: string;
   problem: string;
   solution: string[];
   achievements: string[];
@@ -121,20 +118,16 @@ export function getCV(locale: Locale): CV {
       year: project.year,
       category: text.category,
       group: project.group,
-      visual: project.visual,
-      card: [...project.card],
+      stage: project.stage,
+      stageWide: project.stageWide ?? false,
       summary: text.summary,
       metric: text.metric,
+      chips: text.chips,
       stack: [...project.stack],
       link: project.link,
       live: project.live,
       accent: project.accent,
-      image: project.image,
       imageAlt: text.imageAlt,
-      imageW: project.imageW,
-      imageH: project.imageH,
-      phone: project.phone,
-      wide: project.wide,
       problem: text.problem,
       solution: text.solution,
       achievements: text.achievements,

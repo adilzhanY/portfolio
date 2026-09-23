@@ -24,6 +24,8 @@ export const content: Content = {
     prompt: "Have something in mind?",
     promptSub: "I'd like to hear about it.",
     cta: "Let's talk",
+    copy: "Copy",
+    copied: "Copied",
   },
 
   projects: {
@@ -32,6 +34,7 @@ export const content: Content = {
       summary:
         "A 3D building editor for German energy consultants, in the browser. Draw a house and watch the U-values, the heat loss, the Energieausweis class, the heat load of every room and the payback of every renovation step move while you draw. Then print the German report.",
       metric: "237 kWh/(m2a) today, 63 after the full envelope, 367 tests",
+      chips: ["G → B with the full envelope", "367 tests", "Runs in the browser"],
       postmortem: [
         "Asked to audit its own physics, the agent found five errors of its own, all sitting under green tests, because the tests had pinned its own numbers instead of the standard's. Degree hours were 84 kKh instead of the 66 of the German reference climate, internal gains were missing entirely, the EnEV correction factors for the floor slab and the unheated stairwell were never applied, Berlin's design temperature was -12 C instead of -14 C, and two preset U-values contradicted their own layer stacks.",
         "The fix moved the example house by about 70 kWh per square metre and year, into the range the IWU typology gives an unrenovated building from before 1918. A test that pins the number the code already produces is a regression test, not a correctness test. Every formula now starts from a case computed by hand out of the standard, and the code has to meet it.",
@@ -55,8 +58,9 @@ export const content: Content = {
         "An 18-storey tower with 719 openings on the bench route, with a frame time graph",
       ],
       gallery: {
+        building: { alt: "Bauwerk building page with the energy data and the city's 3D model", caption: "Any Berlin building, from the city's own 3D model" },
         scene: { alt: "The demo house in 3D on its Kreuzberg plot", caption: "The house on its real plot" },
-        openings: { alt: "The first floor being edited, the ground floor drawn as an outline below", caption: "The floors you are not editing become outlines" },
+        openings: { alt: "The ground floor being edited, the floors above drawn faintly", caption: "The floors you are not editing fade out" },
         energy: { alt: "The energy panel with the class scale, losses, gains and areas", caption: "Every loss and gain, recomputed live" },
         scenarios: { alt: "Renovation scenarios with investment and payback, and the roadmap", caption: "Cheapest payback first, each step on the last" },
         report: { alt: "The first page of the German building report", caption: "The German report, ready to print" },
@@ -68,6 +72,7 @@ export const content: Content = {
       summary:
         "A walkable, flyable 3D reconstruction of central Berlin that runs in the browser from a single link. Raw WebGL2, real OpenStreetMap data, no engine and no library. I wrote one prompt and Claude Fable 5.1 built all of it in four hours while I watched the numbers.",
       metric: "7,895 lines, 4 h 08 min, $27.49 of tokens, zero human code",
+      chips: ["$27.49 of tokens", "5,323 buildings", "2.3 ms GPU per frame"],
       postmortem: [
         "The ground z-fought: roads flickered through pavements at every distance. The vertex format stored positions at 1/32 m to save bytes, and the six ground layers, which sit between 0 and 6 cm apart, collapsed onto two heights. The agent found it by reading the binary bundle it had designed, not by staring at the picture, and moved 531 of the 532 tiles to a 1/128 m grid. The one tile that holds the 368 m TV Tower stays coarse because it needs the range.",
         "The TV Tower was invisible from the Brandenburg Gate, which is the one shot the prompt asked for. Nothing was wrong with the geometry: the tile was loaded, inside the frustum, and drawn. Zooming into the pixels showed sunlit concrete at 2 km had exactly the brightness of the horizon sky behind it. The fix was lighting, a dimmer sun, a brighter sky and darker concrete, and then the tower reads at the end of Unter den Linden the way it does in photographs.",
@@ -103,6 +108,7 @@ export const content: Content = {
       summary:
         "E-commerce platform for Genshin Impact boosting, built and launched alone. Paid orders flow straight into a Telegram bot, payments clear end to end, CI/CD deploys on every push.",
       metric: "150+ paying customers in the first 10 days",
+      chips: ["150+ paying customers in 10 days", "36k lines of TypeScript", "Still running"],
       postmortem: [
         "On 12 July a customer paid 2000 RUB for a service that requires quest declarations, and the order reached the booster with nothing declared. I shipped a fix that retried the fetch three times and warned in Telegram. On 25 July it happened again, same amount, order 96162b2e. The fix had not held, because it aimed at the wrong code path.",
         "So I stopped guessing and went to the data. Of 27 gated order lines, exactly two were broken, and there were no bad carts at all. The real cause was that the parent item stored undefined, so the customer's choice existed only as separate cart lines, and deleting one of those lines threw the choice away silently, with no error and no log. The fix was an explicit value plus a server check that re-reads the links at checkout and returns 409, which the cart page catches and re-opens the dialog, so nothing is lost. Then I replayed 50 real paid orders against it. It blocked exactly the two bad ones and passed the other 48.",
@@ -126,7 +132,7 @@ export const content: Content = {
       gallery: {
         hero: { alt: "Whale Abyss landing page", caption: "Landing page" },
         services: { alt: "Whale Abyss service catalog", caption: "Service catalog" },
-        cart: { alt: "Whale Abyss cart and checkout", caption: "Cart and checkout" },
+        service: { alt: "A Whale Abyss service page with its price", caption: "A service page and its price" },
         reviews: { alt: "Whale Abyss reviews", caption: "Moderated reviews" },
       },
     },
@@ -136,6 +142,7 @@ export const content: Content = {
       summary:
         "A gym app that tells you how strong you actually are. Every set is scored with the DOTS formula, normalised for bodyweight and sex, and turned into a rank across nine tiers, with percentiles from 400k+ OpenPowerlifting lifters.",
       metric: "Nine rank tiers, 243 tests, local-first with free sync",
+      chips: ["401k lifters to rank against", "243 tests", "Works offline"],
       postmortem: [
         "Push notifications took the whole app down and I did not notice for weeks. expo-notifications re-exports a helper that calls addPushTokenListener at module scope, and that call throws in Expo Go on Android because SDK 53 removed remote push. A throw during require kills the entire bundle, so the app showed a red runtime-not-ready box and never rendered a single frame. My pushSupported() guards were useless, because the crash happened at import time, before any of my code ran. I found it on an emulator on 9 August, and it had been broken since push landed. The fix is a dynamic import behind the guard. The lesson is that a guard only protects code that gets to run.",
         "The second one was about honesty rather than code. I had claimed a population of 2.2 million lifters, and that number was wrong in four places, including the paywall copy. When I rebuilt the dataset the real figures were 1.46 million per-lifter bests, and between 133,697 and 401,158 for an individual lift. I corrected every surface. Torq now always says \"of competitive lifters\" and names the sample size instead of \"top N% of people\", because everyone in that database entered a sanctioned meet and is a much stronger crowd than the gym floor.",
@@ -169,6 +176,7 @@ export const content: Content = {
       summary:
         "An Android sudoku app that can tell you why a puzzle is hard. Every puzzle is solved by a technique solver before you see it, so the level is the hardest human rule it actually needs, and the same solver writes the hints and the 45 lesson course.",
       metric: "4,200 rated puzzles, 860 tests, 3.1 MB, no internet permission",
+      chips: ["860 tests", "No internet permission", "12 languages"],
       postmortem: [
         "The worst bug in this app ended games it had already decided were lost. A wrong digit can break no rule at all, so nothing on the board showed it, but the mistake counter in the header had gone up, which means the app knew and said nothing. Twenty moves later a cell could take no digit whatsoever, every attempt at it cost another mistake, and three attempts finished an Easy puzzle that had been unwinnable since the hidden slip. Two rules came out of it. If a mistake is charged for, it is marked at once, so while a mistake limit runs the marking is not a preference. And a cell is only charged for while its own answer can still be written in it, because past that point the player is paying twice for one error. There is a test file named after the rules.",
         "The hint engine had the same shape of problem. A hint would rule a digit out of a cell, the player had written no pencil marks there, so nothing visible changed, and the next hint would announce that the cell had only one candidate left. From where the player sat it had two, and the app was telling them to guess. Now every cell a hint touches keeps its true marks, and a hint that leans on an earlier hint says so on the card. Whatever a hint proves has to end up somewhere the player can read it.",
@@ -203,6 +211,7 @@ export const content: Content = {
       summary:
         "System-wide voice dictation for Hyprland. Press a key, speak, and whisper.cpp types your words into whatever text field is focused. Fully local and private, with per-utterance language detection for mixed EN/RU/DE/KK speech, deterministic replacements, and an optional LLM polish pass.",
       metric: "~0.2 s per sentence with the warm daemon, fully offline",
+      chips: ["0.2 s per sentence", "Fully offline", "EN · RU · DE · KK"],
       postmortem: [
         "The first version reloaded the model for every phrase, which meant reading roughly 600 MB off disk before a single word appeared. It worked, but it was too slow to actually use, and I kept falling back to the keyboard. Moving to a warm whisper-server daemon that keeps the model in VRAM is what turned a demo into something I use every day, at about 0.2 s per sentence.",
         "The stranger problem was that stopping without speaking produced text anyway. Whisper is trained on speech, so given near-silence it confidently returns the most common thing in its training data, usually \"Thank you.\" Catching that in the language model was the wrong layer. The fix is a silence gate on the audio peak, before transcription runs at all, so silence produces nothing rather than something plausible.",
@@ -239,6 +248,7 @@ export const content: Content = {
       summary:
         "A life tracker that stops asking you to open five different apps. Habits, food, steps, weight, and focus in one XP economy, with web, mobile, and a Hyprland desktop panel sharing one domain core, offline-first with delta sync.",
       metric: "One XP economy across web, mobile, and desktop",
+      chips: ["One core, three apps", "Works offline"],
       postmortem: [
         "Sync looked finished, and then deleted rows started coming back. The write hooks that stamp local rows were also firing when the sync layer applied changes pulled from the server, so a pulled row re-stamped its own updatedAt and looked freshly edited, and a pulled delete created a brand new tombstone. Two devices could pass the same delete back and forth indefinitely, each one honestly reporting that it had just happened.",
         "The fix is small: a suppress flag the sync layer sets around remote applies, so the hooks stay quiet while the server's version is written in. What it taught me is that the hard part of offline-first is not merging, it is knowing which writes are news and which are echoes.",
@@ -259,11 +269,11 @@ export const content: Content = {
         "Installable PWA on web, native notifications and audio on mobile",
       ],
       gallery: {
-        myday: { alt: "Grit My Day view with daily quests", caption: "My Day and quests" },
+        myday: { alt: "Grit My Day view with the level and XP", caption: "My Day, level and XP" },
         focus: { alt: "Grit focus timer with per-task ranks", caption: "Focus ranks" },
         bad: { alt: "Grit bad habit streak cards", caption: "Clean streaks" },
-        food: { alt: "Grit daily food log with fasting timer", caption: "Daily log" },
-        stats: { alt: "Grit XP ledger and stats", caption: "The ledger" },
+        food: { alt: "Grit daily log with calories and macros", caption: "Daily log" },
+        stats: { alt: "Grit focus heatmap for the year", caption: "A year of focus" },
       },
     },
   },
@@ -363,10 +373,14 @@ export const content: Content = {
       selectedEyebrow: "01 / From my project folder",
       selectedHeading: "A few things I've built.",
       openShelf: "Open the whole shelf",
-      aboutEyebrow: "02 / A bit more about me",
+      aboutEyebrow: "A bit more about me",
       aboutHeading: "A lot of this starts with “I could use that.”",
       moreExperience: "More about my experience",
       tinkering: "Currently tinkering",
+      factProducts: "products shipped",
+      factCustomers: "paying customers",
+      factLanguages: "languages spoken",
+      workHint: "Hover a project to see it move.",
       avatarTitle: "Yes, that's me",
       verified: "Verified",
       sectionProjects: "Projects",
@@ -378,6 +392,27 @@ export const content: Content = {
       sectionActivity: "GitHub Activity",
       sectionCertifications: "Certifications",
       saveContact: "Save contact",
+    },
+    stage: {
+      hintFan: "Hover",
+      hintExplode: "Hover to take it apart",
+      hintJourney: "Hover to place an order",
+      hintDictation: "Hover to dictate",
+      hintStops: "Move across the picture",
+      stopOf: "Stop {{n}} of {{total}}",
+      tapOn: "Tap to go on",
+      energyClass: "Energy class",
+      botName: "Whale Abyss bot",
+      botOrder: "New paid order, 2000 RUB",
+      botPosted: "Posted to the boosters' channel",
+      botTake: "Take order",
+      botDetails: "Details",
+      webhook: "Webhook signature verified, order paid",
+      chatName: "Anna",
+      chatSeen: "last seen recently",
+      chatIn: "are you coming to the gym tomorrow?",
+      chatOut: "Yes, I will be there at seven. Save me the squat rack.",
+      keys: "speak, it types",
     },
     projects: {
       eyebrow: "Projects / Built, used, and still tinkered with",

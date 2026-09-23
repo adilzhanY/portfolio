@@ -24,6 +24,8 @@ export const content: Content = {
     prompt: "Haben Sie etwas im Sinn?",
     promptSub: "Ich höre gern davon.",
     cta: "Sprechen wir",
+    copy: "Kopieren",
+    copied: "Kopiert",
   },
 
   projects: {
@@ -32,6 +34,7 @@ export const content: Content = {
       summary:
         "Ein 3D-Gebäudeeditor für deutsche Energieberater, im Browser. Man zeichnet ein Haus und sieht dabei zu, wie sich die U-Werte, die Wärmeverluste, die Energieausweis-Klasse, die Heizlast jedes Raums und die Amortisation jedes Sanierungsschritts bewegen. Danach druckt es den deutschen Bericht.",
       metric: "237 kWh/(m²a) heute, 63 nach der vollen Hülle, 367 Tests",
+      chips: ["G → B mit der ganzen Hülle", "367 Tests", "Läuft im Browser"],
       postmortem: [
         "Aufgefordert, seine eigene Physik zu prüfen, fand der Agent fünf eigene Fehler, alle unter grünen Tests, weil die Tests seine eigenen Zahlen festgehalten hatten statt die der Norm. Die Gradstunden lagen bei 84 kKh statt bei den 66 des deutschen Referenzklimas, die internen Gewinne fehlten ganz, die EnEV-Korrekturfaktoren für die Bodenplatte und das unbeheizte Treppenhaus wurden nie angewendet, die Berliner Auslegungstemperatur war -12 C statt -14 C, und zwei voreingestellte U-Werte widersprachen ihren eigenen Schichtaufbauten.",
         "Die Korrektur verschob das Beispielhaus um rund 70 kWh pro Quadratmeter und Jahr, in den Bereich, den die IWU-Typologie einem unsanierten Bau vor 1918 gibt. Ein Test, der die Zahl festhält, die der Code ohnehin liefert, ist ein Regressionstest, kein Korrektheitstest. Jede Formel beginnt jetzt mit einem von Hand aus der Norm gerechneten Fall, und der Code muss ihn treffen.",
@@ -55,8 +58,9 @@ export const content: Content = {
         "Ein 18-geschossiger Turm mit 719 Öffnungen auf der Bench-Route, mit Frametime-Graph",
       ],
       gallery: {
+        building: { alt: "Gebäudeseite in Bauwerk mit Energiedaten und dem 3D-Stadtmodell", caption: "Jedes Berliner Gebäude aus dem 3D-Stadtmodell" },
         scene: { alt: "Das Demohaus in 3D auf seinem Kreuzberger Grundstück", caption: "Das Haus auf seinem echten Grundstück" },
-        openings: { alt: "Das erste Obergeschoss in Bearbeitung, das Erdgeschoss als Umriss darunter", caption: "Nicht bearbeitete Geschosse werden zum Umriss" },
+        openings: { alt: "Das Erdgeschoss in Bearbeitung, die Geschosse darüber blass", caption: "Nicht bearbeitete Geschosse treten zurück" },
         energy: { alt: "Das Energiepanel mit Klassenskala, Verlusten, Gewinnen und Flächen", caption: "Jeder Verlust und Gewinn, live gerechnet" },
         scenarios: { alt: "Sanierungsszenarien mit Investition und Amortisation und der Fahrplan", caption: "Schnellste Amortisation zuerst, Schritt auf Schritt" },
         report: { alt: "Die erste Seite des deutschen Gebäudeberichts", caption: "Der deutsche Bericht, druckfertig" },
@@ -68,6 +72,7 @@ export const content: Content = {
       summary:
         "Eine begehbare und befliegbare 3D-Rekonstruktion der Berliner Mitte, die im Browser über einen einzigen Link läuft. Reines WebGL2, echte OpenStreetMap-Daten, keine Engine und keine Bibliothek. Ich habe einen Prompt geschrieben, und Claude Fable 5.1 hat alles in vier Stunden gebaut, während ich die Zahlen beobachtet habe.",
       metric: "7.895 Zeilen, 4 h 08 min, 27,49 $ an Tokens, keine Zeile von Hand",
+      chips: ["27,49 $ an Tokens", "5.323 Gebäude", "2,3 ms GPU pro Frame"],
       postmortem: [
         "Der Boden flackerte: Straßen schimmerten in jeder Entfernung durch die Gehwege. Das Vertexformat speicherte Positionen mit 1/32 m, um Bytes zu sparen, und die sechs Bodenschichten, die nur 0 bis 6 cm auseinanderliegen, fielen auf zwei Höhen zusammen. Der Agent fand das, indem er das von ihm selbst entworfene Binärbündel las, nicht indem er auf das Bild starrte, und stellte 531 der 532 Kacheln auf ein Raster von 1/128 m um. Die eine Kachel mit dem 368 m hohen Fernsehturm bleibt grob, weil sie den Wertebereich braucht.",
         "Der Fernsehturm war vom Brandenburger Tor aus unsichtbar, und genau diese Aufnahme hatte der Prompt verlangt. An der Geometrie lag es nicht: die Kachel war geladen, im Sichtkegel und gezeichnet. Ein Blick in die Pixel zeigte, dass sonnenbeschienener Beton in 2 km Entfernung exakt die Helligkeit des Horizonthimmels dahinter hatte. Die Lösung war die Beleuchtung, eine schwächere Sonne, ein hellerer Himmel und dunklerer Beton, und seitdem steht der Turm am Ende von Unter den Linden so, wie man ihn von Fotos kennt.",
@@ -103,6 +108,7 @@ export const content: Content = {
       summary:
         "E-Commerce-Plattform für Genshin-Impact-Boosting, allein gebaut und veröffentlicht. Bezahlte Bestellungen laufen direkt in einen Telegram-Bot, Zahlungen laufen vollständig durch, CI/CD deployt bei jedem Push.",
       metric: "150+ zahlende Kunden in den ersten 10 Tagen",
+      chips: ["150+ zahlende Kunden in 10 Tagen", "36.000 Zeilen TypeScript", "Läuft bis heute"],
       postmortem: [
         "Am 12. Juli bezahlte ein Kunde 2000 RUB für eine Leistung, die deklarierte Quests voraussetzt, und die Bestellung erreichte den Booster ganz ohne Deklaration. Ich lieferte einen Fix aus: drei Wiederholungen des Requests und eine Warnung in Telegram. Am 25. Juli passierte es wieder, gleicher Betrag, Bestellung 96162b2e. Der Fix hielt nicht, weil er auf den falschen Code-Pfad zielte.",
         "Also hörte ich auf zu raten und ging in die Daten. Von 27 betroffenen Bestellzeilen waren genau zwei kaputt, und fehlerhafte Warenkörbe gab es überhaupt keine. Die eigentliche Ursache war, dass das übergeordnete Element undefined speicherte, sodass die Auswahl des Kunden nur als separate Warenkorbzeilen existierte, und beim Löschen einer solchen Zeile verschwand die Auswahl stillschweigend, ohne Fehler und ohne Logeintrag. Der Fix war ein expliziter Wert plus eine Serverprüfung, die die Verknüpfungen beim Checkout neu liest und 409 zurückgibt, was die Warenkorbseite abfängt und den Dialog erneut öffnet, sodass nichts verloren geht. Danach spielte ich 50 echte bezahlte Bestellungen dagegen. Die Prüfung blockierte genau die zwei kaputten und ließ die anderen 48 durch.",
@@ -126,10 +132,7 @@ export const content: Content = {
       gallery: {
         hero: { alt: "Startseite von Whale Abyss", caption: "Startseite" },
         services: { alt: "Servicekatalog von Whale Abyss", caption: "Servicekatalog" },
-        cart: {
-          alt: "Warenkorb und Kasse von Whale Abyss",
-          caption: "Warenkorb und Kasse",
-        },
+        service: { alt: "Eine Serviceseite von Whale Abyss mit Preis", caption: "Eine Serviceseite und ihr Preis" },
         reviews: { alt: "Bewertungen von Whale Abyss", caption: "Moderierte Bewertungen" },
       },
     },
@@ -139,6 +142,7 @@ export const content: Content = {
       summary:
         "Eine Gym-App, die dir sagt, wie stark du wirklich bist. Jeder Satz wird mit der DOTS-Formel bewertet, normiert auf Körpergewicht und Geschlecht, und in einen Rang über neun Stufen übersetzt, mit Perzentilen aus über 400.000 OpenPowerlifting-Athleten.",
       metric: "Neun Ränge, 243 Tests, lokal gespeichert mit kostenloser Sync",
+      chips: ["401.000 Heber zum Vergleich", "243 Tests", "Funktioniert offline"],
       postmortem: [
         "Push-Benachrichtigungen legten die ganze App lahm, und ich habe es wochenlang nicht bemerkt. expo-notifications reexportiert einen Helfer, der addPushTokenListener auf Modulebene aufruft, und dieser Aufruf wirft in Expo Go unter Android eine Exception, weil SDK 53 Remote-Push entfernt hat. Eine Exception während require reißt das gesamte Bundle mit, deshalb zeigte die App eine rote runtime-not-ready-Box und stellte nie ein einziges Bild dar. Meine pushSupported()-Guards waren nutzlos, weil der Absturz zur Importzeit passierte, bevor irgendein Code von mir lief. Gefunden habe ich es am 9. August im Emulator, kaputt war es seit der Einführung von Push. Der Fix ist ein dynamischer Import hinter dem Guard. Die Lehre: ein Guard schützt nur Code, der überhaupt zur Ausführung kommt.",
         "Die zweite Geschichte handelt nicht von Code, sondern von Ehrlichkeit. Ich hatte eine Grundgesamtheit von 2,2 Millionen Athleten angegeben, und diese Zahl war an vier Stellen falsch, auch im Text der Bezahlschranke. Als ich den Datensatz neu aufbaute, lauteten die echten Zahlen: 1,46 Millionen Bestleistungen pro Athlet und zwischen 133.697 und 401.158 für eine einzelne Disziplin. Ich habe jede Stelle korrigiert. Torq schreibt jetzt immer \"unter Wettkampfathleten\" und nennt die Stichprobengröße statt \"die besten N Prozent aller Menschen\", denn alle in dieser Datenbank sind bei offiziellen Wettkämpfen angetreten und damit deutlich stärker als das Publikum im Studio.",
@@ -178,6 +182,7 @@ export const content: Content = {
       summary:
         "Eine Sudoku-App für Android, die sagen kann, warum ein Rätsel schwer ist. Jedes Rätsel wird von einem Techniklöser gelöst, bevor du es siehst, deshalb ist die Stufe die schwerste menschliche Regel, die wirklich nötig ist, und derselbe Löser schreibt die Hinweise und den Kurs mit 45 Lektionen.",
       metric: "4.200 bewertete Rätsel, 860 Tests, 3,1 MB, ohne Internet-Berechtigung",
+      chips: ["860 Tests", "Keine Internetberechtigung", "12 Sprachen"],
       postmortem: [
         "Der schlimmste Fehler dieser App beendete Partien, die sie längst selbst als verloren erkannt hatte. Eine falsche Ziffer kann gegen keine einzige Regel verstoßen, auf dem Brett war also nichts zu sehen, aber der Fehlerzähler in der Kopfzeile war hochgezählt, die App wusste es und schwieg. Zwanzig Züge später passte in eine Zelle überhaupt keine Ziffer mehr, jeder Versuch dort kostete einen weiteren Fehler, und drei Versuche beendeten ein leichtes Rätsel, das seit jenem verborgenen Ausrutscher nicht mehr zu gewinnen war. Daraus wurden zwei Regeln. Wird ein Fehler berechnet, wird er sofort markiert, bei laufendem Fehlerlimit ist die Markierung deshalb keine Einstellung mehr. Und eine Zelle wird nur so lange berechnet, wie ihre eigene Lösung noch hineingeschrieben werden kann, sonst zahlt jemand zweimal für einen Fehler. Es gibt eine Testdatei, die nach diesen Regeln benannt ist.",
         "Die Hinweise hatten dasselbe Problem in anderer Form. Ein Hinweis schloss eine Ziffer in einer Zelle aus, der Spieler hatte dort keine Notizen, sichtbar änderte sich also nichts, und der nächste Hinweis verkündete, in der Zelle sei nur noch ein Kandidat übrig. Vom Platz des Spielers aus waren es zwei, und die App forderte ihn zum Raten auf. Jetzt behält jede Zelle, die ein Hinweis berührt, ihre echten Notizen, und ein Hinweis, der auf einem früheren aufbaut, sagt das auf der Karte. Was ein Hinweis beweist, muss dort landen, wo der Spieler es sehen kann.",
@@ -212,6 +217,7 @@ export const content: Content = {
       summary:
         "Systemweites Diktieren für Hyprland. Taste drücken, sprechen, und whisper.cpp tippt deine Worte in das Textfeld, das gerade den Fokus hat. Vollständig lokal und privat, mit Spracherkennung pro Äußerung für gemischte EN/RU/DE/KK-Sprache, festen Ersetzungen und einem optionalen LLM-Feinschliff.",
       metric: "~0,2 s pro Satz mit warmem Daemon, vollständig offline",
+      chips: ["0,2 s pro Satz", "Komplett offline", "EN · RU · DE · KK"],
       postmortem: [
         "Die erste Version lud das Modell für jede Phrase neu, las also rund 600 MB von der Festplatte, bevor überhaupt ein Wort erschien. Es funktionierte, war aber zu langsam für den echten Gebrauch, und ich landete immer wieder auf der Tastatur. Erst der dauerhaft laufende whisper-server-Daemon, der das Modell im VRAM hält, machte aus der Demo ein Werkzeug, das ich täglich benutze, mit etwa 0,2 s pro Satz.",
         "Das seltsamere Problem war, dass auch dann Text entstand, wenn man die Aufnahme beendete, ohne etwas zu sagen. Whisper ist auf Sprache trainiert, also gibt es bei nahezu Stille selbstbewusst das Häufigste aus seinen Trainingsdaten aus, meistens \"Thank you.\" Das im Sprachmodell abzufangen war die falsche Ebene. Die Lösung ist ein Stille-Gate auf dem Signalpegel, bevor die Transkription überhaupt startet, damit Stille nichts ergibt statt etwas Plausibles.",
@@ -260,6 +266,7 @@ export const content: Content = {
       summary:
         "Ein Lebens-Tracker, der aufhört, fünf verschiedene Apps zu verlangen. Gewohnheiten, Essen, Schritte, Gewicht und Fokus in einer XP-Ökonomie, wobei Web, Mobile und ein Hyprland-Desktop-Panel denselben Domain-Kern teilen, offline-first mit Delta-Sync.",
       metric: "Eine XP-Ökonomie über Web, Mobile und Desktop",
+      chips: ["Ein Kern, drei Apps", "Funktioniert offline"],
       postmortem: [
         "Die Synchronisation sah fertig aus, und dann kamen gelöschte Einträge zurück. Die Write-Hooks, die lokale Zeilen mit Zeitstempeln versehen, feuerten auch dann, wenn die Sync-Schicht vom Server geholte Änderungen einspielte. Eine geholte Zeile stempelte ihr eigenes updatedAt neu und sah frisch bearbeitet aus, und ein geholtes Löschen erzeugte einen brandneuen Grabstein. Zwei Geräte konnten dasselbe Löschen endlos hin und her schieben, und jedes meldete ehrlich, es sei gerade eben passiert.",
         "Der Fix ist klein: ein Suppress-Flag, das die Sync-Schicht um das Einspielen entfernter Änderungen herum setzt, damit die Hooks still bleiben, während die Version vom Server geschrieben wird. Gelernt habe ich daraus: das Schwierige an offline-first ist nicht das Zusammenführen, sondern zu wissen, welche Schreibvorgänge Neuigkeit sind und welche Echo.",
@@ -280,10 +287,7 @@ export const content: Content = {
         "Installierbare PWA im Web, native Benachrichtigungen und Ton auf Mobile",
       ],
       gallery: {
-        myday: {
-          alt: "Die Ansicht „Mein Tag“ in Grit mit Tagesquests",
-          caption: "Mein Tag und Quests",
-        },
+        myday: { alt: "Grits Ansicht Mein Tag mit Level und XP", caption: "Mein Tag, Level und XP" },
         focus: {
           alt: "Fokus-Timer in Grit mit Rängen pro Aufgabe",
           caption: "Fokus-Ränge",
@@ -292,11 +296,8 @@ export const content: Content = {
           alt: "Serienkarten für schlechte Gewohnheiten in Grit",
           caption: "Saubere Serien",
         },
-        food: {
-          alt: "Tägliches Essensprotokoll in Grit mit Fastentimer",
-          caption: "Tagesprotokoll",
-        },
-        stats: { alt: "XP-Ledger und Statistiken in Grit", caption: "Das Ledger" },
+        food: { alt: "Grits Tageslog mit Kalorien und Makros", caption: "Tageslog" },
+        stats: { alt: "Grits Fokus-Heatmap über das Jahr", caption: "Ein Jahr Fokus" },
       },
     },
   },
@@ -396,10 +397,14 @@ export const content: Content = {
       selectedEyebrow: "01 / Aus meinem Projektordner",
       selectedHeading: "Ein paar Dinge, die ich gebaut habe.",
       openShelf: "Das ganze Regal öffnen",
-      aboutEyebrow: "02 / Etwas mehr über mich",
+      aboutEyebrow: "Etwas mehr über mich",
       aboutHeading: "Vieles beginnt mit „das könnte ich brauchen“.",
       moreExperience: "Mehr über meine Erfahrung",
       tinkering: "Gerade in Arbeit",
+      factProducts: "Produkte",
+      factCustomers: "zahlende Kunden",
+      factLanguages: "Sprachen",
+      workHint: "Mit der Maus über ein Projekt fahren, dann bewegt es sich.",
       avatarTitle: "Ja, das bin ich",
       verified: "Verifiziert",
       sectionProjects: "Projekte",
@@ -411,6 +416,27 @@ export const content: Content = {
       sectionActivity: "GitHub-Aktivität",
       sectionCertifications: "Zertifikate",
       saveContact: "Kontakt speichern",
+    },
+    stage: {
+      hintFan: "Maus darüber",
+      hintExplode: "Maus darüber zum Zerlegen",
+      hintJourney: "Maus darüber für eine Bestellung",
+      hintDictation: "Maus darüber zum Diktieren",
+      hintStops: "Mit der Maus über das Bild fahren",
+      stopOf: "Halt {{n}} von {{total}}",
+      tapOn: "Tippen für den nächsten",
+      energyClass: "Effizienzklasse",
+      botName: "Whale Abyss Bot",
+      botOrder: "Neue bezahlte Bestellung, 2000 RUB",
+      botPosted: "Im Kanal der Booster gepostet",
+      botTake: "Annehmen",
+      botDetails: "Details",
+      webhook: "Webhook-Signatur geprüft, Bestellung bezahlt",
+      chatName: "Anna",
+      chatSeen: "kürzlich online",
+      chatIn: "kommst du morgen ins Gym?",
+      chatOut: "Ja, ich bin um sieben da. Halt mir das Squat Rack frei.",
+      keys: "sprechen, es tippt",
     },
     projects: {
       eyebrow: "Projekte / Gebaut, benutzt und weiter verbessert",

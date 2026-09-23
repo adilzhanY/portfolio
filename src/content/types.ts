@@ -12,6 +12,8 @@ export interface ProjectCopy {
   summary: string;
   /** The single fact worth remembering. */
   metric: string;
+  /** Two or three short facts shown as chips under the stage. */
+  chips: string[];
   /** The problem this project exists to solve. */
   problem: string;
   /** What was built, paragraph by paragraph. */
@@ -114,6 +116,38 @@ export interface UiCopy {
     aboutHeading: string;
     moreExperience: string;
     tinkering: string;
+    /** The three figures beside the hero heading. */
+    factProducts: string;
+    factCustomers: string;
+    factLanguages: string;
+    /** One line beside the work heading that says the stages move. */
+    workHint: string;
+  };
+  /** Words drawn inside the project stages. */
+  stage: {
+    /** The small hint on each stage, by kind. */
+    hintFan: string;
+    hintExplode: string;
+    hintJourney: string;
+    hintDictation: string;
+    hintStops: string;
+    /** On a touch screen the stops advance by tap. Supports {{n}} and {{total}}. */
+    stopOf: string;
+    tapOn: string;
+    energyClass: string;
+    /** The Telegram message a paid order produces. */
+    botName: string;
+    botOrder: string;
+    botPosted: string;
+    botTake: string;
+    botDetails: string;
+    webhook: string;
+    /** The chat the dictation types into. */
+    chatName: string;
+    chatSeen: string;
+    chatIn: string;
+    chatOut: string;
+    keys: string;
   };
   projects: {
     heading: string;
@@ -283,6 +317,9 @@ export interface Content {
     prompt: string;
     promptSub: string;
     cta: string;
+    /** The copy button beside the email address. */
+    copy: string;
+    copied: string;
   };
   projects: Record<string, ProjectCopy>;
   experience: Record<ExperienceId, ExperienceCopy>;

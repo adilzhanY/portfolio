@@ -25,16 +25,16 @@ export default function CertificationList({ label }: { label: string }) {
   const certifications = CERTIFICATIONS;
 
   return (
-    <div className="mt-2">
+    <div className="card px-5 sm:px-7">
       {certifications.map((cert, i) => (
         <div
           key={cert.url}
           className={[
-            "flex flex-wrap items-center gap-x-5 gap-y-3 py-4",
+            "flex flex-wrap items-center gap-x-5 gap-y-3 py-5",
             i < certifications.length - 1 ? "border-b border-faint" : "",
           ].join(" ")}
         >
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sharp border border-faint bg-chip">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface">
             <IssuerIcon issuer={cert.issuer} />
           </span>
           <div className="min-w-0 flex-1">
@@ -47,10 +47,10 @@ export default function CertificationList({ label }: { label: string }) {
             href={cert.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-sharp-sm border border-muted/50 px-4 py-1.5 text-sm font-semibold text-body transition-colors hover:border-ink hover:bg-chip"
+            className="button"
           >
             {label}
-            <FiExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
+            <FiExternalLink aria-hidden="true" />
           </a>
         </div>
       ))}

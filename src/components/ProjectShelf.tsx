@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Children, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import ProjectCard, { type ProjectCardData } from "@/components/ProjectCard";
+import { stageSpans } from "@/components/stage/layout";
 
 type Filter = "all" | "web" | "mobile" | "desktop";
 
@@ -17,32 +17,43 @@ export interface ShelfLabels {
   surprise: string;
 }
 
+export interface ShelfItem {
+  href: string;
+  group: "web" | "mobile" | "desktop";
+  wide: boolean;
+}
+
 /**
- * The filter row and the grid under it. Everything is rendered at build time,
- * so the full shelf is there before the script runs and filtering only ever
- * hides what is already on the page.
+ * The filter row and the stages under it. The stages are rendered on the
+ * server and handed in as children, one per item, so filtering only hides
+ * what is already on the page and re-pairs what is left.
  */
 export default function ProjectShelf({
-  projects,
+  items,
   labels,
+  children,
 }: {
-  projects: ProjectCardData[];
+  items: ShelfItem[];
   labels: ShelfLabels;
+  children: React.ReactNode;
 }) {
   const router = useRouter();
   const [filter, setFilter] = useState<Filter>("all");
+  const stages = Children.toArray(children);
 
   const counts = useMemo(
     () => ({
-      all: projects.length,
-      web: projects.filter((p) => p.group === "web").length,
-      mobile: projects.filter((p) => p.group === "mobile").length,
-      desktop: projects.filter((p) => p.group === "desktop").length,
+      all: items.length,
+      web: items.filter((p) => p.group === "web").length,
+      mobile: items.filter((p) => p.group === "mobile").length,
+      desktop: items.filter((p) => p.group === "desktop").length,
     }),
-    [projects],
+    [items],
   );
 
-  const visible = projects.filter((p) => filter === "all" || p.group === filter);
+  const shown = items.map((item) => filter === "all" || item.group === filter);
+  const spans = stageSpans(items.filter((_, i) => shown[i]));
+  let next = 0;
 
   const filters: { id: Filter; label: string }[] = [
     { id: "all", label: labels.all },
@@ -52,18 +63,13 @@ export default function ProjectShelf({
   ];
 
   const surprise = () => {
-    const pick = projects[Math.floor(Math.random() * projects.length)];
+    const pick = items[Math.floor(Math.random() * items.length)];
     if (pick) router.push(pick.href);
   };
 
   return (
     <>
-      <button type="button" className="button surprise-button" onClick={surprise}>
-        <span aria-hidden="true">⚄</span> {labels.surprise}{" "}
-        <span aria-hidden="true">↗</span>
-      </button>
-
-      <div className="project-toolbar">
+      <div className="shelf-bar">
         <div className="filters" role="group" aria-label={labels.group}>
           {filters.map((item) => (
             <button
@@ -72,18 +78,26 @@ export default function ProjectShelf({
               aria-pressed={filter === item.id}
               onClick={() => setFilter(item.id)}
             >
-              {item.label} <span>{counts[item.id]}</span>
+              {item.label}
+              <span>{counts[item.id]}</span>
             </button>
           ))}
         </div>
-        <span className="project-count" role="status">
-          {labels.count.replace("{{count}}", String(visible.length))}
-        </span>
+        <div className="filters">
+          <span className="shelf-count" role="status">
+            {labels.count.replace("{{count}}", String(spans.length))}
+          </span>
+          <button type="button" onClick={surprise}>
+            {labels.surprise} <span aria-hidden="true">↗</span>
+          </button>
+        </div>
       </div>
 
-      <div className="project-grid">
-        {visible.map((project, i) => (
-          <ProjectCard key={project.id} project={project} eager={i < 2} />
+      <div className="stages">
+        {stages.map((stage, i) => (
+          <div key={items[i]?.href ?? i} data-span={shown[i] ? spans[next++] : undefined} hidden={!shown[i]}>
+            {stage}
+          </div>
         ))}
       </div>
     </>

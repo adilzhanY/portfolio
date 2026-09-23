@@ -28,15 +28,17 @@ export default function NotFound() {
       </head>
       <body className="flex min-h-dvh flex-col font-sans antialiased">
         {tint && <style>{tint}</style>}
-        <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-4 py-16 sm:px-6">
-          <p className="font-mono text-sm text-muted">404</p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-            {ui.notFound.title}
-          </h1>
-          <p className="mt-2 text-body">
+        <main className="wrap flex flex-1 flex-col justify-center py-12">
+          <div className="nf card">
+          <p className="eyebrow">
+            <span className="status-dot" aria-hidden="true" />
+            404
+          </p>
+          <h1>{ui.notFound.title}</h1>
+          <p>
             {ui.notFound.body} {ui.notFound.puzzleIntro}
           </p>
-          <div className="mt-8">
+          <div className="mt-4">
             <Sudoku404
               labels={{
                 hint: ui.notFound.hint,
@@ -52,6 +54,7 @@ export default function NotFound() {
                 cellLabel: ui.notFound.cellLabel,
               }}
             />
+          </div>
           </div>
         </main>
       </body>

@@ -1,5 +1,4 @@
 import "@/app/globals.css";
-import { JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
@@ -9,18 +8,6 @@ import PixelBlastBackdrop from "@/components/PixelBlastBackdrop";
 import LanguageHint from "@/components/LanguageHint";
 import { getContent } from "@/data/cv";
 import type { Locale } from "@/i18n/config";
-
-/*
- * The only web font on the site, and it dresses one word: the wordmark in the
- * nav. Bold only, latin only, self-hosted by next/font at build time, exposed
- * as a variable so nothing else picks it up by accident.
- */
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
-  variable: "--font-wordmark",
-});
 
 /*
  * Open Runde, a rounded cut of Inter written as a replacement for SF Pro
@@ -76,9 +63,10 @@ const rundeCyrillic = localFont({
 
 /**
  * The animated background behind every page. Two are ported from reactbits;
- * swap the value to compare them, or set "none" for the plain surface.
+ * swap the value to compare them. The Stages design runs on the plain ground,
+ * so it is off.
  */
-const BACKDROP: "pixel" | "crt" | "none" = "pixel";
+const BACKDROP: "pixel" | "crt" | "none" = "none";
 
 /**
  * The document shell. Each root layout renders this with its own locale, which
@@ -96,7 +84,7 @@ export default function RootShell({
   return (
     <html
       lang={locale}
-      className={`${rundeLatin.variable} ${rundeCyrillic.variable} ${jetbrainsMono.variable}`}
+      className={`${rundeLatin.variable} ${rundeCyrillic.variable}`}
       suppressHydrationWarning
     >
       <head>
