@@ -18,14 +18,14 @@
 }
 
 html.dark {
-  --surface: #0b0c0f;
-  --card-c: #131419;
-  --ink: #ececef;
-  --body-c: #b8b9c0;
-  --muted-c: #8a8b93;
-  --faint-c: #23252c;
+  --surface: #08080a;
+  --card-c: #111113;
+  --ink: #ededed;
+  --body-c: #b9b9bc;
+  --muted-c: #8b8b90;
+  --faint-c: #232326;
   --accent-c: #8ea4ff;
-  --chip-c: #1b1d23;
+  --chip-c: #1a1a1d;
   --good-c: #8abb94;
   --shadow-lg: 0 1.8rem 3.5rem -1.2rem #000000aa, 0 0.4rem 1rem #00000055;
   --shadow-sm: 0 0.6rem 1.4rem -0.5rem #00000099;
