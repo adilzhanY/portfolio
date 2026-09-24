@@ -375,7 +375,6 @@ export const content: Content = {
       linkedin: "LinkedIn",
       xing: "XING",
       telegram: "Telegram",
-      reddit: "Reddit",
       x: "X",
       email: "Почта",
     },
@@ -560,7 +559,6 @@ export const content: Content = {
     emailLabel: "Почта",
     githubLabel: "GitHub",
     xLabel: "X",
-    redditLabel: "Reddit",
     xingLabel: "Xing",
   },
 
@@ -597,7 +595,7 @@ export const content: Content = {
       "Компьютер, рабочий стол, редактор и инструменты, с которыми я работаю каждый день: Arch Linux, Hyprland, Neovim и две десктопные программы, написанные мной.",
     contactTitle: "Контакты",
     contactDescription:
-      "Все способы связаться с Адильжаном Ержаном: почта, LinkedIn, GitHub, Telegram, X, Reddit, Xing или звонок на 15 минут.",
+      "Все способы связаться с Адильжаном Ержаном: почта, LinkedIn, GitHub, Telegram, X, Xing или звонок на 15 минут.",
     nowTitle: "Сейчас",
     nowDescription:
       "Над чем сейчас работает Адильжан Ержан: Sendoku и Torq, открыт к предложениям.",

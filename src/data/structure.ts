@@ -94,7 +94,6 @@ export const PROFILE = {
     linkedin: "https://linkedin.com/in/adilzhanyerzhan",
     xing: "https://www.xing.com/profile/Adilzhan_Yerzhan",
     telegram: "https://t.me/kowiqx",
-    reddit: "https://www.reddit.com/user/Fast_Pizza_1046/",
     x: "https://x.com/woopleer",
     booking: "https://cal.com/adilzhan/15min",
   },

@@ -2,7 +2,6 @@ import {
   FaEnvelope,
   FaGithub,
   FaLinkedin,
-  FaReddit,
   FaTelegram,
   FaXing,
   FaXTwitter,
@@ -52,12 +51,6 @@ export default function ContactView({ locale }: { locale: Locale }) {
       Icon: FaXTwitter,
       label: copy.xLabel,
       handle: "x.com/woopleer",
-    },
-    {
-      href: contact.reddit,
-      Icon: FaReddit,
-      label: copy.redditLabel,
-      handle: "u/Fast_Pizza_1046",
     },
     {
       href: contact.xing,

@@ -375,7 +375,6 @@ export const content: Content = {
       linkedin: "LinkedIn",
       xing: "XING",
       telegram: "Telegram",
-      reddit: "Reddit",
       x: "X",
       email: "E-Mail",
     },
@@ -560,7 +559,6 @@ export const content: Content = {
     emailLabel: "E-Mail",
     githubLabel: "GitHub",
     xLabel: "X",
-    redditLabel: "Reddit",
     xingLabel: "Xing",
   },
 
@@ -597,7 +595,7 @@ export const content: Content = {
       "Rechner, Desktop, Editor und Werkzeuge, mit denen ich täglich arbeite: Arch Linux, Hyprland, Neovim und zwei selbst geschriebene Desktop-Werkzeuge.",
     contactTitle: "Kontakt",
     contactDescription:
-      "Alle Wege zu Adilzhan Yerzhan: E-Mail, LinkedIn, GitHub, Telegram, X, Reddit, Xing oder ein Gespräch von 15 Minuten.",
+      "Alle Wege zu Adilzhan Yerzhan: E-Mail, LinkedIn, GitHub, Telegram, X, Xing oder ein Gespräch von 15 Minuten.",
     nowTitle: "Jetzt",
     nowDescription:
       "Woran Adilzhan Yerzhan gerade arbeitet: Sendoku und Torq, offen für neue Aufgaben.",

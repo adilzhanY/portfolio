@@ -69,7 +69,6 @@ export interface UiCopy {
     linkedin: string;
     xing: string;
     telegram: string;
-    reddit: string;
     x: string;
     email: string;
   };
@@ -249,7 +248,6 @@ export interface ContactCopy {
   emailLabel: string;
   githubLabel: string;
   xLabel: string;
-  redditLabel: string;
   xingLabel: string;
 }
 
