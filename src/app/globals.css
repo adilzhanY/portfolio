@@ -48,9 +48,13 @@ html.dark {
      small insets the second. */
   --radius-sharp: 1rem;
   --radius-sharp-sm: 0.6rem;
-  /* Open Runde, split Latin then Cyrillic, then the system stack behind it. */
+  /* Open Runde, Cyrillic half first. The Latin half comes with a metric
+     fallback that is plain Arial with no unicode-range, and Arial has
+     Cyrillic, so with Latin first every Russian letter stopped at that
+     fallback and never reached Open Runde. The Cyrillic face is limited to
+     Cyrillic by its unicode-range, so Latin text passes straight over it. */
   --font-sans:
-    var(--font-runde-latin), var(--font-runde-cyrillic), -apple-system,
+    var(--font-runde-cyrillic), var(--font-runde-latin), -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono:
     ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
