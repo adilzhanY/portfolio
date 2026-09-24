@@ -1447,3 +1447,7 @@ html.dark .footer-actions .button.primary:hover { color: var(--ink); }
   .burger i, .nav-drawer, .nav-drawer > * { transition-duration: 1ms !important; transition-delay: 0ms !important; }
   .stage *, .stage *::before, .stage *::after { transition-duration: 1ms !important; transition-delay: 0ms !important; }
 }
+
+/* IBM blue, and a lighter step of it on the dark ground. */
+.ibm-mark { color: #0f62fe; }
+html.dark .ibm-mark { color: #78a9ff; }
