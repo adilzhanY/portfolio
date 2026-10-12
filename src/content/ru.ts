@@ -471,6 +471,8 @@ export const content: Content = {
       wentWrong: "Что пошло не так",
       stack: "Стек",
       inDetail: "Подробнее",
+      play: "Воспроизвести",
+      pause: "Пауза",
     },
     experience: {
       eyebrow: "Опыт / Как всё было",

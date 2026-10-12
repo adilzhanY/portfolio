@@ -10,7 +10,13 @@ const STEP_MS = 1900;
  * Plays a gallery whose shots are a sequence in time rather than a set of
  * separate views. Stills cannot show that something is fast; this can.
  */
-export default function SequenceReplay({ shots }: { shots: GalleryImage[] }) {
+export default function SequenceReplay({
+  shots,
+  labels,
+}: {
+  shots: GalleryImage[];
+  labels: { play: string; pause: string };
+}) {
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
   const hovering = useRef(false);
@@ -63,7 +69,7 @@ export default function SequenceReplay({ shots }: { shots: GalleryImage[] }) {
         <button
           type="button"
           onClick={() => setPlaying((p) => !p)}
-          aria-label={playing ? "Pause" : "Play"}
+          aria-label={playing ? labels.pause : labels.play}
           className="shrink-0 cursor-pointer text-muted transition-colors hover:text-ink"
         >
           {playing ? (

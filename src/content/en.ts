@@ -447,6 +447,8 @@ export const content: Content = {
       wentWrong: "What went wrong",
       stack: "Stack",
       inDetail: "In detail",
+      play: "Play",
+      pause: "Pause",
     },
     experience: {
       eyebrow: "Experience / The story so far",

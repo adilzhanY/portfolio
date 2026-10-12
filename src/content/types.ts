@@ -175,6 +175,8 @@ export interface UiCopy {
     wentWrong: string;
     stack: string;
     inDetail: string;
+    play: string;
+    pause: string;
   };
   experience: {
     heading: string;

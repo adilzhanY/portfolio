@@ -124,7 +124,7 @@ export default function ProjectView({
           <section className="case-block card print:hidden">
             <h2>{ui.project.inDetail}</h2>
             <div>
-              {sequence.length > 0 && <SequenceReplay shots={sequence} />}
+              {sequence.length > 0 && <SequenceReplay shots={sequence} labels={ui.project} />}
               {rest.length > 0 && (
                 <div
                   className={project.galleryPhones ? "gallery phones" : "gallery"}
