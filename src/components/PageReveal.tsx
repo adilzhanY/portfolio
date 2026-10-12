@@ -2,7 +2,6 @@
 
 import { useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import gsap from "gsap";
 
 /*
  * The page settles into place when it opens: the blocks on the first screen
@@ -61,20 +60,25 @@ export default function PageReveal() {
     const pill = first.current ? document.querySelector(".site-header .nav-pill") : null;
     first.current = false;
 
-    const ctx = gsap.context(() => {
-      gsap.set(targets, { opacity: 0, y: 22 });
-      if (pill) gsap.set(pill, { opacity: 0, y: -14 });
-      root.classList.remove("reveal-pending");
-
-      const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
-      if (pill) timeline.to(pill, { opacity: 1, y: 0, duration: 0.6, clearProps: "opacity,transform" }, 0);
-      timeline.to(
-        targets,
-        { opacity: 1, y: 0, duration: 0.7, stagger: 0.055, clearProps: "opacity,transform" },
-        pill ? 0.08 : 0,
+    // power3.out, the ease the reveal has always used
+    const easing = "cubic-bezier(0.215, 0.61, 0.355, 1)";
+    // fill "backwards" holds the start frame through each delay and leaves no inline style once done
+    const animations = targets.map((el, i) =>
+      el.animate(
+        [{ opacity: 0, translate: "0 22px" }, { opacity: 1, translate: "0 0" }],
+        { duration: 700, delay: (pill ? 80 : 0) + i * 55, easing, fill: "backwards" },
+      ),
+    );
+    if (pill) {
+      animations.push(
+        pill.animate(
+          [{ opacity: 0, translate: "0 -14px" }, { opacity: 1, translate: "0 0" }],
+          { duration: 600, easing, fill: "backwards" },
+        ),
       );
-    });
-    return () => ctx.revert();
+    }
+    root.classList.remove("reveal-pending");
+    return () => animations.forEach((a) => a.cancel());
   }, [pathname]);
 
   return null;
