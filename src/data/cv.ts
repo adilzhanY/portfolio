@@ -1,4 +1,4 @@
-import type { Content } from "@/content/types";
+import type { Content, ExperienceCopy } from "@/content/types";
 import { content as en } from "@/content/en";
 import { content as ru } from "@/content/ru";
 import { content as de } from "@/content/de";
@@ -9,24 +9,12 @@ import {
   PROFILE,
   PROJECTS,
   SKILLS,
+  type CertificationStructure,
+  type ExperienceId,
   type ProjectStage,
 } from "@/data/structure";
 
-export interface Experience {
-  company: string;
-  role: string;
-  date: string;
-  /** Small tag beside the date, for example "Remote". */
-  label: string;
-  /** Entry heading when the company name is not the interesting part. */
-  headline?: string;
-  /** One-line version, shown on the Home page. */
-  detail: string;
-  /** Full story, shown on the /experience timeline. */
-  bullets: string[];
-  /** Stable key, independent of the translated company name. */
-  id: string;
-}
+export type Experience = ExperienceCopy & { id: ExperienceId };
 
 export interface GalleryImage {
   src: string;
@@ -68,12 +56,7 @@ export interface Project {
   replayCount?: number;
 }
 
-export interface Certification {
-  issuer: "IBM" | "Meta" | "Next.js";
-  title: string;
-  platform: string;
-  url: string;
-}
+export type Certification = CertificationStructure;
 
 export interface CV {
   name: string;
