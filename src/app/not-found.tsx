@@ -1,4 +1,5 @@
 import "@/app/globals.css";
+import { fontVariables, THEME_SCRIPT } from "@/app/document";
 import Sudoku404 from "@/components/Sudoku404";
 import { getContent } from "@/data/cv";
 import { PROJECTS } from "@/data/structure";
@@ -18,11 +19,11 @@ export default function NotFound() {
     : null;
 
   return (
-    <html lang={DEFAULT_LOCALE} suppressHydrationWarning>
+    <html lang={DEFAULT_LOCALE} className={fontVariables} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`,
+            __html: THEME_SCRIPT,
           }}
         />
       </head>

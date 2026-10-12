@@ -539,63 +539,6 @@ html.dark .sudoku-cell.is-wrong {
 .post-body img { display: block; max-width: 100%; height: auto; border-radius: 0.5rem; border: 1px solid var(--faint-c); }
 .post-body hr { border: 0; border-top: 1px solid var(--faint-c); }
 
-/* ---------- page backdrop ----------
-   The shader canvas sits behind everything. Its strength is set here, not in
-   the shader, so the page controls how much it competes with the type: the
-   dark theme can take more of it than the light one. The colour wash on a
-   case study paints above it, and content above both. */
-.page-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.2;
-  transition: opacity 600ms ease;
-  /* The content column is 64rem wide and centred. The pixels are masked to a
-     quarter strength under it and full strength either side, so the field
-     frames the page instead of sitting behind the type. */
-  -webkit-mask-image: linear-gradient(
-    to right,
-    #000 0,
-    #000 calc(50% - 38rem),
-    rgba(0, 0, 0, 0.25) calc(50% - 31rem),
-    rgba(0, 0, 0, 0.25) calc(50% + 31rem),
-    #000 calc(50% + 38rem),
-    #000 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    #000 0,
-    #000 calc(50% - 38rem),
-    rgba(0, 0, 0, 0.25) calc(50% - 31rem),
-    rgba(0, 0, 0, 0.25) calc(50% + 31rem),
-    #000 calc(50% + 38rem),
-    #000 100%
-  );
-}
-html.dark .page-backdrop {
-  opacity: 0.34;
-}
-/* No sides to speak of below the column width: show the whole field, toned
-   down so the type on top keeps its contrast. */
-@media (max-width: 76rem) {
-  .page-backdrop {
-    -webkit-mask-image: none;
-    mask-image: none;
-    opacity: 0.12;
-  }
-  html.dark .page-backdrop {
-    opacity: 0.2;
-  }
-}
-@media (prefers-reduced-transparency: reduce), print {
-  .page-backdrop {
-    display: none;
-  }
-}
-
 /* ==========================================================================
    Stages: rounded cards on a warm ground, pill controls, and one big tinted
    stage per project that moves when you reach for it.
