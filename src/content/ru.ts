@@ -304,7 +304,7 @@ export const content: Content = {
 
   experience: {
     twenty: {
-      company: "20°",
+      company: "20° GmbH",
       label: "В офисе",
       role: "Младший разработчик, полная занятость",
       date: "с 10.2026 по настоящее время",
