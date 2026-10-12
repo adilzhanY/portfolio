@@ -108,6 +108,7 @@ export default function ResumeModal({
           onClick={onClose}
           className={toolBtn}
           aria-label={labels.close}
+          autoFocus
         >
           <FiX aria-hidden="true" className="h-4 w-4" />
         </button>

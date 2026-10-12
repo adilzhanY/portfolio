@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FiChevronRight } from "react-icons/fi";
 import type { UiCopy } from "@/content/types";
 
@@ -18,10 +18,12 @@ export default function ResumeButton({
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const button = useRef<HTMLButtonElement>(null);
 
   return (
     <>
       <button
+        ref={button}
         type="button"
         onClick={() => setOpen(true)}
         className={className}
@@ -29,7 +31,16 @@ export default function ResumeButton({
         {labels.open}
         <FiChevronRight aria-hidden="true" className="h-4 w-4" />
       </button>
-      {open && <ResumeModal onClose={() => setOpen(false)} labels={labels} file={file} />}
+      {open && (
+        <ResumeModal
+          onClose={() => {
+            setOpen(false);
+            button.current?.focus();
+          }}
+          labels={labels}
+          file={file}
+        />
+      )}
     </>
   );
 }
