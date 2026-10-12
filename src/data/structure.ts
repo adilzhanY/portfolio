@@ -139,6 +139,7 @@ export const SKILLS = [
 
 /** Order of the timeline, newest first. Prose lives under these keys. */
 export const EXPERIENCE_ORDER = [
+  "twenty",
   "independent",
   "intuivo",
   "climanova",

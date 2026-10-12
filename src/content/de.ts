@@ -303,6 +303,14 @@ export const content: Content = {
   },
 
   experience: {
+    twenty: {
+      company: "20°",
+      label: "Vor Ort",
+      role: "Junior Software Engineer, Vollzeit",
+      date: "10.2026 bis heute",
+      detail: "Junior Software Engineer in Vollzeit bei 20° in Berlin, vor Ort.",
+      bullets: ["Seit Oktober 2026 als Junior Software Engineer in Vollzeit bei 20° in Berlin, vor Ort im Büro."],
+    },
     independent: {
       company: "Eigene Produkte",
       label: "Eigene Produkte",
@@ -589,7 +597,7 @@ export const content: Content = {
       "Allein entworfene, gebaute, veröffentlichte und betriebene Produkte: Whale Abyss, Torq, OpenHyprWhisper und Grit.",
     experienceTitle: "Erfahrung",
     experienceDescription:
-      "Beruflicher Werdegang: eigene Produkte im Produktivbetrieb, ein Praktikum als Software Engineer bei intuivo, Teamleitung und ein B.Sc. in Software Engineering.",
+      "Beruflicher Werdegang: Junior Software Engineer bei 20° in Berlin, eigene Produkte im Produktivbetrieb, ein Praktikum als Software Engineer bei intuivo, Teamleitung und ein B.Sc. in Software Engineering.",
     usesTitle: "Werkzeuge",
     usesDescription:
       "Rechner, Desktop, Editor und Werkzeuge, mit denen ich täglich arbeite: Arch Linux, Hyprland, Neovim und zwei selbst geschriebene Desktop-Werkzeuge.",

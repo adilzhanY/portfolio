@@ -279,6 +279,14 @@ export const content: Content = {
   },
 
   experience: {
+    twenty: {
+      company: "20°",
+      label: "On-site",
+      role: "Junior Software Engineer, full-time",
+      date: "10.2026 to present",
+      detail: "Full-time junior software engineer at 20° in Berlin, on-site.",
+      bullets: ["Joined 20° in Berlin in October 2026 as a full-time junior software engineer, working on-site."],
+    },
     independent: {
       company: "Independent products",
       label: "Independent",
@@ -565,7 +573,7 @@ export const content: Content = {
       "Products designed, built, launched, and operated solo: Whale Abyss, Torq, OpenHyprWhisper, and Grit.",
     experienceTitle: "Experience",
     experienceDescription:
-      "Career timeline: solo products in production, a software engineering internship at intuivo, team leadership, and a B.Sc in Software Engineering.",
+      "Career timeline: junior software engineer at 20° in Berlin, solo products in production, a software engineering internship at intuivo, team leadership, and a B.Sc in Software Engineering.",
     usesTitle: "Uses",
     usesDescription:
       "The machine, desktop, editor and tools I work on every day: Arch Linux, Hyprland, Neovim, and two desktop tools I wrote myself.",
