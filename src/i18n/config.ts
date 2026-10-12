@@ -48,3 +48,8 @@ export function splitLocale(pathname: string): {
   }
   return { locale: DEFAULT_LOCALE, path: trimmed };
 }
+
+/** The blog is written in English only, so it has no /ru or /de copy. */
+export function isTranslated(path: string): boolean {
+  return path !== "/blog" && !path.startsWith("/blog/");
+}

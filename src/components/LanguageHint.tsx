@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { FiX } from "react-icons/fi";
-import { isLocale, localePath, splitLocale, type Locale } from "@/i18n/config";
+import {
+  isLocale,
+  isTranslated,
+  localePath,
+  splitLocale,
+  type Locale,
+} from "@/i18n/config";
 import { HINT_DISMISSED_KEY, LANGUAGE_HINTS } from "@/i18n/hints";
 
 /**
@@ -45,10 +51,11 @@ export default function LanguageHint({ locale }: { locale: Locale }) {
     if (preferred && preferred !== locale) setTarget(preferred);
   }, [locale]);
 
-  if (!target) return null;
+  const { path } = splitLocale(pathname);
+  // No translation to offer on an English only page like the blog.
+  if (!target || !isTranslated(path)) return null;
 
   const hint = LANGUAGE_HINTS[target];
-  const { path } = splitLocale(pathname);
 
   const dismiss = () => {
     try {

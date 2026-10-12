@@ -9,6 +9,7 @@ import {
   LOCALES,
   LOCALE_LABELS,
   LOCALE_NAMES,
+  isTranslated,
   localePath,
   splitLocale,
   type Locale,
@@ -19,7 +20,8 @@ const FLAGS: Record<Locale, typeof GB> = { en: GB, ru: RU, de: DE };
 
 /**
  * Keeps you on the same page when you switch language: /ru/projects/torq
- * rather than dumping you back on the home page.
+ * rather than dumping you back on the home page. A page with no translation
+ * (the blog) points the other languages at their home page instead.
  *
  * These are plain anchors on purpose. Each locale sits under its own root
  * layout, so the navigation is a document load either way.
@@ -33,6 +35,7 @@ export default function LanguageSwitcher({
 }) {
   const pathname = usePathname();
   const { path } = splitLocale(pathname);
+  const translated = isTranslated(path);
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -124,7 +127,7 @@ export default function LanguageSwitcher({
             <a
               key={option}
               role="menuitem"
-              href={localePath(option, path)}
+              href={localePath(option, active || translated ? path : "/")}
               hrefLang={option}
               aria-current={active ? "true" : undefined}
               onClick={() => {
