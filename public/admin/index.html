@@ -15,11 +15,16 @@
   </head>
   <body>
     <!--
-      Sveltia CMS, pinned to a minor version so a release cannot break the
-      editor without a deliberate bump here. Reads ./config.yml beside it.
+      Sveltia CMS, pinned to an exact version with its hash. This page holds a
+      token that can push to main, so a new release must never run here by
+      itself. To upgrade, change the version and recompute the hash:
+      curl -s <url> | openssl dgst -sha384 -binary | base64
+      Reads ./config.yml beside it.
     -->
     <script
-      src="https://cdn.jsdelivr.net/npm/@sveltia/cms@0.209/dist/sveltia-cms.js"
+      src="https://cdn.jsdelivr.net/npm/@sveltia/cms@0.209.2/dist/sveltia-cms.js"
+      integrity="sha384-VIyPnckA2e8p2GtAhzan+3HaOpxvMP+s/8IhhlLLBMrmALvoDSAKe446Rky3CZ2H"
+      crossorigin="anonymous"
       type="module"
     ></script>
   </body>

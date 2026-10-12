@@ -36,9 +36,11 @@ build time. Saving in the editor is a commit, so a save is a publish.
 - [x] Dates written by the editor are normalised in the loader, so an
       unquoted `date: 2026-09-10` and a quoted one behave the same.
 - [ ] First sign-in: open `qantrr.com/admin`, click **Sign In with Token**,
-      follow its link to GitHub, generate the token with the scopes it
-      pre-selects, paste it back. Tokens expire (90 days by default), so
-      this comes round a few times a year.
+      and paste a **fine-grained** GitHub token limited to
+      `adilzhanY/portfolio` with only "Contents: Read and write". Do not use
+      the classic `repo` token its link pre-selects: that one can read and
+      push every private repo on the account. Tokens expire, so this comes
+      round a few times a year.
 - [ ] Local editing, no token at all: `npm run dev`, open
       `localhost:3000/admin/index.html` in Chrome or Edge, click **Work with
       Local Repository**, pick this folder. It writes files on disk and makes
