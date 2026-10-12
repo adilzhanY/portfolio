@@ -60,12 +60,12 @@ export default function ProjectView({
         </ul>
         <div className="actions print:hidden">
           {project.live && (
-            <a href={project.live} className="button primary">
+            <a href={project.live} className="button primary" target="_blank" rel="noopener">
               {ui.project.live}
               <FiExternalLink aria-hidden="true" />
             </a>
           )}
-          <a href={project.link} className="button">
+          <a href={project.link} className="button" target="_blank" rel="noopener">
             {ui.project.github}
             <FiGithub aria-hidden="true" />
           </a>

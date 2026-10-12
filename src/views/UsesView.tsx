@@ -26,7 +26,7 @@ export default function UsesView({ locale }: { locale: Locale }) {
                 <div key={item.id} className="uses-row">
                   <dt>
                     {item.url ? (
-                      <a href={item.url}>
+                      <a href={item.url} target="_blank" rel="noopener">
                         {item.name}
                         <FiExternalLink aria-hidden="true" />
                       </a>
