@@ -104,6 +104,9 @@ export const PROFILE = {
     telegram: "t.me/kowiqx",
     booking: "cal.com/adilzhan/15min",
   },
+  /** Home city for structured data; the visible location prose lives in content. */
+  city: "Potsdam",
+  country: "DE",
 } as const;
 
 /** A contact card a recruiter can save in one tap. */

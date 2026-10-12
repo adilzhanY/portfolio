@@ -21,8 +21,8 @@ export function personSchema(locale: Locale) {
     email: `mailto:${cv.contact.email}`,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Potsdam",
-      addressCountry: "DE",
+      addressLocality: PROFILE.city,
+      addressCountry: PROFILE.country,
     },
     alumniOf: {
       "@type": "CollegeOrUniversity",
