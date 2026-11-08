@@ -4,7 +4,7 @@ export const content: Content = {
   name: "Adilzhan Yerzhan",
   tagline: "Full-Stack Web- und Mobile-Entwickler",
   intro:
-    "Ich entwerfe, baue, veröffentliche und betreibe meine eigenen Produkte von Anfang bis Ende: einen Onlineshop mit echten zahlenden Kunden und Offline-First-Apps für Training und Gewohnheiten. Ich habe einen B.Sc. in Software Engineering (Februar 2026) und bin offen für Festanstellung, Vertragsarbeit, Freelance und Remote-Arbeit.",
+    "Ich entwerfe, baue und veröffentliche meine eigenen Produkte von Anfang bis Ende: einen Onlineshop mit echten zahlenden Kunden und Offline-First-Apps für Training und Gewohnheiten. Ich habe einen B.Sc. in Software Engineering (Februar 2026) und bin offen für Festanstellung, Vertragsarbeit, Freelance und Remote-Arbeit.",
   location: "Potsdam, Deutschland",
   languages: ["Kasachisch", "Russisch", "Englisch", "Deutsch"],
   about: [
@@ -108,7 +108,7 @@ export const content: Content = {
       summary:
         "E-Commerce-Plattform für Genshin-Impact-Boosting, allein gebaut und veröffentlicht. Bezahlte Bestellungen laufen direkt in einen Telegram-Bot, Zahlungen laufen vollständig durch, CI/CD deployt bei jedem Push.",
       metric: "150+ zahlende Kunden in den ersten 10 Tagen",
-      chips: ["150+ zahlende Kunden in 10 Tagen", "36.000 Zeilen TypeScript", "Läuft bis heute"],
+      chips: ["150+ zahlende Kunden in 10 Tagen", "36.000 Zeilen TypeScript", "Echte Zahlungen"],
       postmortem: [
         "Am 12. Juli bezahlte ein Kunde 2000 RUB für eine Leistung, die deklarierte Quests voraussetzt, und die Bestellung erreichte den Booster ganz ohne Deklaration. Ich lieferte einen Fix aus: drei Wiederholungen des Requests und eine Warnung in Telegram. Am 25. Juli passierte es wieder, gleicher Betrag, Bestellung 96162b2e. Der Fix hielt nicht, weil er auf den falschen Code-Pfad zielte.",
         "Also hörte ich auf zu raten und ging in die Daten. Von 27 betroffenen Bestellzeilen waren genau zwei kaputt, und fehlerhafte Warenkörbe gab es überhaupt keine. Die eigentliche Ursache war, dass das übergeordnete Element undefined speicherte, sodass die Auswahl des Kunden nur als separate Warenkorbzeilen existierte, und beim Löschen einer solchen Zeile verschwand die Auswahl stillschweigend, ohne Fehler und ohne Logeintrag. Der Fix war ein expliziter Wert plus eine Serverprüfung, die die Verknüpfungen beim Checkout neu liest und 409 zurückgibt, was die Warenkorbseite abfängt und den Dialog erneut öffnet, sodass nichts verloren geht. Danach spielte ich 50 echte bezahlte Bestellungen dagegen. Die Prüfung blockierte genau die zwei kaputten und ließ die anderen 48 durch.",
@@ -124,7 +124,7 @@ export const content: Content = {
       ],
       achievements: [
         "150+ zahlende Kunden in den ersten 10 Tagen nach dem Start",
-        "Läuft produktiv auf whaleabyss.com und wird weiterhin von mir betrieben",
+        "Produktiv auf whaleabyss.com veröffentlicht",
         "36.000+ Zeilen TypeScript: 80+ Komponenten, 35+ API-Endpunkte, 13 Datenbanktabellen",
         "Echtes Geld auf dem ganzen Weg: Zahlungs-Gateway, signierte Webhooks, Rückerstattungen, Provisionen",
         "Allein entworfen, gebaut, veröffentlicht und betrieben",
@@ -314,13 +314,13 @@ export const content: Content = {
     independent: {
       company: "Eigene Produkte",
       label: "Eigene Produkte",
-      headline: "Eigene Produkte bauen und betreiben",
-      role: "Alleiniger Entwickler und Betreiber",
+      headline: "Eigene Produkte bauen und veröffentlichen",
+      role: "Alleiniger Entwickler",
       date: "2024 bis heute",
       detail:
-        "Ich habe meine eigenen Produkte entworfen, gebaut, veröffentlicht und betreibe sie weiterhin: Whale Abyss, Torq, Grit und OpenHyprWhisper.",
+        "Ich habe meine eigenen Produkte entworfen, gebaut und veröffentlicht: Whale Abyss, Torq, Grit und OpenHyprWhisper.",
       bullets: [
-        "Whale Abyss: eine produktive E-Commerce-Plattform für Game-Boosting mit echten Zahlungen, 150+ zahlenden Kunden in den ersten 10 Tagen, live auf whaleabyss.com und seit dem Start von mir betrieben.",
+        "Whale Abyss: eine produktive E-Commerce-Plattform für Game-Boosting, gebaut und auf whaleabyss.com veröffentlicht, mit echten Zahlungen und 150+ zahlenden Kunden in den ersten 10 Tagen.",
         "Torq: eine Offline-First-Gym-App, die jeden Satz mit der DOTS-Formel bewertet und Stärke über neun Ränge einordnet, abgesichert durch 243 Tests.",
         "Grit: ein spielerischer Lebens-Tracker mit einer XP-Ökonomie, die sich eine Next.js-Web-App, eine Expo-Mobile-App und ein Quickshell-Desktop-Panel teilen.",
         "OpenHyprWhisper: vollständig lokales Diktieren für den Hyprland-Desktop auf Basis von whisper.cpp, als Open Source veröffentlicht.",
@@ -446,7 +446,7 @@ export const content: Content = {
       keys: "sprechen, es tippt",
     },
     projects: {
-      eyebrow: "Projekte / Gebaut, benutzt und weiter verbessert",
+      eyebrow: "Projekte / Gebaut und benutzt",
       pageHeading: "Mein Projektregal",
       pageIntro: "Dinge, die ich selbst benutzen wollte, Probleme, die ich verstehen wollte, und ein Experiment, das aus dem Ruder lief.",
       surprise: "Such mir ein Projekt aus",

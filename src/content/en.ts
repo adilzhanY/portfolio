@@ -4,7 +4,7 @@ export const content: Content = {
   name: "Adilzhan Yerzhan",
   tagline: "Full-Stack Web and Mobile Developer",
   intro:
-    "I design, build, launch, and run my own products end to end: an e-commerce storefront with real paying customers, and offline-first apps for training and habits. I hold a B.Sc in Software Engineering (February 2026) and am open to full-time, contract, freelance, and remote roles.",
+    "I design, build, and launch my own products end to end: an e-commerce storefront with real paying customers, and offline-first apps for training and habits. I hold a B.Sc in Software Engineering (February 2026) and am open to full-time, contract, freelance, and remote roles.",
   location: "Potsdam, Germany",
   languages: ["Kazakh", "Russian", "English", "German"],
   about: [
@@ -108,7 +108,7 @@ export const content: Content = {
       summary:
         "E-commerce platform for Genshin Impact boosting, built and launched alone. Paid orders flow straight into a Telegram bot, payments clear end to end, CI/CD deploys on every push.",
       metric: "150+ paying customers in the first 10 days",
-      chips: ["150+ paying customers in 10 days", "36k lines of TypeScript", "Still running"],
+      chips: ["150+ paying customers in 10 days", "36k lines of TypeScript", "Real payments"],
       postmortem: [
         "On 12 July a customer paid 2000 RUB for a service that requires quest declarations, and the order reached the booster with nothing declared. I shipped a fix that retried the fetch three times and warned in Telegram. On 25 July it happened again, same amount, order 96162b2e. The fix had not held, because it aimed at the wrong code path.",
         "So I stopped guessing and went to the data. Of 27 gated order lines, exactly two were broken, and there were no bad carts at all. The real cause was that the parent item stored undefined, so the customer's choice existed only as separate cart lines, and deleting one of those lines threw the choice away silently, with no error and no log. The fix was an explicit value plus a server check that re-reads the links at checkout and returns 409, which the cart page catches and re-opens the dialog, so nothing is lost. Then I replayed 50 real paid orders against it. It blocked exactly the two bad ones and passed the other 48.",
@@ -124,7 +124,7 @@ export const content: Content = {
       ],
       achievements: [
         "150+ paying customers within the first 10 days of launch",
-        "Live in production at whaleabyss.com, still operated by me",
+        "Launched to production at whaleabyss.com",
         "36,000+ lines of TypeScript: 80+ components, 35+ API endpoints, 13 database tables",
         "Real money end to end: payment gateway, signed webhooks, refunds, commission payouts",
         "Designed, built, launched, and operated solo",
@@ -290,13 +290,13 @@ export const content: Content = {
     independent: {
       company: "Independent products",
       label: "Independent",
-      headline: "Building and running my own products",
-      role: "Solo developer and operator",
+      headline: "Building and launching my own products",
+      role: "Solo developer",
       date: "2024 to present",
       detail:
-        "Designed, built, launched, and still operate my own products: Whale Abyss, Torq, Grit, and OpenHyprWhisper.",
+        "Designed, built, and launched my own products: Whale Abyss, Torq, Grit, and OpenHyprWhisper.",
       bullets: [
-        "Whale Abyss: a production e-commerce platform for game boosting with real payments, 150+ paying customers in the first 10 days, live at whaleabyss.com and operated by me since launch.",
+        "Whale Abyss: a production e-commerce platform for game boosting, built and launched at whaleabyss.com, with real payments and 150+ paying customers in the first 10 days.",
         "Torq: an offline-first gym app that scores every set with the DOTS formula and ranks strength across nine tiers, backed by 243 tests.",
         "Grit: a gamified life tracker with one XP economy shared across a Next.js web app, an Expo mobile app, and a Quickshell desktop panel.",
         "OpenHyprWhisper: fully local voice dictation for the Hyprland desktop built on whisper.cpp, published open source.",
@@ -422,7 +422,7 @@ export const content: Content = {
       keys: "speak, it types",
     },
     projects: {
-      eyebrow: "Projects / Built, used, and still tinkered with",
+      eyebrow: "Projects / Built and used",
       pageHeading: "My project shelf",
       pageIntro: "Things I wanted to use, problems I wanted to understand, and an occasional experiment that got out of hand.",
       surprise: "Pick a project for me",
